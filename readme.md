@@ -1,0 +1,1 @@
+Delete the dummy txts when you upload something to your folder. Just there to have the folders there.
