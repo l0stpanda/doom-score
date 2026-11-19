@@ -1,0 +1,11 @@
+350a290a44960dd20d47cfa070c84995 *data/exports/contract_transactions.csv
+52343eed36d176d95802ff9c2468ff3a *data/exports/current_roster_snapshot.csv
+a4fd81ba4807a09dbf819471b67c0618 *data/exports/draft_history.csv
+76f5c9d25459ad5307d4fe9b017bd020 *data/exports/draft_pick_inventory.csv
+94383fb9433ca46d727c100792df05f4 *data/exports/league_cba_parameters.csv
+ec89af8a5525bbf0ddb6de20034b3a5a *data/exports/missingness_report.csv
+c11eb125aaa213a63197aa63bd41fe1e *data/exports/player_season_data.csv
+1709a0c02d2d1ae88c2b8e11519e679f *data/exports/team_features.csv
+bc07eeeed35941f08446ac7159bc97c5 *data/exports/team_financials.csv
+a9a5368ab72d8327ddc509d6b340aff5 *data/exports/team_season_data.csv
+a0629502b2e134a02fdda9be165e5691 *data/exports/team_season_sources.csv

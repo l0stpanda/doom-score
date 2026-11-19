@@ -1,0 +1,69 @@
+league,franchise_id,alias,alias_type,notes
+WNBA,WNBA-ATL,Atlanta Dream,full_name,
+WNBA,WNBA-ATL,Atlanta,city,
+WNBA,WNBA-CHI,Chicago Sky,full_name,
+WNBA,WNBA-CHI,Chicago,city,
+WNBA,WNBA-CON,Connecticut Sun,full_name,
+WNBA,WNBA-CON,Connecticut,city,
+WNBA,WNBA-CON,Houston Comets,full_name,Relocated name from 2027 (same franchise).
+WNBA,WNBA-CON,Houston,city,Relocated city from 2027 (same franchise).
+WNBA,WNBA-DAL,Dallas Wings,full_name,
+WNBA,WNBA-DAL,Dallas,city,
+WNBA,WNBA-DAL,Tulsa Shock,historical_name,Franchise name 2010-2015 (outside data window).
+WNBA,WNBA-GSV,Golden State Valkyries,full_name,
+WNBA,WNBA-GSV,Golden State,city,
+WNBA,WNBA-IND,Indiana Fever,full_name,
+WNBA,WNBA-IND,Indiana,city,
+WNBA,WNBA-LVA,Las Vegas Aces,full_name,
+WNBA,WNBA-LVA,Las Vegas,city,
+WNBA,WNBA-LVA,San Antonio Stars,historical_name,Franchise name 2014-2017 (appears in 2016-2017 drafts).
+WNBA,WNBA-LVA,San Antonio,city,Historical city 2003-2017.
+WNBA,WNBA-LAS,Los Angeles Sparks,full_name,
+WNBA,WNBA-LAS,Los Angeles,city,
+WNBA,WNBA-MIN,Minnesota Lynx,full_name,
+WNBA,WNBA-MIN,Minnesota,city,
+WNBA,WNBA-NYL,New York Liberty,full_name,
+WNBA,WNBA-NYL,New York,city,
+WNBA,WNBA-PHO,Phoenix Mercury,full_name,
+WNBA,WNBA-PHO,Phoenix,city,
+WNBA,WNBA-POR,Portland Fire,full_name,
+WNBA,WNBA-POR,Portland,city,
+WNBA,WNBA-SEA,Seattle Storm,full_name,
+WNBA,WNBA-SEA,Seattle,city,
+WNBA,WNBA-TOR,Toronto Tempo,full_name,
+WNBA,WNBA-TOR,Toronto,city,
+WNBA,WNBA-WAS,Washington Mystics,full_name,
+WNBA,WNBA-WAS,Washington,city,
+PWHL,PWHL-BOS,Boston Fleet,full_name,
+PWHL,PWHL-BOS,PWHL Boston,historical_name,2023-24 name.
+PWHL,PWHL-BOS,Boston,city,
+PWHL,PWHL-MIN,Minnesota Frost,full_name,
+PWHL,PWHL-MIN,PWHL Minnesota,historical_name,2023-24 name.
+PWHL,PWHL-MIN,Minnesota,city,
+PWHL,PWHL-MTL,Montréal Victoire,full_name,
+PWHL,PWHL-MTL,PWHL Montreal,historical_name,2023-24 name.
+PWHL,PWHL-MTL,Montréal,city,
+PWHL,PWHL-NY,New York Sirens,full_name,
+PWHL,PWHL-NY,PWHL New York,historical_name,2023-24 name.
+PWHL,PWHL-NY,New York,city,
+PWHL,PWHL-OTT,Ottawa Charge,full_name,
+PWHL,PWHL-OTT,PWHL Ottawa,historical_name,2023-24 name.
+PWHL,PWHL-OTT,Ottawa,city,
+PWHL,PWHL-TOR,Toronto Sceptres,full_name,
+PWHL,PWHL-TOR,PWHL Toronto,historical_name,2023-24 name.
+PWHL,PWHL-TOR,Toronto,city,
+PWHL,PWHL-SEA,Seattle Torrent,full_name,
+PWHL,PWHL-SEA,PWHL Seattle,historical_name,Pre-branding name used in 2025 announcements.
+PWHL,PWHL-SEA,Seattle,city,
+PWHL,PWHL-VAN,Vancouver Goldeneyes,full_name,
+PWHL,PWHL-VAN,PWHL Vancouver,historical_name,Pre-branding name used in 2025 announcements.
+PWHL,PWHL-VAN,Vancouver,city,
+PWHL,PWHL-DET,Detroit Clutch,full_name,
+PWHL,PWHL-DET,Detroit,city,
+PWHL,PWHL-HAM,Hamilton Havoc,full_name,
+PWHL,PWHL-HAM,Hamilton,city,
+PWHL,PWHL-SJ,San Jose Sea Lions,full_name,
+PWHL,PWHL-SJ,San Jose,city,
+PWHL,PWHL-VGS,Vegas Vanguards,full_name,
+PWHL,PWHL-VGS,Vegas,city,
+PWHL,PWHL-VGS,Las Vegas,city,
