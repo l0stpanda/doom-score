@@ -1,0 +1,12 @@
+check,pass,detail
+every team-season has Phase 3 roster features,True,missing 0
+birthdate coverage of playing time >= 99.5%,True,min 1.0000
+traded player split by stint (Manny Ramirez 2010: LAD 232 + CWS 88 PA),True,"{'chicago-white-sox': 88, 'los-angeles-dodgers': 232}"
+MLB player PA and BF sum exactly to official team totals (all team-seasons),True,mismatches: []
+NHL skater games per team game in 17.5..18.5 (18 dressed),True,17.77-18.01
+NHL goalie GP >= team games,True,
+"age_weighted league means plausible (MLB 27-31, NHL 26-30)",True,"MLB 29.04, NHL 28.17"
+"shares within [0,1]",True,
+MoneyPuck: every NHL team 2008+ matched,True,missing 0
+"Corsi/xG league mean ~0.5, PDO ~1.0",True,"corsi 0.500, xg 0.500, pdo 1.000"
+one row per key,True,
