@@ -6,11 +6,11 @@ build(): writes data/processed/mlb_m1b_features.csv (one row per MLB team-season
          reports/m1b_feature_checks.csv.
 Run: PYTHONUTF8=1 python ADAM-DATA/src/m1b_features.py"""
 import os, sys, time
-import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import fetch_phase1 as f1
+from common import lpct
 
 ROOT, RAW = f1.ROOT, f1.RAW
 OUT = os.path.join(ROOT, "data", "processed", "mlb_m1b_features.csv")
@@ -46,10 +46,6 @@ def fetch():
             get("milb", f"standings_{y}", MILB_STAND.format(ids=",".join(map(str, ids)), y=y))
 
 
-def lpct(s):
-    r = s.rank(method="average")
-    n = s.notna().sum()
-    return (r - 1) / (n - 1) * 100 if n > 1 else r * np.nan
 
 
 def load_json(source, name):

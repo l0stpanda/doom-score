@@ -17,6 +17,8 @@ from sklearn.pipeline import Pipeline
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import backtest as bt
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # src/
+from common import lpct
 from run_m1 import make_en, make_ols, frame, fmt, N_BOOT
 
 REP = os.path.join(bt.ROOT, "reports")
@@ -47,7 +49,7 @@ def make_lgbm(depth):
 def with_xg(df):
     """NHL underlying_quality swapped from Corsi to MoneyPuck xgoals_pct (as _lpct). Diagnostic only (D54, D79)."""
     full = pd.read_csv(bt.FULL, usecols=bt.KEY + ["xgoals_pct"], low_memory=False)
-    full["xg_lpct"] = full.groupby(["league", bt.SEASON]).xgoals_pct.transform(bt.lpct)
+    full["xg_lpct"] = full.groupby(["league", bt.SEASON]).xgoals_pct.transform(lpct)
     out = df.merge(full[bt.KEY + ["xg_lpct"]], on=bt.KEY, how="left", validate="one_to_one")
     nhl = out.league == "NHL"
     assert (out.loc[nhl, "xg_lpct"].notna() == out.loc[nhl, "underlying_quality_lpct"].notna()).all()

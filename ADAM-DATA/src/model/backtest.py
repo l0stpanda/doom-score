@@ -34,11 +34,6 @@ SPEC_EXCLUDE = {"MLB": {"underlying_quality_lpct": "spec: MLB has no independent
 Y_REG, Y_CLF = "y_doom_3yr", "y_doomed_bottom25"
 
 
-def lpct(s):
-    """Within-group percentile, same formula as win_pct_percentile: (average rank - 1)/(n - 1) * 100."""
-    r = s.rank(method="average")
-    n = s.notna().sum()
-    return (r - 1) / (n - 1) * 100 if n > 1 else r * np.nan
 
 
 def load():

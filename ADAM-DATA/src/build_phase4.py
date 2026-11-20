@@ -1,6 +1,6 @@
 """Phase 4 build: money (best effort) + final stacked table + data dictionary + correlation review.
 Input: data/processed/mlb_nhl_core_phase3.csv. Outputs: data/processed/mlb_nhl_team_seasons.csv,
-data/manual/{mlb_cbt_threshold,nhl_salary_cap,payroll_template}.csv, DATA_DICTIONARY.md,
+data/manual/{mlb_cbt_threshold,nhl_salary_cap,payroll_template}.csv,
 reports/phase4_correlations.csv, reports/phase4_checks.csv."""
 import glob, html, json, os, re, sys
 import numpy as np

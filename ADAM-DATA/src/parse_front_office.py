@@ -12,7 +12,6 @@ Date rules (D28):
 """
 import json, os, re
 from datetime import date
-import pandas as pd
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WIKI = os.path.join(ROOT, "data", "raw", "wikipedia")

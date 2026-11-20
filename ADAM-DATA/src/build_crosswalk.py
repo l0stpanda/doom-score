@@ -1,12 +1,13 @@
 """Shared-concept aliases (for stacking with NBA/NFL), within-league-season percentiles (_lpct), vet_share_lq,
 spending availability. Reads/writes data/processed/mlb_nhl_team_seasons.csv (idempotent: drops its own columns
-first) and writes FEATURE_CROSSWALK.md. Decisions D57-D60."""
+first) and writes reports/feature_crosswalk.md. Decisions D57-D60."""
 import os, sys
 import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build_phase3 as p3
+from common import lpct
 
 ROOT = p3.ROOT
 OUT = os.path.join(ROOT, "data", "processed", "mlb_nhl_team_seasons.csv")
@@ -42,11 +43,6 @@ CONCEPTS = {
 }
 
 
-def lpct(s):
-    """Within-group percentile like win_pct_percentile, over non-missing values; NaN stays NaN."""
-    r = s.rank(method="average")
-    n = s.notna().sum()
-    return (r - 1) / (n - 1) * 100 if n > 1 else s * np.nan
 
 
 def wquantile(x, w, q):
@@ -104,7 +100,6 @@ def main():
     print(f"wrote {os.path.basename(OUT)}: {df.shape}")
 
     # checks
-    lp = [c + "_lpct" for c in CONCEPTS]
     w = np.where(df.league == "MLB", df.team_pa + df.team_bf, df.skater_gp_sum)  # playing-time proxy for weighting
     lq_means = df.assign(w=w).groupby(["league", "season_start_year"]).apply(
         lambda g: np.average(g.vet_share_lq, weights=g.w), include_groups=False)
@@ -145,7 +140,7 @@ def main():
     cut = df.groupby("league").vet_age_cut_lq.agg(["min", "max"]).round(1)
     print("vet age cut (q75 of playing-time-weighted age) range:", cut.to_dict("index"))
 
-    # FEATURE_CROSSWALK.md
+    # reports/feature_crosswalk.md (was FEATURE_CROSSWALK.md, archived)
     cov = lambda c, lg: f"{df[df.league == lg][c].notna().mean() * 100:.0f}%"
     lines = ["# Feature crosswalk (shared concepts across leagues)", "",
              "Shared concept columns sit right after the 19 core columns in `data/processed/mlb_nhl_team_seasons.csv`. "
@@ -165,8 +160,8 @@ def main():
               f"(MLB {cut.loc['MLB','min']}–{cut.loc['MLB','max']}, NHL {cut.loc['NHL','min']}–{cut.loc['NHL','max']} years).",
               "", "Decisions: D57 (spending), D58 (concept choices), D59 (_lpct), D60 (vet_share_lq). "
               "NBA/NFL columns are TBD for the teammate to fill."]
-    open(os.path.join(ROOT, "FEATURE_CROSSWALK.md"), "w", encoding="utf-8").write("\n".join(lines) + "\n")
-    print("wrote FEATURE_CROSSWALK.md")
+    open(os.path.join(ROOT, "reports", "feature_crosswalk.md"), "w", encoding="utf-8").write("\n".join(lines) + "\n")
+    print("wrote reports/feature_crosswalk.md")
 
 
 if __name__ == "__main__":

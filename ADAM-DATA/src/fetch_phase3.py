@@ -10,7 +10,6 @@ from urllib.parse import quote
 import requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import fetch_phase1 as f1
 from fetch_phase1 import RAW
 
 UA = {"User-Agent": "DoomViz-UW-DATA511/0.1 (student project; contact: https://github.com/AdamRychtecky8)"}

@@ -1,17 +1,20 @@
 """Slim model table: one column per concept, chosen by concept (not by correlation with the label). Decisions D61, D71.
 
 Reads  data/processed/mlb_nhl_team_seasons.csv (never modified; checked by hash).
-Writes data/processed/mlb_nhl_model_slim.csv and SLIM_SELECTION.md (kept/dropped + one-line reason per column).
+Writes data/processed/mlb_nhl_model_slim.csv and reports/slim_selection.md (kept/dropped + one-line reason per column).
 Run:   PYTHONUTF8=1 python ADAM-DATA/src/build_slim.py"""
-import hashlib, os
+import hashlib, os, sys
 import pandas as pd
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from common import lpct
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # ADAM-DATA
 FULL = os.path.join(ROOT, "data", "processed", "mlb_nhl_team_seasons.csv")
 SLIM = os.path.join(ROOT, "data", "processed", "mlb_nhl_model_slim.csv")
-DOC = os.path.join(ROOT, "SLIM_SELECTION.md")
+DOC = os.path.join(ROOT, "reports", "slim_selection.md")
 
-# Concepts in the slim table, in order. Each uses its FEATURE_CROSSWALK.md alias, as the _lpct version.
+# Concepts in the slim table, in order. Each uses its crosswalk alias (docs/FEATURES.md), as the _lpct version.
 CONCEPTS = ["margin_per_game", "luck", "underlying_quality", "roster_age_weighted", "star_concentration",
             "draft_capital", "gm_tenure", "coach_tenure", "spending"]
 
@@ -42,7 +45,7 @@ KEPT = [
     ("y_pct_t3", "label", "Component label: percentile in t+3. LABEL."),
 ]
 
-# League source columns behind each crosswalk alias (from FEATURE_CROSSWALK.md).
+# League source columns behind each crosswalk alias (docs/FEATURES.md).
 SOURCE_OF = {"age_weighted": "roster_age_weighted", "top3_concentration": "star_concentration",
              "point_diff_per_game": "margin_per_game", "pythag_win_pct": "underlying_quality",
              "corsi_pct": "underlying_quality", "draft_picks_rd1_2": "draft_capital",
@@ -116,11 +119,6 @@ DROPPED = {
 DERIVED = {"win_pct_trailing_3_seasons_lpct": "win_pct_trailing_3_seasons"}
 
 
-def lpct(s):
-    """Within league-season percentile, same formula as win_pct_percentile / FEATURE_CROSSWALK _lpct (D59)."""
-    r = s.rank(method="average")
-    n = s.notna().sum()
-    return (r - 1) / (n - 1) * 100 if n > 1 else r * float("nan")
 
 
 def sha(p):
@@ -180,10 +178,10 @@ def main():
 `data/processed/mlb_nhl_model_slim.csv` ({len(df):,} rows × {n_keep} columns) is a subset of the full table
 `data/processed/mlb_nhl_team_seasons.csv` ({len(df):,} rows × {len(full_cols)} columns), which is unchanged,
 plus {len(DERIVED)} derived column computed from it (marked "derived", last row). Built by `src/build_slim.py`.
-Decisions **D61**, **D71** in `DECISIONS.md`.
+Decisions **D61**, **D71** in `docs/decisions_full.md`.
 
 **Chosen by concept, not by correlation with the label.** One `_lpct` column per concept; where a concept has
-several candidate columns, the one listed in `FEATURE_CROSSWALK.md` is used. No column was picked or dropped
+several candidate columns, the crosswalk choice (`docs/FEATURES.md`) is used. No column was picked or dropped
 because of its relationship with `y_doom_3yr`.
 
 Slim column order: ids/display → features → flags → labels. `y_*` columns are labels: never use them as features.

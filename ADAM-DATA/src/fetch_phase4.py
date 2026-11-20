@@ -4,7 +4,7 @@
 - Wikipedia NHL salary cap page (cap ceiling by season) via the approved Action API method."""
 import os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from fetch_phase3 import get, S
+from fetch_phase3 import get
 from fetch_wiki_batch import API
 
 COTS = "https://legacy.baseballprospectus.com/compensation/cots/"

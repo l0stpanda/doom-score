@@ -24,7 +24,7 @@ def main():
         try:
             resp = s.get(r.logo_url, timeout=30)
             ok = resp.status_code == 200 and b"<svg" in resp.content[:2000].lower()
-        except requests.RequestException as e:
+        except requests.RequestException:
             ok, resp = False, None
         if ok:
             open(path, "wb").write(resp.content)

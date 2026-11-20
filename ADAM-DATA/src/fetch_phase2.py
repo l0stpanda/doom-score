@@ -4,7 +4,6 @@ import json, os, sys
 import requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import fetch_phase1 as f1
 from fetch_phase1 import get, RAW
 
 UA = {"User-Agent": "doom-score-research/0.1 (student project; python-requests)"}
