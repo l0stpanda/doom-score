@@ -18,7 +18,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WIKI = os.path.join(ROOT, "data", "raw", "wikipedia")
 MONTHS = {m: i for i, m in enumerate(["january", "february", "march", "april", "may", "june", "july", "august",
                                       "september", "october", "november", "december"], 1)}
-DASH = r"\s*(?:–|—|-|&ndash;|&mdash;|to)\s*"
+DASH = r"\s*(?:–|—|-|&ndash;|&mdash;|\bto\b)\s*"  # \b: 'to' inside 'October' split terms before (fixed)
 
 
 def wikitext(page):
@@ -43,7 +43,8 @@ def strip_refs(s):
 
 def season_years(s):
     """Season start years referenced as NHL season links or {{nhly|Y}} templates."""
-    ys = [int(y) for y in re.findall(r"\[\[(\d{4})[–-]\d{2,4} [^|\]]*?season", s)]  # NHL or team-season links
+    # NHL or team-season links; tolerate '_' for spaces and 'Season' capitalised ([[2009-10 NHL Season|2010]])
+    ys = [int(y) for y in re.findall(r"\[\[(\d{4})[–-]\d{2,4}[ _][^|\]]*?season", s, flags=re.I)]
     ys += [int(y) for y in re.findall(r"\{\{(?:nhly|NHL Year)\|(\d{4})", s, flags=re.I)]
     return ys
 
@@ -79,7 +80,7 @@ DATE_RE = re.compile(r"(?:(\w+)\s+(\d{1,2}),?\s+(\d{4}))|(?:(\w+)\s+(\d{4}))|(\d
 def parse_point(tok):
     """'June 20, 2005' -> (date, 'day'); 'July 1974' -> (date, 'month'); '2005' -> (2005, 'year')."""
     tok = tok.strip()
-    if re.fullmatch(r"present|current|", tok, flags=re.I):
+    if re.fullmatch(r"present|current|incumbent|", tok, flags=re.I):
         return None, "open"
     m = re.fullmatch(r"([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})", tok)
     if m and m.group(1).lower() in MONTHS:
@@ -166,8 +167,8 @@ def rows_from_tables(body):
                 i = cells.index(c)
                 nxt = clean(cells[i + 1]) if i + 1 < len(cells) else ""
                 if not re.search(r"–|—|\d{4}\s*-|present", clean(c), flags=re.I) and not season_years(c) and \
-                        (re.fullmatch(r"present|current|[–—-]", nxt, flags=re.I) or parse_point(nxt)[1] in ("day", "month")):
-                    term = clean(c) + " – " + ("present" if re.fullmatch(r"[–—-]|current", nxt) else nxt)
+                        (re.fullmatch(r"present|current|incumbent|[–—-]", nxt, flags=re.I) or parse_point(nxt)[1] in ("day", "month")):
+                    term = clean(c) + " – " + ("present" if re.fullmatch(r"[–—-]|current|incumbent", nxt, flags=re.I) else nxt)
                 break
         if person and term:
             row_role = next((role_of(clean(c)) for c in cells if role_of(clean(c)) in ("gm", "baseball_ops_president")
@@ -267,8 +268,11 @@ def resolve_dates(rows, league):
         r["date_precision_start"], r["date_precision_end"] = pa, pb
         if r["role"] == "head_coach":  # dated coach rows -> NHL seasons (season t = Oct t .. Apr t+1)
             sd, ed = r["start_date"], r["end_date"]
-            r["s_season"] = sd.year if sd.month >= 5 else sd.year - 1
-            r["in_season_start"] = sd.month in (11, 12, 1, 2, 3, 4) or (sd.month == 10 and sd.day > 15)
+            # regular season ~Oct 1 - Apr 10: a hire after ~Apr 10 is for the next season (e.g. Vigneault 2019-04-15)
+            offseason_april = sd.month == 4 and sd.day > 10
+            r["s_season"] = sd.year if (sd.month >= 5 or offseason_april) else sd.year - 1
+            r["in_season_start"] = (sd.month in (11, 12, 1, 2, 3) or (sd.month == 4 and not offseason_april)
+                                    or (sd.month == 10 and sd.day > 15))
             r["e_season"] = None if ed is None else (ed.year if ed.month >= 10 else ed.year - 1)
             if r["e_season"] is not None and r["e_season"] < r["s_season"]:
                 continue  # zero-length (e.g. interim between seasons)

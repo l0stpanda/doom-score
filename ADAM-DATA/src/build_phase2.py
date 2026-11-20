@@ -7,6 +7,7 @@ import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import phase2_api_features as api
 import parse_front_office as pf
+import parse_people
 from fetch_phase2 import MLB_EXEC_PAGES, NHL_NAMES
 
 ROOT = api.ROOT
@@ -15,6 +16,7 @@ MAN = os.path.join(ROOT, "data", "manual")
 REP = os.path.join(ROOT, "reports")
 os.makedirs(MAN, exist_ok=True)
 KEY = ["league", "season_start_year", "franchise_id"]
+UNRESOLVED_PEOPLE = pd.DataFrame()
 WINDOW_START = date(1999, 1, 1)  # spans ending before this are irrelevant (and include pre-relocation noise)
 
 
@@ -36,6 +38,14 @@ def build_spans():
                 rows += pf.resolve_dates(pf.spans_from_page(page, fid, "NHL", role), "NHL")
     s = pd.DataFrame(rows)
     s["source_url"] = s.page.map(pf.url)
+    s["evidence"] = ""
+    # Braves/Orioles/Reds list GMs without years -> spans from the individuals' articles (D38)
+    ppl, unresolved = parse_people.people_spans()
+    ppl["row_idx"] = range(len(ppl))
+    ppl["page"] = ppl.source_url
+    s = pd.concat([s, ppl], ignore_index=True)
+    global UNRESOLVED_PEOPLE
+    UNRESOLVED_PEOPLE = unresolved
     # keep the longest span when a person/start appears twice (e.g. Twins 'again from 2012' + '2012 - 2016')
     s["_end_sort"] = s.end_date.map(lambda d: date(9999, 1, 1) if d is None or pd.isna(d) else d)
     s = s.sort_values("_end_sort", ascending=False).drop_duplicates(["franchise_id", "role", "person", "start_date"])
@@ -51,7 +61,7 @@ def build_spans():
     s["league"] = np.where(s.franchise_id.isin(MLB_EXEC_PAGES), "MLB", "NHL")
     cols = ["league", "franchise_id", "role", "person", "start_date", "end_date", "date_precision",
             "date_precision_start", "date_precision_end", "interim", "in_season_start", "s_season", "e_season",
-            "page_row", "source_url", "needs_verification"]
+            "page_row", "source_url", "evidence", "needs_verification"]
     s["page_row"] = s.row_idx  # order on the source page (chronological) - tie-break for same-season changes
     return s[cols].sort_values(["franchise_id", "role", "start_date"]).reset_index(drop=True)
 
@@ -60,19 +70,20 @@ def lead_at(spans, d):
     """(person, gap_flag) for the top exec on date d. spans: one franchise, roles gm/baseball_ops_president."""
     started = spans[spans.start_date <= d]
     active = started[started.end_date.isna() | (started.end_date >= d)]
-    for role in ("baseball_ops_president", "gm"):
+    for role in ("gm",):  # GM only in both leagues (D36); president spans stay in the spans file
         a = active[active.role == role]
         if len(a):
             r = a.sort_values("start_date").iloc[-1]
             return r.person, 0, r.role
-    if len(started):  # vacancy / year-only gap: carry the most recently started person
+    if len(started):  # short gap (year-only boundary): carry the most recently started person ...
         r = started.sort_values("start_date").iloc[-1]
-        return r.person, 1, r.role
-    return None, 0, None
+        if r.end_date is None or pd.isna(r.end_date) or (d - r.end_date).days <= 400:
+            return r.person, 1, r.role
+    return None, 0, None  # ... but a longer vacancy stays missing (D37; e.g. Dodgers had no GM 2019-2021)
 
 
 def personnel_features(core, spans):
-    leads = spans[spans.role.isin(["gm", "baseball_ops_president"])]
+    leads = spans[spans.role == "gm"]
     out = []
     for (lg, fid), grp in core.groupby(["league", "franchise_id"]):
         fs = leads[leads.franchise_id == fid]
@@ -92,7 +103,6 @@ def personnel_features(core, spans):
                 d, months = prev, months + 1
             prev_year = lead_at(fs, m - timedelta(days=365))[0]
             out.append(dict(league=lg, season_start_year=t, franchise_id=fid, personnel_lead_name=person,
-                            personnel_lead_role=role,
                             personnel_lead_tenure_years=round(months * 30 / 365.25, 2),
                             personnel_lead_changed_past_year=(np.nan if prev_year is None else int(prev_year != person)),
                             personnel_lead_tenure_left_censored=(d - timedelta(days=30) < earliest and
@@ -159,8 +169,6 @@ def main():
     # personnel lead
     pl = personnel_features(core, spans)
     df = df.merge(pl, on=KEY, how="left")
-    bo_fr = set(spans[spans.role == "baseball_ops_president"].franchise_id)
-    df["personnel_lead_bo_source_available"] = np.where(df.league == "MLB", df.franchise_id.isin(bo_fr), np.nan)
     print(f"personnel lead merged: MLB {df[df.league=='MLB'].personnel_lead_name.notna().mean():.1%}, "
           f"NHL {df[df.league=='NHL'].personnel_lead_name.notna().mean():.1%}")
 
@@ -186,18 +194,19 @@ def main():
         for fid in fids:
             sub = df[(df.league == lg) & (df.franchise_id == fid)]
             if sub.personnel_lead_name.isna().any():
-                need.append(dict(league=lg, franchise_id=fid, role="gm" if lg == "NHL" else "gm_or_baseball_ops_president",
-                                 missing_seasons=int(sub.personnel_lead_name.isna().sum())))
+                need.append(dict(league=lg, franchise_id=fid, role="gm",
+                                 missing_seasons=" ".join(map(str, sub[sub.personnel_lead_name.isna()].season_start_year))))
             if lg == "NHL" and sub.coach_name.isna().any():
                 need.append(dict(league=lg, franchise_id=fid, role="head_coach",
-                                 missing_seasons=int(sub.coach_name.isna().sum())))
+                                 missing_seasons=" ".join(map(str, sub[sub.coach_name.isna()].season_start_year))))
+    UNRESOLVED_PEOPLE.to_csv(os.path.join(MAN, "front_office_unresolved_people.csv"), index=False)
     tmpl = pd.DataFrame(need)
     if len(tmpl):
         tmpl = tmpl.assign(person="", start_date="", end_date="", date_precision="", source_url="")
     tmpl.to_csv(os.path.join(MAN, "front_office_template.csv"), index=False)
     print(f"manual template rows: {len(tmpl)}")
 
-    # MLB teams whose Wikipedia page has no dated baseball-ops president spans: lead falls back to GM (D31)
+    # OPTIONAL (D36): baseball-ops presidents are no longer used for personnel_lead; template kept for a future variant
     bo = set(spans[(spans.role == "baseball_ops_president")].franchise_id)
     no_bo = sorted(set(MLB_EXEC_PAGES) - bo)
     pd.DataFrame(dict(league="MLB", franchise_id=no_bo, role="baseball_ops_president", person="", start_date="",
