@@ -1,0 +1,33 @@
+{
+  "age_young_threshold": 25,
+  "age_old_threshold": 30,
+  "top_n": {
+    "WNBA": 5,
+    "PWHL": 8
+  },
+  "top_k_concentration": [
+    1,
+    3
+  ],
+  "meaningful_playtime": {
+    "WNBA": {
+      "min_games": 10,
+      "min_minutes_per_game": 15.0
+    },
+    "PWHL": {
+      "min_games": 10,
+      "min_toi_per_game": 12.0
+    }
+  },
+  "qualified_for_league_median": {
+    "WNBA": {
+      "min_minutes": 200,
+      "metric": "ws_per_40"
+    },
+    "PWHL": {
+      "min_games": 10,
+      "metric": "points_per_game",
+      "skaters_only": true
+    }
+  }
+}

@@ -1,0 +1,118 @@
+check,status,n_issues,detail,run_at_utc
+duplicate_keys:team_season_data.csv,PASS,0,"0 rows share a key ['league', 'season', 'team_id']",2026-11-19T10:33:11+00:00
+duplicate_keys:player_season_data.csv,PASS,0,"0 rows share a key ['league', 'season', 'team_id', 'player_id']",2026-11-19T10:33:11+00:00
+duplicate_keys:draft_history.csv,PASS,0,"0 rows share a key ['league', 'draft_year', 'selection_key']",2026-11-19T10:33:11+00:00
+duplicate_keys:draft_pick_inventory.csv,PASS,0,"0 rows share a key ['league', 'inventory_key']",2026-11-19T10:33:11+00:00
+duplicate_keys:team_financials.csv,PASS,0,"0 rows share a key ['league', 'season', 'record_type', 'team_id']",2026-11-19T10:33:11+00:00
+duplicate_keys:team_season_sources.csv,PASS,0,"0 rows share a key ['league', 'team_id', 'season', 'dataset', 'variables', 'source_url']",2026-11-19T10:33:11+00:00
+duplicate_keys:team_features.csv,PASS,0,"0 rows share a key ['league', 'season', 'record_type', 'team_id']",2026-11-19T10:33:11+00:00
+duplicate_keys:current_roster_snapshot.csv,PASS,0,"0 rows share a key ['league', 'snapshot_team_id', 'player_name']",2026-11-19T10:33:11+00:00
+duplicate_keys:contract_transactions.csv,PASS,0,"0 rows share a key ['league', 'tx_key']",2026-11-19T10:33:11+00:00
+duplicate_keys:league_cba_parameters.csv,PASS,0,"0 rows share a key ['league', 'season', 'parameter']",2026-11-19T10:33:11+00:00
+team_season_coverage:missing,PASS,0,missing [],2026-11-19T10:33:11+00:00
+team_season_coverage:unexpected,PASS,0,unexpected [],2026-11-19T10:33:11+00:00
+team_ids_known:team_season_data.csv,PASS,0,unknown [],2026-11-19T10:33:11+00:00
+team_ids_known:player_season_data.csv,PASS,0,unknown [],2026-11-19T10:33:11+00:00
+team_ids_known:team_financials.csv,PASS,0,unknown [],2026-11-19T10:33:11+00:00
+team_ids_known:team_features.csv,PASS,0,unknown [],2026-11-19T10:33:11+00:00
+team_ids_known:draft_history.selecting_team_id,PASS,0,unknown [],2026-11-19T10:33:11+00:00
+team_ids_resolved:draft_history.selecting_team_id,PASS,0,0 unresolved names,2026-11-19T10:33:11+00:00
+team_ids_known:draft_history.original_owner_team_id,PASS,0,unknown [],2026-11-19T10:33:11+00:00
+team_ids_resolved:draft_history.original_owner_team_id,PASS,0,0 unresolved names,2026-11-19T10:33:11+00:00
+team_name_unique_per_team_season,PASS,0,,2026-11-19T10:33:11+00:00
+record:WNBA wins+losses=GP,PASS,0,"Empty DataFrame
+Columns: [season, team_id]
+Index: []",2026-11-19T10:33:11+00:00
+record:PWHL W+L+OTL=GP,PASS,0,"Empty DataFrame
+Columns: [season, team_id]
+Index: []",2026-11-19T10:33:11+00:00
+record:PWHL RW+OTW+SOW=W,PASS,0,,2026-11-19T10:33:11+00:00
+percent:win_percentage recomputes,PASS,0,,2026-11-19T10:33:11+00:00
+record:PWHL points formula,PASS,0,,2026-11-19T10:33:11+00:00
+"range:win_percentage in [0,1], GP>0",PASS,0,,2026-11-19T10:33:11+00:00
+record:equal GP within league-season,PASS,0,"Series([], )",2026-11-19T10:33:11+00:00
+record:league wins = league losses (incl. OTL),PASS,0,"Series([], )",2026-11-19T10:33:11+00:00
+record:playoff game wins = losses league-wide,PASS,0,"Series([], )",2026-11-19T10:33:11+00:00
+record:exactly one champion per completed season,PASS,0,"Series([], )",2026-11-19T10:33:11+00:00
+season_labels:WNBA YYYY,PASS,0,,2026-11-19T10:33:11+00:00
+season_labels:PWHL YYYY-YY with end=start+1,PASS,0,,2026-11-19T10:33:11+00:00
+season_labels:player PWHL,PASS,0,,2026-11-19T10:33:11+00:00
+players:team-season exists,PASS,0,"Empty DataFrame
+Columns: [league, season, team_id]
+Index: []",2026-11-19T10:33:11+00:00
+players:player GP <= team GP,PASS,0,"Empty DataFrame
+Columns: [season, team_id, player_name, games_played, team_gp]
+Index: []",2026-11-19T10:33:11+00:00
+players:one id per name within team-season,PASS,0,"Series([], )",2026-11-19T10:33:11+00:00
+players:WNBA sum(player points) = team points_for,PASS,0,"Series([], )",2026-11-19T10:33:11+00:00
+players:PWHL team GF = sum(player goals) + shootout wins,PASS,0,"GF - player goals - SO wins: Series([], )",2026-11-19T10:33:11+00:00
+players:age available for players who appeared,PASS,0,0 rows,2026-11-19T10:33:11+00:00
+players:non-negative counts,PASS,0,,2026-11-19T10:33:11+00:00
+players:multi-team stints flagged,PASS,0,126 player-seasons with >1 team row,2026-11-19T10:33:11+00:00
+draft:unique pick numbers,PASS,0,"Series([], )",2026-11-19T10:33:11+00:00
+draft:contiguous pick numbers (forfeits are WARN),PASS,0,"Series([], )",2026-11-19T10:33:11+00:00
+draft:round known for entry picks,PASS,0,,2026-11-19T10:33:11+00:00
+draft:WNBA bbref name mismatches (spelling variants),WARN,9,"     draft_year  pick_overall                player_name         bbref_player_name
+315        2016          10.0              Imani Boyette      Imani McGee-Stafford
+381        2017           5.0                 Nia Coffey                Nia Brodie
+388        2018          11.0              Maria Vadeeva         Maria Kliundikova
+394        2018          17.0                 Park Ji-su                 JiSu Park
+430        2019          17.0            Megan Gustafson               Megan DiLeo
+433        2019           2.0                  Asia Durr                   AD Durr
+521        2021          34.0           Aina Ayuso Bagur                Aina Ayuso
+547        2022          25.0  Ameshya Williams-Holliday  Meshya Williams-Holliday
+725        2026          43.0                  Ran Kejia                 Kejia Ran",2026-11-19T10:33:11+00:00
+inventory:unique future pick slots,PASS,0,,2026-11-19T10:33:11+00:00
+inventory:rights holder known,PASS,0,"Series([], )",2026-11-19T10:33:11+00:00
+inventory:WNBA every active team listed or traded out,PASS,0,"current_rights_holder_team_id
+WNBA-ATL    2
+WNBA-CHI    3
+WNBA-CON    3
+WNBA-DAL    4
+WNBA-GSV    3
+WNBA-IND    3
+WNBA-LAS    5
+WNBA-LVA    2
+WNBA-MIN    2
+WNBA-NYL    3
+WNBA-PHO    2
+WNBA-POR    3
+WNBA-SEA    3
+WNBA-TOR    3
+WNBA-WAS    4",2026-11-19T10:33:11+00:00
+financial:PWHL salaries >= CBA minimum,PASS,0,"Empty DataFrame
+Columns: [player_name, salary_base_usd]
+Index: []",2026-11-19T10:33:11+00:00
+financial:salaries positive,PASS,0,,2026-11-19T10:33:11+00:00
+financial:WNBA cap attached to each season row,PASS,0,,2026-11-19T10:33:11+00:00
+financial:team payroll available,WARN,88,"league  financial_data_status                      
+PWHL    not_reported_by_source_for_season              12
+WNBA    not_collected_no_permitted_automated_source    76",2026-11-19T10:33:11+00:00
+financial:PWHL avg reported salary within +/-10% of requirement,PASS,0,"Empty DataFrame
+Columns: [season, team_id, avg_salary_vs_requirement]
+Index: []",2026-11-19T10:33:11+00:00
+provenance:every team-season has source rows,PASS,0,[],2026-11-19T10:33:11+00:00
+provenance:source_url and retrieval timestamp present,PASS,0,,2026-11-19T10:33:11+00:00
+provenance:dataset covered:team_season_data,PASS,0,,2026-11-19T10:33:11+00:00
+provenance:dataset covered:player_season_data,PASS,0,,2026-11-19T10:33:11+00:00
+provenance:dataset covered:draft_history,PASS,0,,2026-11-19T10:33:11+00:00
+provenance:dataset covered:team_financials,PASS,0,,2026-11-19T10:33:11+00:00
+provenance:dataset covered:current_roster_snapshot,PASS,0,,2026-11-19T10:33:11+00:00
+schema_stable:team_season_data.csv,PASS,0,,2026-11-19T10:33:11+00:00
+schema_stable:player_season_data.csv,PASS,0,,2026-11-19T10:33:11+00:00
+schema_stable:draft_history.csv,PASS,0,,2026-11-19T10:33:11+00:00
+schema_stable:draft_pick_inventory.csv,PASS,0,,2026-11-19T10:33:11+00:00
+schema_stable:team_financials.csv,PASS,0,,2026-11-19T10:33:11+00:00
+schema_stable:team_season_sources.csv,PASS,0,,2026-11-19T10:33:11+00:00
+schema_stable:team_features.csv,PASS,0,,2026-11-19T10:33:11+00:00
+schema_stable:current_roster_snapshot.csv,PASS,0,,2026-11-19T10:33:11+00:00
+schema_stable:contract_transactions.csv,PASS,0,,2026-11-19T10:33:11+00:00
+schema_stable:league_cba_parameters.csv,PASS,0,,2026-11-19T10:33:11+00:00
+crosscheck:team records vs second source,WARN,4,"   league season   team_id source_b mismatched_fields
+44   WNBA   2021  WNBA-ATL     ESPN           allowed
+52   WNBA   2021  WNBA-NYL     ESPN            scored
+92   WNBA   2025  WNBA-ATL     ESPN            scored
+98   WNBA   2025  WNBA-LAS     ESPN            scored",2026-11-19T10:33:11+00:00
+crosscheck:coverage,PASS,0,"Empty DataFrame
+Columns: [league, season, team_id]
+Index: []",2026-11-19T10:33:11+00:00

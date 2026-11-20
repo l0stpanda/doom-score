@@ -1,0 +1,29 @@
+league,franchise_id,current_team_name,abbr,first_season_in_data_window,last_season_in_data_window,status_as_of_snapshot,bbref_code,source_team_id,notes,notes_source_url
+WNBA,WNBA-ATL,Atlanta Dream,ATL,2019,,active,ATL,,,
+WNBA,WNBA-CHI,Chicago Sky,CHI,2019,,active,CHI,,,
+WNBA,WNBA-CON,Connecticut Sun,CON,2019,2026,relocating,CON,,"Sale and relocation approved May 2026; franchise plays as the Houston Comets from the 2027 season (same franchise_id kept for continuity).",https://hartfordbusiness.com/article/its-official-wnba-approves-ct-sun-relocation-to-houston/
+WNBA,WNBA-DAL,Dallas Wings,DAL,2019,,active,DAL,,,
+WNBA,WNBA-GSV,Golden State Valkyries,GSV,2025,,active,GSV,,Expansion franchise; first season 2025.,
+WNBA,WNBA-IND,Indiana Fever,IND,2019,,active,IND,,,
+WNBA,WNBA-LVA,Las Vegas Aces,LVA,2019,,active,LVA,,,
+WNBA,WNBA-LAS,Los Angeles Sparks,LAS,2019,,active,LAS,,,
+WNBA,WNBA-MIN,Minnesota Lynx,MIN,2019,,active,MIN,,,
+WNBA,WNBA-NYL,New York Liberty,NYL,2019,,active,NYL,,,
+WNBA,WNBA-PHO,Phoenix Mercury,PHO,2019,,active,PHO,,,
+WNBA,WNBA-POR,Portland Fire,POR,2026,,active,POR,,Expansion franchise; first season 2026.,
+WNBA,WNBA-SEA,Seattle Storm,SEA,2019,,active,SEA,,,
+WNBA,WNBA-TOR,Toronto Tempo,TOR,2026,,active,TOR,,Expansion franchise; first season 2026.,
+WNBA,WNBA-WAS,Washington Mystics,WAS,2019,,active,WAS,,,
+WNBA,WNBA-CLE,Cleveland (expansion),CLE,,,announced_expansion,,,Announced expansion franchise scheduled to begin play in 2028; no data rows expected.,https://www.wnba.com/news/wnba-wnbpa-tentative-cba-deal-2026
+PWHL,PWHL-BOS,Boston Fleet,BOS,2023-24,,active,,1,Named 'PWHL Boston' in 2023-24.,
+PWHL,PWHL-MIN,Minnesota Frost,MIN,2023-24,,active,,2,Named 'PWHL Minnesota' in 2023-24.,
+PWHL,PWHL-MTL,Montréal Victoire,MTL,2023-24,,active,,3,Named 'PWHL Montreal' in 2023-24.,
+PWHL,PWHL-NY,New York Sirens,NY,2023-24,,active,,4,Named 'PWHL New York' in 2023-24.,
+PWHL,PWHL-OTT,Ottawa Charge,OTT,2023-24,,active,,5,Named 'PWHL Ottawa' in 2023-24.,
+PWHL,PWHL-TOR,Toronto Sceptres,TOR,2023-24,,active,,6,Named 'PWHL Toronto' in 2023-24.,
+PWHL,PWHL-SEA,Seattle Torrent,SEA,2025-26,,active,,8,Expansion franchise; first season 2025-26.,
+PWHL,PWHL-VAN,Vancouver Goldeneyes,VAN,2025-26,,active,,9,Expansion franchise; first season 2025-26.,
+PWHL,PWHL-DET,Detroit Clutch,DET,2026-27,,expansion_not_yet_played,,,Expansion franchise; first season 2026-27 (not started at snapshot). Source team id not yet present in collected data.,https://www.dailyfaceoff.com/news/pwhl-increases-minimum-salary-and-roster-size-for-2026-27
+PWHL,PWHL-HAM,Hamilton Havoc,HAM,2026-27,,expansion_not_yet_played,,,Expansion franchise; first season 2026-27 (not started at snapshot).,https://www.dailyfaceoff.com/news/pwhl-increases-minimum-salary-and-roster-size-for-2026-27
+PWHL,PWHL-SJ,San Jose Sea Lions,SJ,2026-27,,expansion_not_yet_played,,,Expansion franchise; first season 2026-27 (not started at snapshot).,https://www.dailyfaceoff.com/news/pwhl-increases-minimum-salary-and-roster-size-for-2026-27
+PWHL,PWHL-VGS,Vegas Vanguards,VGS,2026-27,,expansion_not_yet_played,,,Expansion franchise (Las Vegas); first season 2026-27 (not started at snapshot).,https://www.dailyfaceoff.com/news/pwhl-increases-minimum-salary-and-roster-size-for-2026-27

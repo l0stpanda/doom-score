@@ -1,0 +1,11 @@
+# Raw downloads are a local cache: large, reproducible by re-running the
+# scripts, and some sources restrict redistribution (PWHLPA, Sports Reference).
+data/raw/*
+!data/raw/manual/
+data/raw/manual/*
+!data/raw/manual/README.md
+!data/raw/manual/*.template.csv
+logs/*.log
+logs/*.out
+__pycache__/
+*.pyc
