@@ -166,3 +166,15 @@ archive history; delete only regenerable or dead files. No model, label or featu
 | `BEN-DATA/dummy.txt` | leave |  | groupmate folder; not mine to change |
 | `LEO-DATA/dummy.txt` | leave |  | groupmate folder; not mine to change |
 | `readme.md` | leave |  | shared repo readme from the `init` commit; ownership unclear |
+
+## Result
+
+- **After:** 132 tracked files (128 in `ADAM-DATA/`: 94 active + 34 in `archive/`), 9.11 MB tracked (active 8.64 MB,
+  archive 0.48 MB), down from 123 files / 11.79 MB. Deleted 4 tracked files (2.74 MB); added 9 (docs, `common.py`,
+  `build_all.py`, `archive/README.md`).
+- **Verification:** `python scripts/build_all.py --clean` (removed 108 regenerable files, rebuilt all 10 steps) reproduced
+  every committed data output and model report byte for byte (all `dashboard/data/*.csv`, `data/processed/*`,
+  M1/M2/M1b/M3 CSVs, JSON and PNGs). The only diffs were three expected text changes: path references to
+  `docs/decisions_full.md` / `docs/FEATURES.md` in `reports/m3.md`, `model_card.md` and `slim_selection.md`.
+  Brier: MLB p_doom75 0.139, p_doomed 0.140; NHL 0.144, 0.143. Viz built with 62/62 logos, 0 failures. There is no
+  test suite in the repo. `--from-raw` was not run (D110).

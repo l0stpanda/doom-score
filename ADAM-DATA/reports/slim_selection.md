@@ -3,10 +3,10 @@
 `data/processed/mlb_nhl_model_slim.csv` (1,454 rows × 29 columns) is a subset of the full table
 `data/processed/mlb_nhl_team_seasons.csv` (1,454 rows × 104 columns), which is unchanged,
 plus 1 derived column computed from it (marked "derived", last row). Built by `src/build_slim.py`.
-Decisions **D61**, **D71** in `DECISIONS.md`.
+Decisions **D61**, **D71** in `docs/decisions_full.md`.
 
 **Chosen by concept, not by correlation with the label.** One `_lpct` column per concept; where a concept has
-several candidate columns, the one listed in `FEATURE_CROSSWALK.md` is used. No column was picked or dropped
+several candidate columns, the crosswalk choice (`docs/FEATURES.md`) is used. No column was picked or dropped
 because of its relationship with `y_doom_3yr`.
 
 Slim column order: ids/display → features → flags → labels. `y_*` columns are labels: never use them as features.
