@@ -1,0 +1,10 @@
+{
+ "MLB": {
+  "best": "B1 OLS pct",
+  "chosen": "B1 OLS pct"
+ },
+ "NHL": {
+  "best": "Elastic net",
+  "chosen": "Elastic net"
+ }
+}

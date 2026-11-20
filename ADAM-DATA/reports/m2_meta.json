@@ -1,0 +1,121 @@
+{
+ "MLB": {
+  "features": [
+   "win_pct_percentile",
+   "win_pct_trailing_3_seasons_lpct",
+   "margin_per_game_lpct",
+   "luck_lpct",
+   "roster_age_weighted_lpct",
+   "star_concentration_lpct",
+   "draft_capital_lpct",
+   "gm_tenure_lpct",
+   "coach_tenure_lpct",
+   "spending_lpct",
+   "personnel_lead_vacant",
+   "short_season",
+   "seasons_of_history"
+  ],
+  "dropped": {
+   "underlying_quality_lpct": "spec: MLB has no independent underlying-quality measure (column = Pythagorean win%, near-duplicate of margin)"
+  },
+  "tests": [
+   2008,
+   2009,
+   2010,
+   2011,
+   2012,
+   2013,
+   2014,
+   2015,
+   2016,
+   2017,
+   2018,
+   2019,
+   2020,
+   2021,
+   2022,
+   2023
+  ],
+  "ebm": {
+   "files": [
+    "m2_ebm_mlb_margin_per_game_lpct.png",
+    "m2_ebm_mlb_win_pct_percentile.png",
+    "m2_ebm_mlb_spending_lpct.png",
+    "m2_ebm_mlb_roster_age_weighted_lpct.png"
+   ],
+   "importance": {
+    "margin_per_game_lpct": 4.198,
+    "win_pct_percentile": 3.539,
+    "spending_lpct": 2.144,
+    "roster_age_weighted_lpct": 1.79,
+    "win_pct_trailing_3_seasons_lpct": 1.274,
+    "coach_tenure_lpct": 1.052,
+    "draft_capital_lpct": 0.863,
+    "gm_tenure_lpct": 0.849,
+    "star_concentration_lpct": 0.535,
+    "personnel_lead_vacant__missing": 0.497,
+    "luck_lpct": 0.39,
+    "gm_tenure_lpct__missing": 0.268,
+    "personnel_lead_vacant": 0.243,
+    "seasons_of_history": 0.131,
+    "short_season": 0.034
+   }
+  }
+ },
+ "NHL": {
+  "features": [
+   "win_pct_percentile",
+   "win_pct_trailing_3_seasons_lpct",
+   "margin_per_game_lpct",
+   "luck_lpct",
+   "underlying_quality_lpct",
+   "roster_age_weighted_lpct",
+   "star_concentration_lpct",
+   "draft_capital_lpct",
+   "gm_tenure_lpct",
+   "coach_tenure_lpct",
+   "personnel_lead_vacant",
+   "short_season",
+   "seasons_of_history"
+  ],
+  "dropped": {
+   "spending_lpct": "all missing in this league"
+  },
+  "tests": [
+   2013,
+   2014,
+   2015,
+   2016,
+   2017,
+   2018,
+   2019,
+   2020,
+   2021,
+   2022
+  ],
+  "ebm": {
+   "files": [
+    "m2_ebm_nhl_margin_per_game_lpct.png",
+    "m2_ebm_nhl_win_pct_trailing_3_seasons_lpct.png",
+    "m2_ebm_nhl_win_pct_percentile.png",
+    "m2_ebm_nhl_underlying_quality_lpct.png"
+   ],
+   "importance": {
+    "margin_per_game_lpct": 3.828,
+    "win_pct_trailing_3_seasons_lpct": 3.734,
+    "win_pct_percentile": 2.914,
+    "underlying_quality_lpct": 2.794,
+    "star_concentration_lpct": 2.487,
+    "roster_age_weighted_lpct": 2.358,
+    "draft_capital_lpct": 1.174,
+    "luck_lpct": 1.003,
+    "gm_tenure_lpct": 0.958,
+    "coach_tenure_lpct": 0.625,
+    "seasons_of_history": 0.2,
+    "underlying_quality_lpct__missing": 0.179,
+    "short_season": 0.08,
+    "personnel_lead_vacant": 0.038
+   }
+  }
+ }
+}

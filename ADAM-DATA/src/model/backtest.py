@@ -70,8 +70,9 @@ def league_features(df, league, features=FEATURES):
 class MedianImputeWithIndicator(BaseEstimator, TransformerMixin):
     """Median fill + a 0/1 missing indicator for each column missing in > `threshold` of the *training* rows."""
 
-    def __init__(self, threshold=0.01):
+    def __init__(self, threshold=0.01, as_frame=False):
         self.threshold = threshold
+        self.as_frame = as_frame          # True: return a DataFrame with feature names (EBM explanations)
 
     def fit(self, X, y=None):
         X = pd.DataFrame(X)
@@ -86,7 +87,7 @@ class MedianImputeWithIndicator(BaseEstimator, TransformerMixin):
         out = X.fillna(self.medians_)
         for c in self.indicator_cols_:
             out[f"{c}__missing"] = X[c].isna().astype(float)
-        return out.to_numpy(dtype=float)
+        return out.astype(float) if self.as_frame else out.to_numpy(dtype=float)
 
     def get_feature_names_out(self, input_features=None):
         return np.array(self.columns_ + [f"{c}__missing" for c in self.indicator_cols_])
