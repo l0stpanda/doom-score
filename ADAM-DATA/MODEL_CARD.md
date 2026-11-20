@@ -8,13 +8,18 @@
 (t+1..t+3); 0 = finishes top of the league three years running, 100 = bottom three years running. `doom_pred` is
 the predicted doom made at the prediction moment (MLB Nov 15 of t; NHL Jun 15 of t+1). Also exported:
 - `doom_lo80`/`doom_hi80`: 80% split-conformal interval (D80).
-- `p_doomed`: probability that doom ≥ 75 (bottom quarter on average). MLB: logistic regression on current
+- `p_doomed` (diagnostic): direct classifier probability that doom ≥ 75. MLB: logistic regression on current
   standing; NHL: L1 logistic on the NHL feature set (M1).
 - `proj_pct_t1..t3`: projected percentile in each of the next three seasons, from per-horizon models (training
   gap = horizon, D87), shifted by one common offset per team so that 100 − mean(path) equals `doom_pred`
   exactly (D88). Values are clipped to 0–100; clipped rows have `path_clipped` = True (1 rows),
   and for those the average is no longer exact.
-- `doom_band`: Low < 35, Moderate 35–55, High 55–75, Very high ≥ 75 (D89).
+- `p_doom75`: probability that actual doom ends ≥ 75, given the predicted doom: the share of earlier
+  walk-forward residuals (same calibration set as the intervals) that would carry the prediction to 75+ (D99).
+- `doom_band` on `p_doom75`: Low < 10%, Moderate 10–30%, High 30–50%, Very high ≥ 50%; "Not available" where
+  `interval_available` = 0 (D100). `doom_pred` itself is unchanged; `p_doomed` (direct classifier) is kept as a
+  diagnostic.
+- `interval_available`: 1 if the row has an 80% interval and `p_doom75` (0 for the earliest backtest seasons).
 
 ## Models
 

@@ -18,7 +18,8 @@ OUT = os.path.join(ROOT, "dashboard", "data")
 HORIZONS = ["y_pct_t1", "y_pct_t2", "y_pct_t3"]
 LIVE = {"MLB": [2024, 2025, 2026], "NHL": [2023, 2024, 2025]}
 CONF_LEVEL, CONF_MIN_CAL = 0.80, 2
-BANDS = [(75, "Very high"), (55, "High"), (35, "Moderate"), (-np.inf, "Low")]       # D89
+BANDS = [(0.50, "Very high"), (0.30, "High"), (0.10, "Moderate"), (-np.inf, "Low")]  # on p_doom75 (D100)
+NO_BAND = "Not available"
 MLB_NOTE = ("MLB score uses current standing only: in backtests no other MLB feature beat it beyond noise "
             "(M1, M1b). Other numbers in the team profile are context, not drivers.")
 
@@ -70,8 +71,8 @@ def plain(name, z):
     return hi if z > 0 else lo
 
 
-def band(x):
-    return next(lbl for cut, lbl in BANDS if x >= cut)
+def band(p):
+    return NO_BAND if pd.isna(p) else next(lbl for cut, lbl in BANDS if p >= cut)
 
 
 # ---------------- fitting with exact linear contributions ----------------
@@ -148,9 +149,19 @@ def conformal_q(bt_rows, T, level=CONF_LEVEL):
     return float(np.quantile(r, min(1.0, np.ceil((n + 1) * level) / n), method="higher"))
 
 
+def cal_residuals(bt_rows, T):
+    """Signed walk-forward residuals (actual - predicted doom) of backtest seasons <= T-3, the same calibration set
+    as the conformal intervals (D80); None if fewer than CONF_MIN_CAL seasons."""
+    cal = bt_rows[bt_rows.season_start_year <= T - bt.GAP]
+    if cal.season_start_year.nunique() < CONF_MIN_CAL:
+        return None
+    return (cal.actual_doom - cal.doom_pred).to_numpy()
+
+
 def finish(P):
-    """Conformal intervals, path shift + clip (D88), bands."""
+    """Conformal intervals, p_doom75 (D99), path shift + clip (D88), bands on p_doom75 (D100)."""
     P = P.copy()
+    P["p_doom75"] = np.nan
     for lg in P.league.unique():
         b = P[(P.league == lg) & (P.pred_type == "backtest")]
         for T in P[P.league == lg].season_start_year.unique():
@@ -158,6 +169,13 @@ def finish(P):
             m = (P.league == lg) & (P.season_start_year == T)
             P.loc[m, "doom_lo80"] = np.clip(P.loc[m, "doom_pred"] - q, 0, 100)
             P.loc[m, "doom_hi80"] = np.clip(P.loc[m, "doom_pred"] + q, 0, 100)
+            r = cal_residuals(b, T)
+            if r is not None:
+                # P(actual >= 75 | predicted d) = share of calibration residuals >= 75 - d
+                d = P.loc[m, "doom_pred"].to_numpy()
+                P.loc[m, "p_doom75"] = (r[None, :] >= (75 - d)[:, None]).mean(axis=1)
+    P["interval_available"] = P.doom_lo80.notna().astype(int)
+    assert (P.interval_available == P.p_doom75.notna()).all()
     raw = P[[f"raw_proj_pct_t{k}" for k in (1, 2, 3)]].to_numpy()
     off = (100 - P.doom_pred.to_numpy()) - raw.mean(axis=1)
     shifted = raw + off[:, None]
@@ -166,8 +184,43 @@ def finish(P):
     for k in (1, 2, 3):
         P[f"proj_pct_t{k}"] = shifted[:, k - 1]
     P["path_offset"] = off
-    P["doom_band"] = [band(x) for x in P.doom_pred]
+    P["doom_band"] = [band(x) for x in P.p_doom75]
     return P
+
+
+def calibration(P, n_bins=10):
+    """Backtest rows with p_doom75 and a label: predicted probability by decile vs observed rate, per league."""
+    rows = []
+    for lg in ("MLB", "NHL"):
+        d = P[(P.league == lg) & (P.pred_type == "backtest") & P.p_doom75.notna() & P.actual_doom.notna()].copy()
+        d["obs"] = (d.actual_doom >= 75).astype(float)
+        d["decile"] = pd.qcut(d.p_doom75.rank(method="first"), n_bins, labels=False) + 1
+        for k, g in d.groupby("decile"):
+            rows.append({"league": lg, "decile": int(k), "n": len(g), "p_min": g.p_doom75.min(),
+                         "p_max": g.p_doom75.max(), "mean_predicted": g.p_doom75.mean(), "observed_rate": g.obs.mean()})
+    return pd.DataFrame(rows)
+
+
+def band_check(P):
+    order = ["Low", "Moderate", "High", "Very high", NO_BAND]
+    rows = []
+    for lg in ("MLB", "NHL"):
+        for b in order:
+            g = P[(P.league == lg) & (P.doom_band == b)]
+            lab = g[g.actual_doom.notna()]
+            rows.append({"league": lg, "band": b, "rows": len(g), "labelled": len(lab),
+                         "share_actual_ge75": float((lab.actual_doom >= 75).mean()) if len(lab) else np.nan})
+    return pd.DataFrame(rows)
+
+
+def brier(P):
+    out = {}
+    for lg in ("MLB", "NHL"):
+        d = P[(P.league == lg) & (P.pred_type == "backtest") & P.p_doom75.notna() & P.actual_doom.notna()]
+        y = (d.actual_doom >= 75).astype(float)
+        out[lg] = dict(n=len(d), base_rate=float(y.mean()), p_doom75=float(((d.p_doom75 - y) ** 2).mean()),
+                       p_doomed=float(((d.p_doomed - y) ** 2).mean()), climatology=float(((y.mean() - y) ** 2).mean()))
+    return out
 
 
 def driver_text(D, P):
@@ -258,13 +311,18 @@ def model_card(S):
 (t+1..t+3); 0 = finishes top of the league three years running, 100 = bottom three years running. `doom_pred` is
 the predicted doom made at the prediction moment (MLB Nov 15 of t; NHL Jun 15 of t+1). Also exported:
 - `doom_lo80`/`doom_hi80`: 80% split-conformal interval (D80).
-- `p_doomed`: probability that doom ≥ 75 (bottom quarter on average). MLB: logistic regression on current
+- `p_doomed` (diagnostic): direct classifier probability that doom ≥ 75. MLB: logistic regression on current
   standing; NHL: L1 logistic on the NHL feature set (M1).
 - `proj_pct_t1..t3`: projected percentile in each of the next three seasons, from per-horizon models (training
   gap = horizon, D87), shifted by one common offset per team so that 100 − mean(path) equals `doom_pred`
   exactly (D88). Values are clipped to 0–100; clipped rows have `path_clipped` = True ({S['path_clipped']} rows),
   and for those the average is no longer exact.
-- `doom_band`: Low < 35, Moderate 35–55, High 55–75, Very high ≥ 75 (D89).
+- `p_doom75`: probability that actual doom ends ≥ 75, given the predicted doom: the share of earlier
+  walk-forward residuals (same calibration set as the intervals) that would carry the prediction to 75+ (D99).
+- `doom_band` on `p_doom75`: Low < 10%, Moderate 10–30%, High 30–50%, Very high ≥ 50%; "Not available" where
+  `interval_available` = 0 (D100). `doom_pred` itself is unchanged; `p_doomed` (direct classifier) is kept as a
+  diagnostic.
+- `interval_available`: 1 if the row has an 80% interval and `p_doom75` (0 for the earliest backtest seasons).
 
 ## Models
 
@@ -343,7 +401,7 @@ earlier calibration seasons have no interval ({S['intervals_missing']} rows).
     open(os.path.join(ROOT, "MODEL_CARD.md"), "w", encoding="utf-8").write(txt)
 
 
-def m3_report(S, P):
+def m3_report(S, P, cal, bands):
     L = ["# Phase M3: dashboard exports\n"]
     L.append(f"Chosen models (D76, D86): MLB = B1, NHL = elastic net. Files in `dashboard/data/`: "
              f"`doom_predictions.csv` ({S['rows']} rows: {S['backtest']} backtest, {S['live']} live), "
@@ -358,19 +416,27 @@ def m3_report(S, P):
     L.append(f"- 80% intervals: {S['intervals_missing']} backtest rows have none (fewer than 2 calibration seasons ≤ "
              f"T−3: MLB 2008–2011, NHL 2013–2016).")
     L.append(f"- Logos: {'all teams have a logo URL' if not S['missing_logo'] else 'missing: ' + ', '.join(S['missing_logo'])}.\n")
-    bands = pd.crosstab(P.league, P.doom_band).reindex(columns=["Low", "Moderate", "High", "Very high"],
-                                                      fill_value=0)
-    L.append("**Doom bands (D89) across all exported rows:**\n")
-    L.append("| League | " + " | ".join(bands.columns) + " |")
-    L.append("|---|" + "---|" * len(bands.columns))
-    for lg, r in bands.iterrows():
-        L.append(f"| {lg} | " + " | ".join(str(int(v)) for v in r) + " |")
-    mx = P.groupby("league").doom_pred.max()
-    L.append(f"\nPredicted doom is shrunk toward the middle, as regression predictions are (max: MLB "
-             f"{mx['MLB']:.1f}, NHL {mx['NHL']:.1f}), so **\"Very high\" (≥ 75) almost never occurs in the "
-             f"predictions**, although {(P.actual_doom >= 75).mean():.0%} of labelled exported rows have actual doom "
-             f"≥ 75. The bands are as specified; if \"Very high\" should be reachable, the cut-offs need a rethink "
-             f"(e.g. on `p_doomed` or on within-season ranks). Not changed here.\n")
+    br = S["brier"]
+    L.append("**p_doom75 (D99)** = P(actual doom ≥ 75 | predicted doom): the share of walk-forward residuals "
+             "(actual − predicted, backtest seasons ≤ T−3, per league; the conformal calibration set) that would "
+             "carry the prediction to 75 or more. Calibration on backtest rows (deciles of predicted probability):\n")
+    L.append("| League | Decile | n | Predicted range | Mean predicted | Observed rate |")
+    L.append("|---|---|---|---|---|---|")
+    for _, r in cal.iterrows():
+        L.append(f"| {r.league} | {r.decile} | {r.n} | {r.p_min:.2f}–{r.p_max:.2f} | {r.mean_predicted:.2f} | "
+                 f"{r.observed_rate:.2f} |")
+    L.append("\nBrier score on the same rows (lower is better): " + "; ".join(
+        f"{lg} p_doom75 {v['p_doom75']:.3f}, p_doomed {v['p_doomed']:.3f}, base rate only {v['climatology']:.3f} "
+        f"(n = {v['n']}, base rate {v['base_rate']:.1%})" for lg, v in br.items()) + ".\n")
+    L.append("**Bands on p_doom75 (D100):** Low < 10%, Moderate 10–30%, High 30–50%, Very high ≥ 50%; "
+             f"\"{NO_BAND}\" where no interval/probability exists (`interval_available` = 0). Counts over all "
+             "exported rows, and the share of labelled rows in each band that actually ended at doom ≥ 75:\n")
+    L.append("| League | Band | Rows | Labelled | Actual ≥ 75 |")
+    L.append("|---|---|---|---|---|")
+    for _, r in bands.iterrows():
+        sh = "—" if pd.isna(r.share_actual_ge75) else f"{r.share_actual_ge75:.0%}"
+        L.append(f"| {r.league} | {r.band} | {r.rows} | {r.labelled} | {sh} |")
+    L.append("")
     L.append("**Current view (latest season), most and least doomed:**\n")
     for lg in ("MLB", "NHL"):
         cur = P[(P.league == lg) & (P.season_start_year == P[P.league == lg].season_start_year.max())]
@@ -408,7 +474,8 @@ def main():
     path_err = np.abs(100 - P[["proj_pct_t1", "proj_pct_t2", "proj_pct_t3"]].mean(axis=1) - P.doom_pred)
 
     cols = (["league", "season_start_year", "franchise_id", "team", "wins", "losses", "ot_losses", "games",
-             "win_pct", "win_pct_percentile", "doom_pred", "doom_lo80", "doom_hi80", "p_doomed", "doom_band",
+             "win_pct", "win_pct_percentile", "doom_pred", "doom_lo80", "doom_hi80", "interval_available", "p_doom75",
+             "doom_band", "p_doomed",
              "proj_pct_t1", "proj_pct_t2", "proj_pct_t3", "path_clipped", "pred_type", "actual_doom",
              "actual_pct_t1", "actual_pct_t2", "actual_pct_t3"]
             + [f"driver_up_{i}" for i in (1, 2, 3)] + [f"driver_down_{i}" for i in (1, 2, 3)] + ["driver_note"])
@@ -422,16 +489,19 @@ def main():
     prof.to_csv(os.path.join(OUT, "team_profile.csv"), index=False)
     dic.to_csv(os.path.join(OUT, "team_profile_columns.csv"), index=False)
 
+    cal, bands, br = calibration(P), band_check(P), brier(P)
+    cal.to_csv(os.path.join(REP, "m3_p_doom75_calibration.csv"), index=False)
+    bands.to_csv(os.path.join(REP, "m3_band_check.csv"), index=False)
     S = dict(rows=len(P), backtest=int((P.pred_type == "backtest").sum()), live=int((P.pred_type == "live").sum()),
              tests={k: [min(v), max(v)] for k, v in tests.items()}, max_diff_vs_m2=max_diff_m2,
              path_max_err_unclipped=float(path_err[~P.path_clipped].max()), path_clipped=int(P.path_clipped.sum()),
              intervals_missing=int(P.doom_lo80.isna().sum()),
              bands=P.groupby(["league", "doom_band"]).size().to_dict(), missing_logo=missing_logo,
-             drivers_rows=len(D))
+             drivers_rows=len(D), brier=br)
     json.dump({k: (v if not isinstance(v, dict) else {str(kk): vv for kk, vv in v.items()}) for k, v in S.items()},
               open(os.path.join(REP, "m3_stats.json"), "w"), indent=1, default=str)
     model_card(S)
-    m3_report(S, P)
+    m3_report(S, P, cal, bands)
     print(open(os.path.join(REP, "m3_stats.json")).read())
     print(f"{time.time() - t0:.0f}s")
 

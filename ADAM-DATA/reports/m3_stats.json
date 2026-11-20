@@ -17,14 +17,32 @@
  "path_clipped": 1,
  "intervals_missing": 240,
  "bands": {
-  "('MLB', 'High')": 211,
-  "('MLB', 'Low')": 71,
-  "('MLB', 'Moderate')": 288,
-  "('NHL', 'High')": 143,
-  "('NHL', 'Low')": 51,
-  "('NHL', 'Moderate')": 208,
+  "('MLB', 'High')": 96,
+  "('MLB', 'Low')": 165,
+  "('MLB', 'Moderate')": 189,
+  "('MLB', 'Not available')": 120,
+  "('NHL', 'High')": 51,
+  "('NHL', 'Low')": 136,
+  "('NHL', 'Moderate')": 95,
+  "('NHL', 'Not available')": 120,
   "('NHL', 'Very high')": 2
  },
  "missing_logo": [],
- "drivers_rows": 6226
+ "drivers_rows": 6226,
+ "brier": {
+  "MLB": {
+   "n": 360,
+   "base_rate": 0.18611111111111112,
+   "p_doom75": 0.13876050089784767,
+   "p_doomed": 0.14006775794354392,
+   "climatology": 0.15147376543209878
+  },
+  "NHL": {
+   "n": 188,
+   "base_rate": 0.2127659574468085,
+   "p_doom75": 0.14433915960228508,
+   "p_doomed": 0.14314541491679048,
+   "climatology": 0.16749660479855139
+  }
+ }
 }
