@@ -1,5 +1,5 @@
 """Write DATA_DICTIONARY.md: definition, source, as-of timing, coverage (computed), leakage note for every column."""
-import os
+import os, sys
 import pandas as pd
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,7 +27,7 @@ D = {
  "win_pct_trailing_3_seasons": ("Mean win_pct of the franchise's last 3 played seasons incl. t (min 1).", "Derived", END_T, OK),
  "observed_doom_next_3_seasons": ("= y_doom_3yr (teammate schema name). **LABEL, not a feature.**", "Derived", "seasons t+1..t+3", "Label - never use as a feature."),
  "draft_picks_used": ("Picks made by the team in the year-t draft (MLB Jun/Jul t; NHL Jun t, before season t).", "MLB Stats API draft / NHL api-web draft", "draft of year t", "MLB July draft is before Nov; NHL uses the June t draft only (June t+1 is after the moment)."),
- "cap_space_pct": ("NHL: (cap ceiling - team cap hit)/ceiling. **Empty: no historical team cap hits available** (Spotrac 403, PuckPedia anti-bot, CapWages current-season only) -> data/manual/payroll_template.csv. MLB: not defined (no cap); see payroll_pct_of_cbt.", "-", "season t", OK),
+ "cap_space_pct": ("Teammate schema column. **Empty for both leagues by decision (D57):** MLB has no cap; NHL team cap hits are unavailable (Spotrac 403, PuckPedia anti-bot, CapWages 2025-26+ only) and the NHL payroll template is intentionally not filled. Use `spending` (MLB payroll relative to league-season mean).", "-", "season t", OK),
  "personnel_lead_tenure_years": ("Years the current GM has been the team's GM at the prediction moment (GM only, both leagues).", WIKI, PM, "Measured at the moment, never total tenure. Year-only dates are placed after that year's season (MLB except Giants/Rays)."),
  "personnel_lead_changed_past_year": ("1 if the GM at the moment differs from the GM 365 days earlier (VACANT counts as a state). **MLB 2026 is systematically 0**: every 2026 MLB change in the sources is year-only and is placed on Dec 31, after the Nov 15 moment.", WIKI, PM, OK),
  "standings_source": ("API URL for the standings row.", "-", "-", "Audit."),
@@ -80,7 +80,7 @@ D = {
  "payroll_rank": ("MLB within-season payroll rank (1 = highest), recomputed from values.", "Derived", "Opening Day of t", OK),
  "payroll_rel_league_mean": ("Payroll / league mean payroll that season (robust to 2020 pro-rating).", "Derived", "Opening Day of t", OK),
  "cap_upper_limit_usd": ("NHL salary cap upper limit (2012-13 shown pro-rated as charted).", "Wikipedia 'NHL salary cap' chart (data/manual/nhl_salary_cap.csv)", "season t", OK),
- "team_cap_hit_usd": ("NHL team cap hit. **Empty** (no accessible historical source) -> payroll_template.csv.", "-", "season t", OK),
+ "team_cap_hit_usd": ("NHL team cap hit. **Empty by decision (D57):** NHL spending marked unavailable; template not filled.", "-", "season t", OK),
  "team_name_then": ("Name used by the source that season (e.g. Montreal Expos).", "Standings APIs", "-", "Audit."),
  "team_id": ("Source team ID (MLB team id / NHL team id).", "Standings APIs", "-", "Audit."),
  "payroll_source": ("Cot's team page for the payroll.", "-", "-", "Audit."),
@@ -105,6 +105,26 @@ def cov(c):
     return "; ".join(out)
 
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from build_crosswalk import CONCEPTS
+for c, (m, n, d, note) in CONCEPTS.items():
+    if c in ("luck",):
+        continue
+    if c == "vet_share_lq":
+        D[c] = ("Share of team playing time from players at or above the league-season's playing-time-weighted 75th "
+                "percentile age (oldest quartile; cut in `vet_age_cut_lq`).", "as age_weighted", "end of season t", OK)
+    else:
+        D[c] = (f"**Shared concept** ({d}). Alias of MLB `{m}` / NHL `{n or 'unavailable'}`. {note}.",
+                "see FEATURE_CROSSWALK.md", "as source column", "As source column.")
+for c, (m, n, d, note) in CONCEPTS.items():
+    D[c + "_lpct"] = (f"Within league-season percentile of `{c}` ((avg rank - 1)/(n - 1)*100 over non-missing; "
+                      "same formula as win_pct_percentile).", "Derived", "as source column",
+                      "Cross-section within season t only.")
+D["playing_time_weight"] = ("Basis of roster weighting: 'PA+BF' (MLB) or 'TOI' (NHL).", "-", "-", "Descriptor.")
+D["spending_available"] = ("1 = spending observed (MLB); 0 = unavailable by decision (NHL, D57).", "-", "-", "Descriptor.")
+D["market_available"] = ("1 = market proxy observed (MLB attendance); 0 = unavailable (NHL).", "-", "-", "Descriptor.")
+D["vet_age_cut_lq"] = ("League-season age cut for vet_share_lq (playing-time-weighted q75 of player age).", "Derived",
+                       "end of season t", OK)
 missing = [c for c in df.columns if c not in D]
 assert not missing, missing
 lines = ["# Data dictionary: `data/processed/mlb_nhl_team_seasons.csv`", "",
@@ -113,7 +133,7 @@ lines = ["# Data dictionary: `data/processed/mlb_nhl_team_seasons.csv`", "",
          "`observed_doom_next_3_seasons`) come from seasons t+1..t+3 and must never be used as features.", "",
          "**Prediction moment:** MLB Nov 15 of t; NHL Jun 15 of t+1. Every feature is knowable by then, with two "
          "known caveats: MoneyPuck xG (soft leakage, below), and coach changes after the regular season "
-         "(not captured, which is conservative). Decisions are in `DECISIONS.md` (D01–D56).", "",
+         "(not captured, which is conservative). Decisions are in `DECISIONS.md` (D01–D60). Shared concept columns (after the core) are described in `FEATURE_CROSSWALK.md`.", "",
          "**Known systematic artifact:** `personnel_lead_changed_past_year` is 0 for every MLB 2026 row. All 2026 "
          "MLB GM changes in the sources are year-only and fall after the Nov 15 2026 prediction moment. MLB 2026 is "
          "unlabelled, so this does not affect training.", "",
