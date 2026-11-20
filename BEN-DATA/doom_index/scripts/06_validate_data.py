@@ -42,6 +42,10 @@ from lib.http import utc_now_iso
 log = setup_logging("06_validate_data")
 EXP = settings.EXPORTS_DIR
 
+PROC = settings.PROCESSED_DIR
+FINAL = settings.FINAL_DIR
+DIRS = {"draft_pick_inventory.csv": PROC, "current_roster_snapshot.csv": PROC, "contract_transactions.csv": PROC,
+        "league_cba_parameters.csv": PROC, "wnba_team_doom_dataset.csv": FINAL, "pwhl_team_doom_dataset.csv": FINAL}
 DATASETS = {
     "team_season_data.csv": ["league", "season", "team_id"],
     "player_season_data.csv": ["league", "season", "team_id", "player_id"],
@@ -49,7 +53,8 @@ DATASETS = {
     "draft_pick_inventory.csv": ["league", "inventory_key"],
     "team_financials.csv": ["league", "season", "record_type", "team_id"],
     "team_season_sources.csv": ["league", "team_id", "season", "dataset", "variables", "source_url"],
-    "team_features.csv": ["league", "season", "record_type", "team_id"],
+    "wnba_team_doom_dataset.csv": ["team_id", "season"],
+    "pwhl_team_doom_dataset.csv": ["team_id", "season"],
     "current_roster_snapshot.csv": ["league", "snapshot_team_id", "player_name"],
     "contract_transactions.csv": ["league", "tx_key"],
     "league_cba_parameters.csv": ["league", "season", "parameter"],
@@ -65,7 +70,7 @@ def check(name: str, ok: bool, detail: str = "", severity: str = "FAIL", n: int 
 
 
 def load(name):
-    p = EXP / name
+    p = DIRS.get(name, EXP) / name
     return pd.read_csv(p, dtype={"season": str}, low_memory=False, keep_default_na=True) if p.exists() else None
 
 
@@ -104,7 +109,8 @@ def main() -> int:
     check("team_season_coverage:unexpected", not unexpected, f"unexpected {unexpected[:20]}", severity="WARN", n=len(unexpected))
 
     # 3 team ids
-    for name in ["team_season_data.csv", "player_season_data.csv", "team_financials.csv", "team_features.csv"]:
+    for name in ["team_season_data.csv", "player_season_data.csv", "team_financials.csv",
+                 "wnba_team_doom_dataset.csv", "pwhl_team_doom_dataset.csv"]:
         df = data[name]
         if df is not None:
             bad = set(df.team_id.dropna()) - known
@@ -239,7 +245,8 @@ def main() -> int:
             check(f"provenance:dataset covered:{need}", need in dsets, "")
 
     # 10 schema snapshot
-    snap_path = EXP / "_schema_snapshot.json"
+    final_checks(data, known)
+    snap_path = settings.LOG_DIR / "_schema_snapshot.json"
     schema = {k: list(v.columns) for k, v in data.items() if v is not None}
     if snap_path.exists():
         old = json.loads(snap_path.read_text())
@@ -277,12 +284,56 @@ def main() -> int:
                 miss_rows.append({"dataset": name, "league": lg, "column": c, "n_rows": len(d),
                                   "pct_missing": round(100 * d[c].isna().mean(), 1)})
     miss = pd.DataFrame(miss_rows)
-    miss.to_csv(EXP / "missingness_report.csv", index=False)
+    miss.to_csv(settings.LOG_DIR / "missingness_report.csv", index=False)
     write_report(data, res, miss)
     n_fail = int((res.status == "FAIL").sum())
     log.info("validation: %d checks, %d PASS, %d WARN, %d FAIL", len(res), (res.status == "PASS").sum(),
              (res.status == "WARN").sum(), n_fail)
     return 1 if n_fail else 0
+
+
+def final_checks(data, known) -> None:
+    w, p = data.get("wnba_team_doom_dataset.csv"), data.get("pwhl_team_doom_dataset.csv")
+    if w is None or p is None:
+        check("final:both league files exist", False, "missing final dataset")
+        return
+    shared_w = [c for c in w.columns if c in p.columns]
+    shared_p = [c for c in p.columns if c in w.columns]
+    check("final:shared columns in identical order", shared_w == shared_p, "")
+    only = sorted(set(w.columns) ^ set(p.columns))
+    check("final:league-specific columns", True, f"{len(shared_w)} shared; league-specific: {only}")
+    for lg, df in (("WNBA", w), ("PWHL", p)):
+        teams = teams_table()
+        active = teams[(teams.league == lg) & teams.status_as_of_snapshot.isin(["active", "relocating", "expansion_not_yet_played"])]
+        cur = df[df.row_type == "current"]
+        check(f"final:{lg} one current row per active franchise", set(cur.team_id) == set(active.franchise_id) and len(cur) == len(active),
+              f"{len(cur)} current rows vs {len(active)} active")
+        ss = df[df.row_type == "season"]
+        check(f"final:{lg} season rows match core team-seasons", len(ss) == len(data["team_season_data.csv"].query(
+            "league == @lg and in_core_scope.astype('str') == 'True'", engine="python")), f"{len(ss)} rows")
+        check(f"final:{lg} perf_win_pct present on season rows", ss.perf_win_pct.notna().all(), "")
+        share_cols = [c for c in df.columns if ("_share" in c or "_pct" in c or c.endswith("_hhi") or "coverage" in c)
+                      and pd.api.types.is_numeric_dtype(df[c]) and c not in ("perf_win_pct_change_yoy", "out_next_win_pct_change", "fin_payroll_share_of_cap")]
+        bad = [c for c in share_cols if ((df[c] < -1e-9) | (df[c] > 1 + 1e-9)).any()]
+        check(f"final:{lg} share/percentage columns within [0,1]", not bad, str(bad))
+        if "fin_payroll_share_of_cap" in df:
+            sc = df.fin_payroll_share_of_cap.dropna()
+            check(f"final:{lg} payroll/cap plausible (0.6-1.3; earnings can exceed cap)", sc.between(0.6, 1.3).all(),
+                  sc[~sc.between(0.6, 1.3)].to_string(), severity="WARN")
+        ages = df[[c for c in df.columns if c in ("age_mean", "age_median", "age_playtime_weighted", "age_top_n_by_playtime", "age_top_n_by_production")]]
+        st = ages.stack()
+        check(f"final:{lg} ages plausible (18-45)", ((st >= 18) & (st <= 45)).all(), str(st[(st < 18) | (st > 45)].head()))
+        banned = [c for c in df.columns if "doom" in c.lower() or "score" in c.lower() or "weight" == c.lower()]
+        check(f"final:{lg} no Doom Score / weight columns", not banned, str(banned))
+        lead = ss.sort_values("season").groupby("team_id")
+        nxt_ok = True
+        for tid, d in lead:
+            v = d.perf_win_pct.tolist()
+            o = d.out_next_win_pct.tolist()
+            for i in range(len(v) - 1):
+                if pd.notna(o[i]) and abs(o[i] - v[i + 1]) > 1e-3:
+                    nxt_ok = False
+        check(f"final:{lg} out_next_win_pct equals next season's perf_win_pct", nxt_ok, "")
 
 
 KEY_FIELDS = {

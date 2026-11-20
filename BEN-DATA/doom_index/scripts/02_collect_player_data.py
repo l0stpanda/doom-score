@@ -15,7 +15,7 @@ LEAGUES / SEASONS
 
 OUTPUTS
     data/exports/player_season_data.csv       (key: league, season, team_id, player_id)
-    data/exports/current_roster_snapshot.csv  (key: league, snapshot_team_id, player_name)
+    data/processed/current_roster_snapshot.csv  (key: league, snapshot_team_id, player_name)
     data/exports/team_season_sources.csv      (provenance rows, upserted)
 
 SOURCES
@@ -74,7 +74,7 @@ from config import settings
 from lib.common import (age_on, base_argparser, flip_last_first, franchise_by_bbref, franchise_by_source_id, player_key,
                         norm_name, resolve_team, setup_logging, teams_table, to_num)
 from lib.http import utc_now_iso
-from lib.salaries import pwhlpa_salaries, wnba_manual_contracts
+from lib.salaries import pwhlpa_salaries, wnba_manual_contracts, wnba_mendeley_salaries
 from lib.sources import bbref_page, fastrhockey_commit, fastrhockey_parquet, wiki_page
 from lib.store import record_provenance, upsert_csv
 from lib.tables import bbref_rows, bbref_tables, clean_cell, grid_text, wikitable_grid
@@ -105,6 +105,70 @@ WNBA_TOTAL_FIELDS = ["g", "gs", "mp", "fg", "fga", "fg_pct", "fg3", "fg3a", "fg3
                      "ft", "fta", "ft_pct", "orb", "drb", "trb", "ast", "stl", "blk", "tov", "pf", "pts"]
 WNBA_ADV_FIELDS = ["per", "ts_pct", "efg_pct", "usg_pct", "orb_pct", "drb_pct", "trb_pct", "ast_pct", "stl_pct",
                    "blk_pct", "tov_pct", "off_rtg", "def_rtg", "ows", "dws", "ws", "ws_per_40"]
+
+
+# ===========================================================================
+# Salary attachment (shared by both leagues)
+# ===========================================================================
+def attach_salaries(df: pd.DataFrame, sal: pd.DataFrame, league: str, status: str, measure: str, source: str,
+                    source_url: str, as_of: str, unlisted_status: str) -> tuple[pd.DataFrame, int]:
+    """Attach player-season salaries (columns season, team_id, name_key, player_name, salary_base_usd)
+    to the stint rows of ``df`` for the seasons present in ``sal``.
+
+    Match order: (season, team, name) -> that team's stint; else (season, name) unique -> the
+    player's main stint that season (most games; method 'name_only_team_differs', because a
+    source may list one team per player-season); else a contract-only row at the listed team
+    (roster_status 'under_contract_no_appearance_for_team'). Stints in covered seasons with no
+    listed salary get ``unlisted_status``.
+    """
+    df = df.copy()
+    df["name_key"] = [player_key(league, n) for n in df["player_name"]]
+    for c in ("salary_base_usd", "salary_match_method", "salary_measure", "salary_source", "salary_source_url", "salary_as_of"):
+        if c not in df:
+            df[c] = np.nan
+        df[c] = df[c].astype(object) if c != "salary_base_usd" else pd.to_numeric(df[c], errors="coerce")
+    cov = df.season.isin(set(sal.season)) & (df.league == league)
+    df.loc[cov, "contract_data_status"] = unlisted_status
+    stints = df[cov]
+    by_team = {(r.season, r.team_id, r.name_key): i for i, r in stints.iterrows()}
+    main_idx = {}
+    for k, g in stints.assign(_g=stints.games_played.fillna(0)).sort_values("_g", ascending=False).groupby(["season", "name_key"]):
+        if g.player_id.nunique() == 1:
+            main_idx[k] = g.index[0]
+    add = []
+    for r in sal.itertuples():
+        i = by_team.get((r.season, r.team_id, r.name_key))
+        method = "team+name"
+        if i is None:
+            i = main_idx.get((r.season, r.name_key))
+            method = "name_only_team_differs"
+        if i is not None:
+            if pd.isna(df.at[i, "salary_base_usd"]):
+                df.at[i, "salary_base_usd"] = r.salary_base_usd
+                df.at[i, "salary_match_method"] = method
+            else:  # second listing for the same stint: sum and flag
+                df.at[i, "salary_base_usd"] += r.salary_base_usd
+                df.at[i, "salary_match_method"] = "summed_multiple_listings"
+            df.at[i, "contract_data_status"] = status
+            continue
+        y0 = int(str(r.season)[:4])
+        add.append({"league": league, "season": r.season, "season_start_year": y0,
+                    "season_end_year": y0 + (1 if league == "PWHL" else 0), "team_id": r.team_id,
+                    "player_id": f"salary-only-{r.name_key.replace(' ', '-')}",
+                    "player_id_source": f"{source} name key (no stats match)", "player_name": r.player_name,
+                    "games_played": 0, "games_started": 0, "roster_status": "under_contract_no_appearance_for_team",
+                    "salary_base_usd": r.salary_base_usd, "salary_match_method": "unmatched_contract_only_row",
+                    "contract_data_status": status})
+    if add:
+        df = pd.concat([df, pd.DataFrame(add)], ignore_index=True)
+    rep = df.contract_data_status == status
+    df.loc[rep, "salary_measure"] = measure
+    df.loc[rep, "salary_source"] = source
+    df.loc[rep, "salary_source_url"] = source_url
+    df.loc[rep, "salary_as_of"] = as_of
+    log.info("%s salaries (%s): %d listed, %d stint rows with salary, %d contract-only rows", league, source, len(sal),
+             int(rep.sum()) - len(add), len(add))
+    return df.drop(columns=["name_key"]), len(add)
 
 
 # ===========================================================================
@@ -245,21 +309,34 @@ def collect_wnba(ts: pd.DataFrame, refresh: bool) -> tuple[pd.DataFrame, list[di
     df["position_group"] = df["position"].map(lambda p: None if not isinstance(p, str) else
                                               ("G" if p.startswith("G") else "F" if p.startswith("F") else "C" if p.startswith("C") else None))
 
-    # contracts (manual only)
-    manual = wnba_manual_contracts()
+    # salaries: Spotrac player earnings via the CC BY 4.0 Mendeley dataset (2018-2023)
     df["contract_data_status"] = "not_collected_no_permitted_automated_source"
+    try:
+        sal, meta = wnba_mendeley_salaries(refresh)
+        sal = sal[sal.season.isin(set(df.season))]
+        df, _ = attach_salaries(df, sal, "WNBA", status="reported_spotrac_via_mendeley",
+                                measure="annual salary earnings per Spotrac player rankings (prorated for partial-season/hardship contracts)",
+                                source="Spotrac via Mendeley Data (CC BY 4.0)", source_url=meta["doi_url"], as_of=meta["as_of"],
+                                unlisted_status="not_listed_in_source")
+        for ssn, tid in sal[["season", "team_id"]].drop_duplicates().itertuples(index=False):
+            prov.append({"league": "WNBA", "team_id": tid, "season": ssn, "dataset": "player_season_data",
+                         "variables": "salary_base_usd",
+                         "source_organization": "Spotrac (via Mendeley Data dataset 38wkcb4pwb v1, CC BY 4.0)",
+                         "source_url": meta["file_url"], "retrieval_timestamp_utc": meta["retrieved"],
+                         "source_update_date": meta["as_of"], "value_origin": "direct",
+                         "quality_notes": "Annual earnings as listed by Spotrac (accessed by the dataset authors 2024-04-28); one team per player-season.",
+                         "verification_status": "secondary_source"})
+    except Exception as exc:
+        log.error("WNBA Mendeley salary dataset unavailable: %s", exc)
+    # optional manual file (e.g. 2024+ salaries from a source you are licensed to use)
+    manual = wnba_manual_contracts()
     if manual is not None:
-        df["name_key"] = [player_key(lg, n) for lg, n in zip(df["league"], df["player_name"])]
         m = manual.rename(columns={"salary_usd": "salary_base_usd"})
-        df = df.merge(m[["season", "team_id", "name_key", "salary_base_usd", "salary_measure", "contract_start_year",
-                         "contract_end_year", "contract_type", "guaranteed_usd", "free_agent_status_next",
-                         "source_organization", "source_url", "source_as_of_date"]]
-                      .rename(columns={"source_organization": "salary_source", "source_url": "salary_source_url",
-                                       "source_as_of_date": "salary_as_of"}),
-                      on=["season", "team_id", "name_key"], how="left")
-        df.loc[df.salary_base_usd.notna(), "contract_data_status"] = "manual_import"
-        df = df.drop(columns=["name_key"])
-        log.info("WNBA manual contracts merged: %d matched rows", df.salary_base_usd.notna().sum())
+        for ssn, g in m.groupby("season"):
+            g = g.assign(name_key=[player_key("WNBA", n) for n in g.player_name])
+            df, _ = attach_salaries(df, g, "WNBA", status="manual_import", measure=g.salary_measure.iloc[0],
+                                    source=g.source_organization.iloc[0], source_url=g.source_url.iloc[0],
+                                    as_of=g.source_as_of_date.iloc[0], unlisted_status="not_listed_in_source")
     return df, prov
 
 
@@ -359,52 +436,12 @@ def collect_pwhl(ts: pd.DataFrame, refresh: bool) -> tuple[pd.DataFrame, list[di
     df["contract_data_status"] = "not_reported"
     try:
         sal, meta = pwhlpa_salaries(refresh)
-        df["name_key"] = [player_key(lg, n) for lg, n in zip(df["league"], df["player_name"])]
-        sal_season = sal.season.iloc[0]
-        # match on (team, name); fall back to name-only when unique in the league-season
-        m1 = sal.merge(df[df.season == sal_season][["team_id", "name_key", "player_id"]], on=["team_id", "name_key"], how="left")
-        unmatched = m1.player_id.isna()
-        name_only = df[df.season == sal_season].groupby("name_key").player_id.agg(lambda x: x.iloc[0] if len(set(x)) == 1 else None)
-        m1.loc[unmatched, "player_id"] = m1.loc[unmatched, "name_key"].map(name_only)
-        m1["salary_match_method"] = np.where(~unmatched, "team+name", np.where(m1.player_id.notna(), "name_only", "unmatched"))
-        # salary belongs to the team listed by the PWHLPA (team at publication)
-        salmap = m1.dropna(subset=["player_id"]).set_index(["player_id", "team_id"])
-        sel = (df.season == sal_season)
-        for i in df.index[sel]:
-            k = (df.at[i, "player_id"], df.at[i, "team_id"])
-            if k in salmap.index:
-                rowm = salmap.loc[k]
-                rowm = rowm.iloc[0] if isinstance(rowm, pd.DataFrame) else rowm
-                df.at[i, "salary_base_usd"] = rowm.salary_base_usd
-                df.at[i, "salary_match_method"] = rowm.salary_match_method
-                df.at[i, "contract_data_status"] = "reported_pwhlpa"
-            else:
-                df.at[i, "contract_data_status"] = "not_listed_in_pwhlpa_guide"
-        # PWHLPA-listed players with no 2025-26 appearance row for that team -> add contract-only rows
-        extra = m1[m1.player_id.isna() | ~m1.set_index(["player_id", "team_id"]).index.isin(
-            df[sel].set_index(["player_id", "team_id"]).index)]
-        add = []
-        for e in extra.itertuples():
-            pid = e.player_id if isinstance(e.player_id, str) else f"pwhlpa-{e.name_key.replace(' ', '-')}"
-            add.append({"league": "PWHL", "season": sal_season, "season_start_year": int(sal_season[:4]),
-                        "season_end_year": int(sal_season[:4]) + 1, "team_id": e.team_id, "player_id": pid,
-                        "player_id_source": "PWHL/HockeyTech player_id (via fastRhockey)" if isinstance(e.player_id, str) else "pwhlpa_name_key (no stats match)",
-                        "player_name": e.player_name, "first_name": e.first_name, "last_name": e.last_name,
-                        "games_played": 0, "games_dressed": 0, "games_started": 0,
-                        "roster_status": "under_contract_no_appearance_for_team",
-                        "salary_base_usd": e.salary_base_usd, "salary_match_method": e.salary_match_method,
-                        "contract_data_status": "reported_pwhlpa"})
-        if add:
-            df = pd.concat([df, pd.DataFrame(add)], ignore_index=True)
-        df.loc[df.contract_data_status == "reported_pwhlpa", "salary_measure"] = "base salary (excludes bonuses, incentives, housing)"
-        df.loc[df.contract_data_status == "reported_pwhlpa", "salary_source"] = "PWHLPA Player Salary Guide"
-        df.loc[df.contract_data_status == "reported_pwhlpa", "salary_source_url"] = meta["url"]
-        df.loc[df.contract_data_status == "reported_pwhlpa", "salary_as_of"] = meta["as_of"]
-        df = df.drop(columns=["name_key"])
-        log.info("PWHLPA salaries: %d listed, %d matched to stats rows, %d contract-only rows",
-                 len(sal), int((m1.salary_match_method != "unmatched").sum()), len(add))
+        df, _ = attach_salaries(df, sal, "PWHL", status="reported_pwhlpa",
+                                measure="base salary (excludes bonuses, incentives, housing)",
+                                source="PWHLPA Player Salary Guide", source_url=meta["url"], as_of=meta["as_of"],
+                                unlisted_status="not_listed_in_pwhlpa_guide")
         for tid in sal.team_id.dropna().unique():
-            prov.append({"league": "PWHL", "team_id": tid, "season": sal_season, "dataset": "player_season_data",
+            prov.append({"league": "PWHL", "team_id": tid, "season": sal.season.iloc[0], "dataset": "player_season_data",
                          "variables": "salary_base_usd", "source_organization": "PWHL Players' Association (PWHLPA)",
                          "source_url": meta["url"], "retrieval_timestamp_utc": meta["retrieved"],
                          "source_update_date": meta["as_of"], "value_origin": "direct",
@@ -575,7 +612,7 @@ def main() -> None:
         snap, sp = collect_snapshot(allp, args.refresh)
         prov += sp
         if not snap.empty:
-            upsert_csv(snap, settings.EXPORTS_DIR / "current_roster_snapshot.csv",
+            upsert_csv(snap, settings.PROCESSED_DIR / "current_roster_snapshot.csv",
                        ["league", "snapshot_team_id", "player_name"], replace_scope={"league": leagues})
     record_provenance(prov, SCRIPT)
     log.info("done: %d player-team-season rows", len(df))

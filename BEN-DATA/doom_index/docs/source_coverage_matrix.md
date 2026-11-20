@@ -15,6 +15,7 @@ Status as of 2026-11-19. Sources were checked directly before any collector was 
 | Spotrac | spotrac.com/wnba/… | HTTP 403 to scripted client | ❌ | access denied; not bypassed |
 | PWHL HockeyTech stats feed | lscluster.hockeytech.com/feed/… | the key in the URL is a client key embedded in thepwhl.com, not one issued to this project | ❌ (direct) | not used directly; the published fastRhockey dataset (built from this feed) is used instead |
 | sportsdataverse fastRhockey-pwhl-data | github.com/sportsdataverse/fastRhockey-pwhl-data | 200; MIT licence | ✅ | PWHL schedules/results, rosters (birth dates, positions), per-game player/goalie box scores incl. TOI |
+| Mendeley Data: "Annual salaries of athletes from 10 professional sports (2014–2023)" | doi.org/10.17632/38wkcb4pwb.1 | 200 via public API; CC BY 4.0 | ✅ | WNBA player salary earnings 2018–2023 (republished from Spotrac's rankings, accessed 2024-04-28); used for 2021–2023 |
 | PWHLPA Player Salary Guide | pwhlpa.com/salary-guide (+ PDF) | 200; site notice: no duplication/redistribution | ✅ | official 2025-26 base salaries. Raw PDF kept in git-ignored cache; see README "Redistribution" |
 | Wikipedia (MediaWiki API) | en.wikipedia.org/w/api.php | 200; CC BY-SA | 🟡 | draft order/ownership & trade footnotes, PWHL standings cross-check, current rosters, PWHL contract terms. Crowd-edited → every row stores the revision permalink and is marked `secondary_unverified` |
 | Front Office Sports / Daily Faceoff / Just Women's Sports / Boardroom / Winsidr | various | 200 | 🟡 (manual) | CBA parameters not published in an official machine-readable form; each value cites its article |
@@ -35,7 +36,7 @@ Status as of 2026-11-19. Sources were checked directly before any collector was 
 | participation (GP, GS, MIN / TOI) | BBRef totals | 2021–2026 | per-game box scores | all | ✅ |
 | box-score production | BBRef totals | 2021–2026 | box scores (G, A, P, SOG, hits, blocks, PIM, +/-, FO) | all | ✅ |
 | advanced / impact | BBRef PER, TS%, USG%, ORtg/DRtg, Win Shares | 2021–2026 | — | — | ❌ PWHL: no credible public GAR/xG impact metric collected (goalie SV%, GAA computed) |
-| player salary | none permitted (manual import hook) | — | PWHLPA guide | 2025-26 only | ❌ WNBA; 🟡 PWHL single season, base salary only |
+| player salary | Spotrac earnings via Mendeley (CC BY 4.0) + manual import hook | 2021–2023 | PWHLPA guide | 2025-26 only | 🟡 WNBA 2021–23 (cash earnings, one team per player-season; 2024+ missing); 🟡 PWHL single season, base salary only |
 | contract term / expiry / FA status | none | — | Wikipedia transaction tables | signings since 2025 offseason | ❌ WNBA; 🟡 PWHL lower-bound counts |
 | draft selections | Wikipedia (✓ BBRef pick+name) | 2016–2026 | Wikipedia | 2023–2026 | ✅ |
 | original owner vs. selecting team, trade notes | Wikipedia "(from X)" + footnotes | 2016–2026 | Wikipedia | 2024–2026 (no traded picks recorded for 2023) | 🟡 secondary source, verbatim notes kept |
@@ -43,6 +44,6 @@ Status as of 2026-11-19. Sources were checked directly before any collector was 
 | draftee career outcomes | BBRef career totals | 2016–2026 drafts | project player data | 2023–2025 drafts | ✅ raw stats only; no composite outcome defined |
 | future pick inventory | Wikipedia 2027 draft (post-lottery order) | 2027 | traded picks only | none found | 🟡 WNBA next draft only; ❌ 2028+; PWHL not available |
 | salary cap / CBA parameters | WNBA.com (2026), press (2021–2025) | 2021–2026 | press / PWHLPA | 2023-24 → 2026-27 | 🟡 some years `calculated_unverified` (3% escalation) |
-| team payroll, cap space, concentration | — | — | aggregated PWHLPA | 2025-26 | ❌ WNBA; 🟡 PWHL single season (77–93% of roster covered) |
+| team payroll, cap space, concentration | aggregated Spotrac/Mendeley | 2021–2023 | aggregated PWHLPA | 2025-26 | 🟡 WNBA payroll is cash earned, so payroll/cap runs 0.78–1.09; 🟡 PWHL single season (77–93% of roster covered) |
 | current roster snapshot | Wikipedia roster templates | Nov 2026 | Wikipedia team articles | 2026-27 preseason | 🟡 dated, crowd-edited; WNBA reflects end-of-season rosters |
 | organisational events (coach/GM changes, ownership) | — | — | — | — | ❌ not yet collected (optional/secondary in the brief; Wikipedia season pages have "Coaching changes" / "Front office changes" tables that could be added) |

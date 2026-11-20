@@ -17,7 +17,8 @@ CONFIG_DIR = ROOT / "config"
 DATA_DIR = ROOT / "data"
 RAW_DIR = DATA_DIR / "raw"            # untouched downloads / API responses (cache)
 PROCESSED_DIR = DATA_DIR / "processed"  # parsed, source-specific intermediate tables
-EXPORTS_DIR = DATA_DIR / "exports"      # the primary analysis-ready CSVs
+EXPORTS_DIR = DATA_DIR / "exports"      # the five normalised tables required by the brief
+FINAL_DIR = DATA_DIR / "final"          # the two analysis-ready CSVs (one per league)
 MANUAL_DIR = RAW_DIR / "manual"         # optional user-supplied files (see README)
 LOG_DIR = ROOT / "logs"
 DOCS_DIR = ROOT / "docs"
@@ -43,6 +44,7 @@ THROTTLE_SECONDS = {
     "github": 0.5,
     "fastrhockey": 0.5,
     "pwhlpa": 2.0,
+    "mendeley": 2.0,
     "default": 2.0,
 }
 # Cached raw responses are reused unless older than this (None = reuse forever

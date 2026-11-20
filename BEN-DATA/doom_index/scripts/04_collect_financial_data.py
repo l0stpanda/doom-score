@@ -9,7 +9,7 @@ WHAT IT COLLECTS
     * contract_transactions.csv - PWHL signings / extensions with contract
       term, parsed from Wikipedia season articles (secondary source), with the
       inferred contract season span.
-    * cba_parameters copy (data/exports/league_cba_parameters.csv).
+    * cba_parameters copy (data/processed/league_cba_parameters.csv).
 
 LEAGUES / SEASONS
     WNBA 2021-2026 seasons + current snapshot; PWHL 2023-24..2025-26 + 2026-27 snapshot.
@@ -189,7 +189,7 @@ def main() -> None:
     args = base_argparser(__doc__.splitlines()[0]).parse_args()
     leagues = ["WNBA", "PWHL"] if args.league == "both" else [args.league]
     cba = pd.read_csv(settings.CBA_PARAMETERS_CSV, dtype=str)
-    write_csv(cba, settings.EXPORTS_DIR / "league_cba_parameters.csv")
+    write_csv(cba, settings.PROCESSED_DIR / "league_cba_parameters.csv")
     ts = pd.read_csv(settings.EXPORTS_DIR / "team_season_data.csv", dtype={"season": str})
     players = pd.read_csv(settings.EXPORTS_DIR / "player_season_data.csv", dtype={"season": str}, low_memory=False)
     prov = []
@@ -213,7 +213,8 @@ def main() -> None:
         if r.league == "WNBA":
             cap, vs, regime = cba_lookup(cba, "WNBA", r.season, "team_salary_cap")
             df.at[i, "team_salary_cap"], df.at[i, "cap_value_verification"], df.at[i, "cba_regime"] = cap, vs, regime
-            df.at[i, "cap_measure"] = "hard cap on total team salary (WNBA CBA)" if cap else None
+            df.at[i, "cap_measure"] = ("hard cap on total team salary (WNBA CBA); reported payroll is Spotrac cash "
+                                       "earnings (incl. waived/prorated players), so share of cap is approximate") if cap else None
         else:
             req, vs, regime = cba_lookup(cba, "PWHL", r.season, "team_average_salary_requirement")
             mn, _, _ = cba_lookup(cba, "PWHL", r.season, "min_base_salary")
@@ -237,7 +238,7 @@ def main() -> None:
         ct, cprov = pwhl_contract_transactions(args.refresh)
         prov += cprov
         if not ct.empty:
-            upsert_csv(ct, settings.EXPORTS_DIR / "contract_transactions.csv", ["league", "tx_key"], replace_scope={"league": ["PWHL"]})
+            upsert_csv(ct, settings.PROCESSED_DIR / "contract_transactions.csv", ["league", "tx_key"], replace_scope={"league": ["PWHL"]})
             up = settings.PWHL_UPCOMING_SEASON["season"]
             valid = ct[ct.transaction_type != "termination"].dropna(subset=["contract_last_season"])
             latest = valid.sort_values("transaction_date").groupby("player_key").tail(1)  # most recent deal per player
@@ -246,7 +247,7 @@ def main() -> None:
             req, vs, regime = cba_lookup(cba, "PWHL", up, "team_average_salary_requirement")
             mn, _, _ = cba_lookup(cba, "PWHL", up, "min_base_salary")
             ros, _, _ = cba_lookup(cba, "PWHL", up, "roster_size")
-            snap_p = settings.EXPORTS_DIR / "current_roster_snapshot.csv"
+            snap_p = settings.PROCESSED_DIR / "current_roster_snapshot.csv"
             roster = pd.read_csv(snap_p, dtype=str) if snap_p.exists() else pd.DataFrame()
             if not roster.empty:
                 roster = roster[roster.league == "PWHL"].copy()

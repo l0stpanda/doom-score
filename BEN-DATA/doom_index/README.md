@@ -12,6 +12,18 @@ weights, or compute a Doom Score.
   regular-season game 2026-12-04 per the league's stats feed, Dec 5 per press). Current rosters, contracts and
   expansion-team information for 2026-27 are in the snapshot tables.
 
+## Final outputs
+
+**Start here:** [`data/final/`](data/final/README.md). It holds two analysis-ready CSVs, one per league, with the same
+columns (league-specific concepts excepted):
+
+* `data/final/wnba_team_doom_dataset.csv`: 76 WNBA team-seasons (2021–2026) + 15 current-roster rows (2027)
+* `data/final/pwhl_team_doom_dataset.csv`: 20 PWHL team-seasons (2023-24 → 2025-26) + 12 current-roster rows (2026-27)
+
+Column prefixes separate performance (`perf_`, which includes the Y-axis win %), next-season outcomes (`out_`) and
+candidate structural features (`age_`, `exp_`, `conc_`, `qual_`, `cont_`, `avail_`, `draft_`, `fin_`, `ctx_`).
+Everything else in `data/` is upstream: the normalised tables the final files are built from, plus the raw cache.
+
 ## Quick start
 
 ```bash
@@ -28,12 +40,12 @@ a cached re-run takes under a minute. Re-runs **upsert** on primary keys, so the
 
 | script | collects / builds | main outputs |
 |---|---|---|
-| `01_collect_team_data.py` | records, scoring, home/away, BBRef ratings & SOS, playoffs, lag features; cross-checks (ESPN for WNBA, Wikipedia standings for PWHL) | `team_season_data.csv`, `processed/playoff_series.csv`, `processed/pwhl_games.csv`, `processed/team_record_crosschecks.csv` |
-| `02_collect_player_data.py` | player-team-season stints: bio, age, experience, participation, production, advanced metrics, PWHLPA salaries; dated current rosters | `player_season_data.csv`, `current_roster_snapshot.csv` |
-| `03_collect_draft_data.py` | entry + expansion drafts, original owner vs. selecting team, trade notes, career outcomes, next-draft pick inventory | `draft_history.csv`, `draft_pick_inventory.csv`, `processed/draft_pick_transactions.csv` |
-| `04_collect_financial_data.py` | CBA parameters, team payroll aggregates where salaries exist, PWHL contract terms | `team_financials.csv`, `contract_transactions.csv`, `league_cba_parameters.csv` |
-| `05_build_team_features.py` | descriptive team aggregates (age, concentration, continuity, draft, finance, snapshot) — **no score / weights** | `team_features.csv`, `team_features_params.json` |
-| `06_validate_data.py` | 60+ data-quality checks, missingness, collection report | `logs/validation_results.csv`, `missingness_report.csv`, `docs/collection_report.md` |
+| `01_collect_team_data.py` | records, scoring, home/away, BBRef ratings & SOS, playoffs, lag features; cross-checks (ESPN for WNBA, Wikipedia standings for PWHL) | `team_season_data.csv`, `processed/team_record_crosschecks.csv` |
+| `02_collect_player_data.py` | player-team-season stints: bio, age, experience, participation, production, advanced metrics, PWHLPA salaries; dated current rosters | `player_season_data.csv`, `processed/current_roster_snapshot.csv` |
+| `03_collect_draft_data.py` | entry + expansion drafts, original owner vs. selecting team, trade notes, career outcomes, next-draft pick inventory | `draft_history.csv`, `processed/draft_pick_inventory.csv` |
+| `04_collect_financial_data.py` | CBA parameters, team payroll aggregates where salaries exist, PWHL contract terms | `team_financials.csv`, `processed/contract_transactions.csv`, `processed/league_cba_parameters.csv` |
+| `05_build_final_datasets.py` | the two final per-league CSVs (season rows + current-roster rows). **No score / weights** | `data/final/*.csv`, `data/final/feature_params.json` |
+| `06_validate_data.py` | ~90 data-quality checks (incl. final-file parity, ranges, outcome alignment), missingness, collection report | `logs/validation_results.csv`, `logs/missingness_report.csv`, `docs/collection_report.md` |
 
 Every collected value is traceable via `data/exports/team_season_sources.csv` (source URL, retrieval timestamp,
 source update date, direct vs. calculated, calculation definition, verification status). Each script's docstring lists exactly
@@ -59,8 +71,10 @@ what it collects, sources, formulas and limitations.
 
 ## Known gaps (see the coverage matrix for detail)
 
-1. **WNBA salaries and contracts are not collected.** No permitted automated source exists: Her Hoop Stats' robots.txt
-   disallows generic crawlers, Spotrac returns 403, and stats.wnba.com blocks scripted clients. None of these were
+1. **WNBA salaries cover 2021–2023 only.** They come from a CC BY 4.0 academic dataset on Mendeley Data that republishes
+   Spotrac's player salary rankings for 2018–2023. These are cash earnings, prorated for short contracts, not cap hits.
+   **WNBA 2024–2026 salaries and all WNBA contract terms are still missing:** Her Hoop Stats' robots.txt disallows
+   generic crawlers, Spotrac returns 403 to scripts, and stats.wnba.com blocks scripted clients. None of these were
    bypassed. If you have legitimate access, fill `data/raw/manual/wnba_player_contracts.csv` from the template
    (instructions in `data/raw/manual/README.md`) and re-run 02–06.
 2. **PWHL salaries cover 2025-26 only** (PWHLPA base salaries as of 2026-04-12; 77–93% of each team's players are listed).
@@ -79,6 +93,10 @@ what it collects, sources, formulas and limitations.
   `player_season_data.csv` / `team_financials.csv` are for this course project; check with the PWHLPA before publishing them.
 * Basketball-Reference data is © Sports Reference LLC. Requests are throttled per its published crawl limits. Do not
   republish bulk extracts.
+* WNBA 2021–2023 salaries: Sitthiyot, T. (2026), "Annual salaries of athletes from 10 professional sports (2014–2023)",
+  Mendeley Data, v1, doi:10.17632/38wkcb4pwb.1, licensed CC BY 4.0
+  (https://creativecommons.org/licenses/by/4.0/). The dataset credits Spotrac as its source. Changes made here: team codes
+  mapped to franchise ids, names matched to Basketball-Reference players, and values aggregated to team payrolls.
 * Wikipedia content is CC BY-SA. fastRhockey PWHL data is MIT-licensed and derived from official PWHL statistics
   ("Official statistics provided by Professional Women's Hockey League").
 
@@ -90,8 +108,9 @@ doom_index/
 ├── config/        settings.py, teams.csv, team_aliases.csv, player_name_aliases.csv, cba_parameters.csv
 ├── scripts/       01_…06_ collectors, run_all.py, lib/ (http cache, table parsers, store, sources, salaries)
 ├── data/raw/      cached raw responses + .meta.json sidecars (git-ignored); raw/manual/ for optional user files
-├── data/processed/ intermediate tables
-├── data/exports/  analysis-ready CSVs
+├── data/processed/ side tables read by 05/06 (roster snapshot, contracts, pick inventory, CBA parameters, cross-checks)
+├── data/exports/  the five normalised tables required by the brief (team, player, draft, financial, sources)
+├── data/final/    ★ the two analysis-ready per-league CSVs + README (column dictionary)
 ├── docs/          data dictionary, coverage matrix, generated collection report
 └── logs/          run logs, validation_results.csv
 ```

@@ -6,8 +6,6 @@ WHAT IT COLLECTS
       owner of the pick, trade annotations, and raw career production.
     * draft_pick_inventory.csv: known FUTURE picks (next draft) with original
       owner vs. current rights holder and any trade/condition notes.
-    * draft_pick_transactions.csv: draft-pick assets parsed from trade tables
-      (PWHL) - raw text preserved.
 
 LEAGUES / YEARS
     WNBA entry drafts 2016-2026 (+ 2027 as future inventory); WNBA expansion
@@ -502,11 +500,7 @@ def main() -> None:
         idf["inventory_key"] = [f"{y}-{r}-{p if pd.notna(p) else 'na'}-{h}-{o}" for y, r, p, h, o in
                                 zip(idf.draft_year, idf["round"], idf.pick_overall, idf.current_rights_holder_team_id, idf.original_owner_team_id)]
         idf = idf.drop_duplicates(["league", "inventory_key"])
-        upsert_csv(idf, settings.EXPORTS_DIR / "draft_pick_inventory.csv", ["league", "inventory_key"], replace_scope={"league": leagues})
-    if ptx:
-        pdf = pd.DataFrame(ptx)
-        pdf["tx_key"] = [f"{d}-{y}-{r}-{rc}-{i}" for i, (d, y, r, rc) in enumerate(zip(pdf.transaction_date, pdf.draft_year, pdf["round"], pdf.receiving_team_id))]
-        upsert_csv(pdf, settings.PROCESSED_DIR / "draft_pick_transactions.csv", ["league", "tx_key"], replace_scope={"league": ["PWHL"]})
+        upsert_csv(idf, settings.PROCESSED_DIR / "draft_pick_inventory.csv", ["league", "inventory_key"], replace_scope={"league": leagues})
     record_provenance(prov, SCRIPT)
     log.info("done: %d draft rows, %d future-pick rows, %d pick transactions", len(df), len(inv), len(ptx))
 

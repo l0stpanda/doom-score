@@ -1,6 +1,6 @@
 # Data dictionary
 
-All exports live in `data/exports/`. Conventions used everywhere:
+The five normalised tables live in `data/exports/`; side tables in `data/processed/`; the two final per-league files in `data/final/`. Conventions used everywhere:
 
 * **Missing values are empty (null), never zero.** Why a value is missing is recorded in a
   `*_status` column where it matters (`contract_data_status`, `financial_data_status`,
@@ -109,9 +109,9 @@ mid-season has one row per team containing only that team's games (`multi_team_s
 | gaa | goals_against × 60 / goalie TOI | goals per 60 |
 | playoff_g, playoff_mp, playoff_pts | WNBA playoff totals | |
 | playoff_games_dressed/played, playoff_goals/assists/points, playoff_time_on_ice_total_min | PWHL playoff totals | |
-| contract_data_status | `reported_pwhlpa`, `not_listed_in_pwhlpa_guide`, `not_reported` (season without disclosure), `not_collected_no_permitted_automated_source` (WNBA), `manual_import` | |
-| salary_base_usd | PWHL 2025-26 base salary (PWHLPA, as of 2026-04-12; excludes bonuses/incentives/housing) | USD |
-| salary_measure, salary_source, salary_source_url, salary_as_of, salary_match_method | provenance of the salary value; match method `team+name` | |
+| contract_data_status | `reported_pwhlpa`, `not_listed_in_pwhlpa_guide`, `reported_spotrac_via_mendeley` (WNBA 2021–23), `not_listed_in_source`, `not_reported` (season without disclosure), `not_collected_no_permitted_automated_source` (WNBA 2024+), `manual_import` | |
+| salary_base_usd | PWHL 2025-26: base salary (PWHLPA, as of 2026-04-12; excludes bonuses/incentives/housing). WNBA 2021–23: annual salary **earnings** listed by Spotrac (prorated for partial-season/hardship deals), via Mendeley Data CC BY 4.0. Read `salary_measure` before comparing the two | USD |
+| salary_measure, salary_source, salary_source_url, salary_as_of, salary_match_method | provenance of the salary value. Match methods: `team+name`; `name_only_team_differs` (the source lists one team per player-season, so the salary sits on the player's main stint); `summed_multiple_listings`; `unmatched_contract_only_row` (paid but no games, e.g. injured, suspended or draft-and-stash; `roster_status = under_contract_no_appearance_for_team`) | |
 | contract_start_year, contract_end_year, contract_type, guaranteed_usd, free_agent_status_next | only populated from the optional WNBA manual import | |
 | source_player_id, source_team_id | raw ids from fastRhockey/HockeyTech (PWHL) | |
 | on_season_roster_table | WNBA: player appeared in the team page's roster table | bool |
@@ -145,7 +145,7 @@ Grain: one row per draft selection. Key: `league, draft_year, selection_key`. Sc
 
 No composite career-outcome score is defined yet.
 
-## `draft_pick_inventory.csv`
+## `processed/draft_pick_inventory.csv`
 
 Known future picks for the next draft. Key: `league, inventory_key`.
 
@@ -182,7 +182,7 @@ Grain: one row per team per season (`record_type = season`) + one dated row per 
 | snapshot_roster_n, contract_team_basis | snapshot rows: roster size and how contracts were attributed to teams | |
 | n_known_contracts_covering_upcoming_season, known_contract_share_of_roster, n_known_contracts_expiring_after_2026-27, n_known_contracts_multi_year_beyond_upcoming | PWHL counts from `contract_transactions.csv` for players on the current roster — **lower bounds** | players |
 
-## `contract_transactions.csv`
+## `processed/contract_transactions.csv`
 
 PWHL signings/extensions with term, parsed from Wikipedia season articles (2025-26 and 2026-27). Key: `league, tx_key`.
 Fields: `transaction_type` (`free_agent_signing`, `extension`, `extension_term_remaining`, `draft_signing`,
@@ -190,7 +190,7 @@ Fields: `transaction_type` (`free_agent_signing`, `extension`, `extension_term_r
 `term_raw`, `term_years`, `contract_first_season` / `contract_last_season` (inferred: May–Nov signing → starts that
 autumn; Dec–Apr signing → season in progress; in-season extensions start next season), source URL and revision.
 
-## `current_roster_snapshot.csv`
+## `processed/current_roster_snapshot.csv`
 
 Dated roster of every active franchise (incl. 2026-27 PWHL expansion teams). Key: `league, snapshot_team_id, player_name`.
 Fields: `player_name` (+`_source`), `position`, `jersey_number`, `birth_date` (+`birth_date_source`: `snapshot_page`
@@ -199,25 +199,9 @@ or `historical_player_record`), `age_at_snapshot`, `age_integer_source` (PWHL pa
 `last_historical_team_id/season`, `snapshot_date`, `source_title`, `source_revision_id`, `source_url`, `retrieved_at_utc`.
 **Caveat:** WNBA roster templates in November largely reflect end-of-season rosters (before 2027 free agency).
 
-## `team_features.csv`
+## Final datasets (`data/final/`)
 
-Descriptive team-level aggregates (script `05_build_team_features.py`; thresholds in `team_features_params.json`).
-**No Doom Score, no weights, no standardisation.** Definitions are in the script docstring; summary:
-
-* roster: `roster_n_listed`, `roster_n_appeared`
-* age: `age_mean`, `age_median`, `age_playtime_weighted`, `pct_players_under_25`, `pct_players_over_30`,
-  `playtime_share_under_25/over_30`, `age_mean_top{5|8}_by_<minutes|win_shares|points|toi|goals>`, `age_coverage_share`
-* experience: `experience_mean`, `experience_playtime_weighted`
-* playing-time concentration: `playtime_hhi`, `skater_toi_hhi`, `goalie_top1_toi_share`, `n_meaningful_playtime`, `n_young_meaningful`
-* production concentration: `top{1,3,N}_share_<metric>`, `team_total_<metric>`, `per_minutes_weighted`,
-  `ws_per_40_minutes_weighted`, `goalie_save_pct_toi_weighted`, `n_above_league_median_<metric>` (+ the median used)
-* availability: `top_playtime_players_games_missed_share` = 1 − mean(GP)/team GP for the top-N single-team players by playing time
-* continuity: `continuity_playtime_share`, `retention_prior_playtime_share`, `n_new_players`, `n_departed_players`
-* draft (draft held before the season): `draft_n_picks_made`, `draft_n_round1_picks`, `draft_best_pick_overall`,
-  `draft_n_picks_acquired_by_trade`, `draft_n_own_picks_traded_away`, `n_own_draftees_appeared`, `own_draftee_playtime_share`
-* finance (copied): payroll fields above
-* snapshot rows only: `snapshot_*` (roster size, age, retention of latest-season playing time, incoming players),
-  `future_*` pick fields + `future_pick_inventory_completeness`, `fin_*` contract counts, `snapshot_caveat`
+The two per-league analysis files are documented column by column in [`data/final/README.md`](../data/final/README.md).
 
 ## `team_season_sources.csv` (provenance)
 
@@ -232,9 +216,8 @@ specialist source, not cross-checked) · `secondary_source` (press / specialist 
 
 ## Other exports
 
-* `league_cba_parameters.csv` — copy of `config/cba_parameters.csv` (league × season × parameter, value, units, measure,
+* `processed/league_cba_parameters.csv` — copy of `config/cba_parameters.csv` (league × season × parameter, value, units, measure,
   regime, source, verification).
-* `missingness_report.csv` — % null by dataset × league × column (from `06_validate_data.py`).
-* `team_features_params.json` — thresholds used by `05`.
-* `data/processed/` — intermediates: `pwhl_games.csv` (one row per PWHL game), `playoff_series.csv`,
-  `team_record_crosschecks.csv` (source-vs-source comparisons), `draft_pick_transactions.csv` (pick assets in PWHL trades).
+* `logs/missingness_report.csv` — % null by dataset × league × column (from `06_validate_data.py`).
+* `final/feature_params.json` — thresholds used by `05`.
+* `data/processed/team_record_crosschecks.csv` — source-vs-source comparisons of team records (read by `06`).

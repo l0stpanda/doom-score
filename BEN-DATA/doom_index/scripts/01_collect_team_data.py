@@ -15,8 +15,6 @@ LEAGUES / SEASONS
 
 OUTPUTS
     data/exports/team_season_data.csv            (key: league, season, team_id)
-    data/processed/playoff_series.csv            (key: league, season, round_number, team_a_id, team_b_id)
-    data/processed/pwhl_games.csv                (key: league, season, game_id)
     data/processed/team_record_crosschecks.csv   (source-vs-source comparisons)
     data/exports/team_season_sources.csv         (provenance rows, upserted)
 
@@ -119,6 +117,32 @@ def parse_wnba_playoffs(tables: dict, season: int) -> list[dict]:
         r["round_number"] = order[r["round_label"]]
         r["is_final"] = r["round_number"] == max(order.values())
     return out
+
+
+def wnba_franchise_first_seasons(refresh: bool) -> tuple[dict, str, str]:
+    """Franchise founding season from Basketball-Reference's franchise index.
+
+    Exception: franchises listed in config/teams.csv as starting inside the data
+    window (2025 Golden State, 2026 Portland/Toronto) use that season, because
+    BBRef groups the 2026 Portland Fire with the defunct 2000-02 Portland Fire.
+    """
+    res = bbref_page("/wnba/teams/", refresh)
+    t = bbref_tables(res.text).get("active")
+    out = {}
+    if t is not None:
+        for r in t.find("tbody").find_all("tr", class_="full_table"):
+            a = r.find("a")
+            code = _team_code((a["href"] + "2000.html") if a else None)
+            ymin = r.find(attrs={"data-stat": "year_min"})
+            if code and ymin:
+                fid = franchise_by_bbref(code) or {"SAS": "WNBA-LVA", "TUL": "WNBA-DAL"}.get(code)
+                if fid:
+                    out[fid] = int(ymin.get_text(strip=True))
+    reg = pd.read_csv(settings.TEAMS_CSV, dtype=str, keep_default_na=False)
+    for r in reg[reg.league == "WNBA"].itertuples():
+        if r.first_season_in_data_window and int(r.first_season_in_data_window) > min(settings.WNBA_CONTEXT_SEASONS):
+            out[r.franchise_id] = int(r.first_season_in_data_window)
+    return out, res.url, res.retrieved_at_utc
 
 
 def collect_wnba_season(season: int, refresh: bool) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
@@ -486,7 +510,6 @@ COLUMN_ORDER = [
 def main() -> None:
     args = base_argparser(__doc__.splitlines()[0]).parse_args()
     team_rows, series_rows, checks, prov = [], [], [], []
-    games_frames = []
     leagues = ["WNBA", "PWHL"] if args.league == "both" else [args.league]
 
     if "WNBA" in leagues:
@@ -500,7 +523,6 @@ def main() -> None:
         for s in settings.PWHL_SEASONS:
             log.info("PWHL %s", s["season"])
             g, url, retrieved = build_pwhl_games(s, args.refresh)
-            games_frames.append(g)
             rows = pwhl_team_rows(g, s)
             names = {}
             team_box, _ = fastrhockey_parquet("team_box", s["fastrhockey_season"], args.refresh)
@@ -528,6 +550,21 @@ def main() -> None:
                              "calculation_definition": "Series reconstructed from playoff games (game_type == 'playoffs'): pair of teams, wins per team; round = order of series in each team's playoff run."})
 
     df = pd.DataFrame(team_rows)
+    # franchise founding season (for franchise-age context)
+    first = {}
+    if "WNBA" in leagues:
+        first, furl, fret = wnba_franchise_first_seasons(args.refresh)
+        for fid in df[df.league == "WNBA"].team_id.unique():
+            prov.append({"league": "WNBA", "team_id": fid, "season": "all", "dataset": "team_season_data",
+                         "variables": "franchise_first_season", "source_organization": "Sports Reference LLC (Basketball-Reference)",
+                         "source_url": furl, "retrieval_timestamp_utc": fret, "value_origin": "direct",
+                         "quality_notes": "Founding season of the franchise incl. prior cities; 2025-26 expansion teams use config/teams.csv.",
+                         "verification_status": "single_source"})
+    reg = pd.read_csv(settings.TEAMS_CSV, dtype=str, keep_default_na=False)
+    for r in reg[reg.league == "PWHL"].itertuples():
+        if r.first_season_in_data_window:
+            first[r.franchise_id] = int(r.first_season_in_data_window[:4])
+    df["franchise_first_season"] = df.team_id.map(first)
     for c in ("points_for", "points_against", "points", "goals_for", "goals_against", "games_played", "wins"):
         if c not in df:
             df[c] = np.nan
@@ -561,14 +598,6 @@ def main() -> None:
 
     scope = {"league": leagues}
     upsert_csv(df, settings.EXPORTS_DIR / "team_season_data.csv", TEAM_KEYS, replace_scope=scope)
-    if not series.empty:
-        series = series.rename(columns={"winner_id": "team_a_id", "loser_id": "team_b_id"})
-        series["team_a_is_winner"] = True
-        upsert_csv(series, settings.PROCESSED_DIR / "playoff_series.csv",
-                   ["league", "season", "round_number", "team_a_id", "team_b_id"], replace_scope=scope)
-    if games_frames:
-        games = pd.concat(games_frames)
-        upsert_csv(games, settings.PROCESSED_DIR / "pwhl_games.csv", ["league", "season", "game_id"])
     if checks:
         ck = pd.DataFrame(checks)
         diffs = []

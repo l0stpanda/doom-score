@@ -12,7 +12,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 STEPS = ["01_collect_team_data.py", "02_collect_player_data.py", "03_collect_draft_data.py",
-         "04_collect_financial_data.py", "05_build_team_features.py", "06_validate_data.py"]
+         "04_collect_financial_data.py", "05_build_final_datasets.py", "06_validate_data.py"]
 
 
 def main() -> int:

@@ -9,3 +9,4 @@ logs/*.log
 logs/*.out
 __pycache__/
 *.pyc
+logs/_schema_snapshot.json
