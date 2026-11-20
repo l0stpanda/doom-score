@@ -1,0 +1,63 @@
+league,franchise_id,team,logo_url,team_id
+MLB,arizona-diamondbacks,Arizona Diamondbacks,https://www.mlbstatic.com/team-logos/109.svg,109
+MLB,athletics,Athletics,https://www.mlbstatic.com/team-logos/133.svg,133
+MLB,atlanta-braves,Atlanta Braves,https://www.mlbstatic.com/team-logos/144.svg,144
+MLB,baltimore-orioles,Baltimore Orioles,https://www.mlbstatic.com/team-logos/110.svg,110
+MLB,boston-red-sox,Boston Red Sox,https://www.mlbstatic.com/team-logos/111.svg,111
+MLB,chicago-cubs,Chicago Cubs,https://www.mlbstatic.com/team-logos/112.svg,112
+MLB,chicago-white-sox,Chicago White Sox,https://www.mlbstatic.com/team-logos/145.svg,145
+MLB,cincinnati-reds,Cincinnati Reds,https://www.mlbstatic.com/team-logos/113.svg,113
+MLB,cleveland-guardians,Cleveland Guardians,https://www.mlbstatic.com/team-logos/114.svg,114
+MLB,colorado-rockies,Colorado Rockies,https://www.mlbstatic.com/team-logos/115.svg,115
+MLB,detroit-tigers,Detroit Tigers,https://www.mlbstatic.com/team-logos/116.svg,116
+MLB,houston-astros,Houston Astros,https://www.mlbstatic.com/team-logos/117.svg,117
+MLB,kansas-city-royals,Kansas City Royals,https://www.mlbstatic.com/team-logos/118.svg,118
+MLB,los-angeles-angels,Los Angeles Angels,https://www.mlbstatic.com/team-logos/108.svg,108
+MLB,los-angeles-dodgers,Los Angeles Dodgers,https://www.mlbstatic.com/team-logos/119.svg,119
+MLB,miami-marlins,Miami Marlins,https://www.mlbstatic.com/team-logos/146.svg,146
+MLB,milwaukee-brewers,Milwaukee Brewers,https://www.mlbstatic.com/team-logos/158.svg,158
+MLB,minnesota-twins,Minnesota Twins,https://www.mlbstatic.com/team-logos/142.svg,142
+MLB,new-york-mets,New York Mets,https://www.mlbstatic.com/team-logos/121.svg,121
+MLB,new-york-yankees,New York Yankees,https://www.mlbstatic.com/team-logos/147.svg,147
+MLB,philadelphia-phillies,Philadelphia Phillies,https://www.mlbstatic.com/team-logos/143.svg,143
+MLB,pittsburgh-pirates,Pittsburgh Pirates,https://www.mlbstatic.com/team-logos/134.svg,134
+MLB,san-diego-padres,San Diego Padres,https://www.mlbstatic.com/team-logos/135.svg,135
+MLB,san-francisco-giants,San Francisco Giants,https://www.mlbstatic.com/team-logos/137.svg,137
+MLB,seattle-mariners,Seattle Mariners,https://www.mlbstatic.com/team-logos/136.svg,136
+MLB,st-louis-cardinals,St. Louis Cardinals,https://www.mlbstatic.com/team-logos/138.svg,138
+MLB,tampa-bay-rays,Tampa Bay Rays,https://www.mlbstatic.com/team-logos/139.svg,139
+MLB,texas-rangers,Texas Rangers,https://www.mlbstatic.com/team-logos/140.svg,140
+MLB,toronto-blue-jays,Toronto Blue Jays,https://www.mlbstatic.com/team-logos/141.svg,141
+MLB,washington-nationals,Washington Nationals,https://www.mlbstatic.com/team-logos/120.svg,120
+NHL,anaheim-ducks,Anaheim Ducks,https://assets.nhle.com/logos/nhl/svg/ANA_light.svg,24
+NHL,boston-bruins,Boston Bruins,https://assets.nhle.com/logos/nhl/svg/BOS_light.svg,6
+NHL,buffalo-sabres,Buffalo Sabres,https://assets.nhle.com/logos/nhl/svg/BUF_light.svg,7
+NHL,calgary-flames,Calgary Flames,https://assets.nhle.com/logos/nhl/svg/CGY_light.svg,20
+NHL,carolina-hurricanes,Carolina Hurricanes,https://assets.nhle.com/logos/nhl/svg/CAR_light.svg,12
+NHL,chicago-blackhawks,Chicago Blackhawks,https://assets.nhle.com/logos/nhl/svg/CHI_light.svg,16
+NHL,colorado-avalanche,Colorado Avalanche,https://assets.nhle.com/logos/nhl/svg/COL_light.svg,21
+NHL,columbus-blue-jackets,Columbus Blue Jackets,https://assets.nhle.com/logos/nhl/svg/CBJ_light.svg,29
+NHL,dallas-stars,Dallas Stars,https://assets.nhle.com/logos/nhl/svg/DAL_light.svg,25
+NHL,detroit-red-wings,Detroit Red Wings,https://assets.nhle.com/logos/nhl/svg/DET_light.svg,17
+NHL,edmonton-oilers,Edmonton Oilers,https://assets.nhle.com/logos/nhl/svg/EDM_light.svg,22
+NHL,florida-panthers,Florida Panthers,https://assets.nhle.com/logos/nhl/svg/FLA_light.svg,13
+NHL,los-angeles-kings,Los Angeles Kings,https://assets.nhle.com/logos/nhl/svg/LAK_light.svg,26
+NHL,minnesota-wild,Minnesota Wild,https://assets.nhle.com/logos/nhl/svg/MIN_light.svg,30
+NHL,montreal-canadiens,Montréal Canadiens,https://assets.nhle.com/logos/nhl/svg/MTL_light.svg,8
+NHL,nashville-predators,Nashville Predators,https://assets.nhle.com/logos/nhl/svg/NSH_light.svg,18
+NHL,new-jersey-devils,New Jersey Devils,https://assets.nhle.com/logos/nhl/svg/NJD_light.svg,1
+NHL,new-york-islanders,New York Islanders,https://assets.nhle.com/logos/nhl/svg/NYI_light.svg,2
+NHL,new-york-rangers,New York Rangers,https://assets.nhle.com/logos/nhl/svg/NYR_light.svg,3
+NHL,ottawa-senators,Ottawa Senators,https://assets.nhle.com/logos/nhl/svg/OTT_light.svg,9
+NHL,philadelphia-flyers,Philadelphia Flyers,https://assets.nhle.com/logos/nhl/svg/PHI_light.svg,4
+NHL,pittsburgh-penguins,Pittsburgh Penguins,https://assets.nhle.com/logos/nhl/svg/PIT_light.svg,5
+NHL,san-jose-sharks,San Jose Sharks,https://assets.nhle.com/logos/nhl/svg/SJS_light.svg,28
+NHL,seattle-kraken,Seattle Kraken,https://assets.nhle.com/logos/nhl/svg/SEA_light.svg,55
+NHL,st-louis-blues,St. Louis Blues,https://assets.nhle.com/logos/nhl/svg/STL_light.svg,19
+NHL,tampa-bay-lightning,Tampa Bay Lightning,https://assets.nhle.com/logos/nhl/svg/TBL_light.svg,14
+NHL,toronto-maple-leafs,Toronto Maple Leafs,https://assets.nhle.com/logos/nhl/svg/TOR_light.svg,10
+NHL,utah-mammoth,Utah Mammoth,https://assets.nhle.com/logos/nhl/svg/UTA_light.svg,68
+NHL,vancouver-canucks,Vancouver Canucks,https://assets.nhle.com/logos/nhl/svg/VAN_light.svg,23
+NHL,vegas-golden-knights,Vegas Golden Knights,https://assets.nhle.com/logos/nhl/svg/VGK_light.svg,54
+NHL,washington-capitals,Washington Capitals,https://assets.nhle.com/logos/nhl/svg/WSH_secondary_light.svg,15
+NHL,winnipeg-jets,Winnipeg Jets,https://assets.nhle.com/logos/nhl/svg/WPG_light.svg,52

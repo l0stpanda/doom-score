@@ -1,0 +1,15 @@
+column,plain_name,scale,used_by_mlb_model,used_by_nhl_model,note
+win_pct_percentile,Current standing,"within-league-season percentile, 0 = lowest, 100 = highest",yes,yes,Context only; drivers come from doom_drivers_long.csv
+win_pct_trailing_3_seasons_lpct,Record over the last 3 seasons,"within-league-season percentile, 0 = lowest, 100 = highest",no,yes,Context only; drivers come from doom_drivers_long.csv
+margin_per_game_lpct,Scoring margin per game,"within-league-season percentile, 0 = lowest, 100 = highest",no,yes,Context only; drivers come from doom_drivers_long.csv
+luck_lpct,Luck (wins above what the scoring margin implies),"within-league-season percentile, 0 = lowest, 100 = highest",no,yes,Context only; drivers come from doom_drivers_long.csv
+underlying_quality_lpct,Underlying quality (MLB: Pythagorean win %; NHL: Corsi shot share),"within-league-season percentile, 0 = lowest, 100 = highest",no,yes,Context only; drivers come from doom_drivers_long.csv
+roster_age_weighted_lpct,Roster age (weighted by playing time),"within-league-season percentile, 0 = lowest, 100 = highest",no,yes,Context only; drivers come from doom_drivers_long.csv
+star_concentration_lpct,Reliance on the top 3 players,"within-league-season percentile, 0 = lowest, 100 = highest",no,yes,Context only; drivers come from doom_drivers_long.csv
+draft_capital_lpct,Early draft picks (rounds 1-2),"within-league-season percentile, 0 = lowest, 100 = highest",no,yes,Context only; drivers come from doom_drivers_long.csv
+gm_tenure_lpct,GM tenure,"within-league-season percentile, 0 = lowest, 100 = highest",no,yes,Context only; drivers come from doom_drivers_long.csv
+coach_tenure_lpct,Manager / head coach tenure,"within-league-season percentile, 0 = lowest, 100 = highest",no,yes,Context only; drivers come from doom_drivers_long.csv
+spending_lpct,Payroll relative to the league (MLB only),"within-league-season percentile, 0 = lowest, 100 = highest",no,n/a (no NHL spending data),Context only; drivers come from doom_drivers_long.csv
+baserun_margin_lpct,Run margin expected from hits and walks (BaseRuns),within-league-season percentile (MLB only),no,n/a,Context only; drivers come from doom_drivers_long.csv
+second_half_margin_lpct,Second-half run margin,within-league-season percentile (MLB only),no,n/a,Context only; drivers come from doom_drivers_long.csv
+value_age_hitters_lpct,Age of the most productive hitters,within-league-season percentile (MLB only),no,n/a,Context only; drivers come from doom_drivers_long.csv

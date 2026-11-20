@@ -1,0 +1,30 @@
+{
+ "rows": 974,
+ "backtest": 788,
+ "live": 186,
+ "tests": {
+  "MLB": [
+   "2008",
+   "2023"
+  ],
+  "NHL": [
+   "2013",
+   "2022"
+  ]
+ },
+ "max_diff_vs_m2": 0.0,
+ "path_max_err_unclipped": 2.1316282072803006e-14,
+ "path_clipped": 1,
+ "intervals_missing": 240,
+ "bands": {
+  "('MLB', 'High')": 211,
+  "('MLB', 'Low')": 71,
+  "('MLB', 'Moderate')": 288,
+  "('NHL', 'High')": 143,
+  "('NHL', 'Low')": 51,
+  "('NHL', 'Moderate')": 208,
+  "('NHL', 'Very high')": 2
+ },
+ "missing_logo": [],
+ "drivers_rows": 6226
+}
