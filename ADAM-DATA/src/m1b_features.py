@@ -1,4 +1,4 @@
-"""Phase M1b MLB features (pre-registered in reports/m1b_preregistration.md). Decisions D82-D86.
+"""Phase M1b MLB features (pre-registered in reports/m1b_preregistration.md). Decisions D82-D86, D90 (value ages from MLB Stats API, not WAR).
 
 fetch(): MLB Stats API schedules (scores), team hitting/pitching totals, minor-league affiliates + standings.
          Cached under data/raw/<source>/ via fetch_phase1.get (never re-downloads).
@@ -23,12 +23,6 @@ SCHED = ("https://statsapi.mlb.com/api/v1/schedule?sportId=1&season={y}&gameType
 TOT = "https://statsapi.mlb.com/api/v1/teams/stats?season={y}&group={g}&stats=season&sportIds=1"
 MILB_TEAMS = "https://statsapi.mlb.com/api/v1/teams?sportIds=11,12,13,14&season={y}"
 MILB_STAND = "https://statsapi.mlb.com/api/v1/standings?leagueId={ids}&season={y}&standingsTypes=regularSeason"
-# Baseball-Reference team codes -> MLB Stats API team id (= franchise key, D03)
-BBREF = {"ANA": 108, "LAA": 108, "ARI": 109, "ATL": 144, "BAL": 110, "BOS": 111, "CHC": 112, "CHW": 145,
-         "CIN": 113, "CLE": 114, "COL": 115, "DET": 116, "FLA": 146, "MIA": 146, "HOU": 117, "KCR": 118,
-         "LAD": 119, "MIL": 158, "MIN": 142, "MON": 120, "WSN": 120, "NYM": 121, "NYY": 147, "OAK": 133,
-         "ATH": 133, "PHI": 143, "PIT": 134, "SDP": 135, "SEA": 136, "SFG": 137, "STL": 138, "TBD": 139,
-         "TBR": 139, "TEX": 140, "TOR": 141}
 
 
 def get(source, name, url):
@@ -125,23 +119,16 @@ def baseruns():
     return pd.concat(rows, ignore_index=True)
 
 
+VALUE_AGE_CHECKS = []
+
+
 def value_age():
-    out = []
-    for fn, who, filt in (("war_daily_bat.txt", "hitters", lambda d: d.pitcher == "N"),
-                          ("war_daily_pitch.txt", "pitchers", lambda d: d.index == d.index)):
-        d = pd.read_csv(os.path.join(RAW, "bbref_war", fn), low_memory=False)
-        d = d[(d.year_ID >= min(SEASONS)) & filt(d)].copy()
-        d["WAR"] = pd.to_numeric(d.WAR, errors="coerce")
-        d["age"] = pd.to_numeric(d.age, errors="coerce")
-        d = d[d.team_ID.isin(BBREF) & d.age.notna() & d.WAR.notna()]
-        d["team_id"] = d.team_ID.map(BBREF)
-        d["w"] = d.WAR.clip(lower=0)
-        g = d.groupby(["year_ID", "team_id"])
-        res = (g.apply(lambda x: np.average(x.age, weights=x.w) if x.w.sum() > 0 else np.nan, include_groups=False)
-               .rename(f"value_age_{who}").reset_index())
-        res[f"pos_war_{who}"] = g.w.sum().to_numpy()
-        out.append(res.rename(columns={"year_ID": "season_start_year"}))
-    return out[0].merge(out[1], on=["season_start_year", "team_id"], how="outer")
+    """D90: value-weighted ages from MLB Stats API player stints (batting runs above average / FIP runs above
+    average); replaces the Baseball-Reference WAR version (deleted)."""
+    import m1b_value_age
+    res, checks = m1b_value_age.build()
+    VALUE_AGE_CHECKS[:] = checks
+    return res
 
 
 def farm():
@@ -191,10 +178,11 @@ def build():
         ("BaseRuns margin vs actual margin, Pearson r", float(base.baserun_margin.corr(base.actual_margin_tot))),
         ("farm affiliates per org, min", float(base.affiliates.min())),
         ("farm affiliates per org, median", float(base.affiliates.median())),
-    ] + [(f"coverage {c}", float(base[c].notna().mean())) for c in NEW]
+    ] + [(f"value age: {k}", v) for k, v in VALUE_AGE_CHECKS] + [
+        (f"coverage {c}", float(base[c].notna().mean())) for c in NEW]
     pd.DataFrame(checks, columns=["check", "value"]).to_csv(CHECKS, index=False)
-    keep = KEY + NEW + [f"{c}_lpct" for c in NEW] + ["second_half_games", "affiliates", "pos_war_hitters",
-                                                     "pos_war_pitchers"]
+    keep = KEY + NEW + [f"{c}_lpct" for c in NEW] + ["second_half_games", "affiliates", "pos_value_hitters",
+                                                     "pos_value_pitchers"]
     base[keep].to_csv(OUT, index=False)
     print(pd.DataFrame(checks, columns=["check", "value"]).to_string())
     print(base.groupby("season_start_year")[NEW].apply(lambda x: x.notna().mean()).loc[[2000, 2010, 2020, 2026]])
