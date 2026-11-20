@@ -88,10 +88,15 @@ def run_league(df, run, league, start=None):
     for name, d in models.items():
         m = bt.metrics(d)
         diff = bt.bootstrap_diff(d, models["B1 OLS pct"], n_boot=N_BOOT) if name != "B1 OLS pct" else {}
+        # per-season bootstrap (block = 1), kept for comparison with the original M1 report (D72)
+        diff1 = (bt.bootstrap_diff(d, models["B1 OLS pct"], n_boot=N_BOOT, block=1)
+                 if name != "B1 OLS pct" else {})
         row = {"run": run, "league": league, "model": name, "test_first": min(tests), "test_last": max(tests),
                "n_test_rows": len(d), **m}
         for k, (v, lo, hi) in diff.items():
             row.update({f"d_{k}": v, f"d_{k}_lo": lo, f"d_{k}_hi": hi})
+        for k, (v, lo, hi) in diff1.items():
+            row.update({f"s_{k}_lo": lo, f"s_{k}_hi": hi})
         rows.append(row)
     preds = pd.concat([d.assign(run=run, model=n) for n, d in models.items()], ignore_index=True)
     coefs = pd.concat([k_en.assign(model="Elastic net"), k_l1.assign(model="L1 logistic")]).assign(run=run)
@@ -104,27 +109,35 @@ def fmt(v, nd=3):
     return "—" if pd.isna(v) else f"{v:.{nd}f}"
 
 
-def fdiff(r, k, nd=3):
+def fdiff(r, k, nd=3, pre="d"):
     v = r.get(f"d_{k}")
     if pd.isna(v):
         return "—"
-    return f"{v:+.{nd}f} [{r[f'd_{k}_lo']:+.{nd}f}, {r[f'd_{k}_hi']:+.{nd}f}]"
+    return f"{v:+.{nd}f} [{r[f'{pre}_{k}_lo']:+.{nd}f}, {r[f'{pre}_{k}_hi']:+.{nd}f}]"
+
+
+def excl0(r, k, pre="d"):
+    lo, hi = r[f"{pre}_{k}_lo"], r[f"{pre}_{k}_hi"]
+    return "yes" if lo > 0 or hi < 0 else "**no**"
 
 
 FINDINGS = (
+    "Intervals below are from the moving-block bootstrap (D72). "
     "**MLB: the features do not beat current standing alone.** The elastic net's per-season Spearman is 0.404 vs "
-    "0.414 for B1 (Δ −0.010, interval −0.049 to +0.024), its MAE is 0.3 points worse, and the L1 logistic is "
+    "0.414 for B1 (Δ −0.010, interval −0.064 to +0.026), its MAE is 0.3 points worse, and the L1 logistic is "
     "slightly worse than B1 on AUC and Brier. The regularization agrees: most MLB coefficients are exactly 0 in "
     "most folds, and only run margin (−5.1 doom points per SD) is used every time. In MLB, doom is almost entirely "
     "\"how good are you now\", and run margin is a slightly better measure of that than the record. "
-    "**NHL: the features help, clearly but modestly.** Elastic net Spearman 0.607 vs 0.519 (+0.088 [+0.038, "
-    "+0.148]), MAE −1.2 points [−2.1, −0.3], AUC +0.033 [+0.007, +0.060]. The L1 logistic gains less, and its "
-    "Brier interval includes 0. The NHL signal is stable: Corsi, margin, trailing record, roster age (older → more "
+    "**NHL: the features help, clearly but modestly, and the gain survives the block bootstrap.** Elastic net "
+    "Spearman 0.607 vs 0.519 (+0.088 [+0.048, +0.178]), MAE −1.2 points [−2.4, −1.0], AUC +0.033 [+0.007, "
+    "+0.064]: all three intervals still exclude 0. The L1 logistic gains less; its Spearman interval excludes 0, "
+    "its AUC and Brier intervals do not. The NHL signal is stable: Corsi, margin, trailing record, roster age (older → more "
     "doom, +2.9), star concentration and draft capital never change sign across folds. Top-5 hit rates (about 2 of "
     "5 in both leagues) do not improve significantly anywhere. Training NHL on 2008+ only is not better (Spearman "
     "0.614 vs 0.634 on 2016–22), so the fill-plus-indicator default stays. **Caveats:** there are only 16 MLB and "
-    "10 NHL test seasons, and labels of adjacent seasons share up to two future seasons, so the season-bootstrap "
-    "intervals are probably somewhat too narrow.")
+    "10 NHL test seasons. Blocks of 3 respect the label overlap, but with 10 NHL seasons there are only 8 distinct "
+    "blocks and the first/last seasons are drawn less often, so the intervals are coarse and can be asymmetric "
+    "around the point estimate (e.g. NHL MAE).")
 
 
 def main():
@@ -166,24 +179,35 @@ def main():
     L.append("# Phase M1: walk-forward backtest, baselines, main models\n")
     ranges = "; ".join(f"{r}: test {min(i['tests'])}–{max(i['tests'])} ({len(i['tests'])} seasons)"
                        for r, i in infos.items())
-    L.append(f"Data `mlb_nhl_model_slim.csv` (+ `personnel_lead_vacant`, D62). Walk-forward: test season T is "
+    L.append(f"Data `mlb_nhl_model_slim.csv` (incl. `personnel_lead_vacant`, `win_pct_trailing_3_seasons_lpct`; "
+             f"D62, D71). Walk-forward: test season T is "
              f"predicted from seasons ≤ T−3 (asserted); preprocessing in a Pipeline; tuning on an inner time split "
              f"with the same gap (D64–D66). {ranges}. Dropped: MLB `underlying_quality_lpct` (spec; Spearman "
              f"{rho_uq:.2f} with margin, D63), NHL `spending_lpct` (all missing). Missing indicators are created "
              f"per fold for features missing in >1% of training rows (D67). Δ = model − B1, 95% interval from "
-             f"{N_BOOT} bootstrap draws of test seasons. Top-5 = mean bottom-quarter hits among each season's 5 "
+             f"a moving-block bootstrap over test seasons ({N_BOOT} draws, blocks of {bt.BLOCK} consecutive seasons, "
+             f"D72). Top-5 = mean bottom-quarter hits among each season's 5 "
              f"most-doomed predictions (of 5).\n")
     L.append("| League | Model | Spearman mean | Spearman pooled | MAE | R² | AUC | Brier | Top-5 |")
     L.append("|---|---|---|---|---|---|---|---|---|")
     for _, r in met.iterrows():
         L.append(f"| {r.run} | {r.model} | {fmt(r.spearman_mean)} | {fmt(r.spearman_pooled)} | {fmt(r.mae, 1)} | "
                  f"{fmt(r.r2)} | {fmt(r.auc)} | {fmt(r.brier)} | {fmt(r.top5_hits, 2)} |")
-    L.append("\n**Difference from B1 [95% CI]**\n")
+    L.append(f"\n**Difference from B1 [95% CI, moving-block bootstrap, block = {bt.BLOCK}]**\n")
     L.append("| League | Model | ΔSpearman mean | ΔMAE | ΔAUC | ΔBrier | ΔTop-5 |")
     L.append("|---|---|---|---|---|---|---|")
     for _, r in met[met.model != "B1 OLS pct"].iterrows():
         L.append(f"| {r.run} | {r.model} | {fdiff(r, 'spearman_mean')} | {fdiff(r, 'mae', 1)} | {fdiff(r, 'auc')} | "
                  f"{fdiff(r, 'brier')} | {fdiff(r, 'top5_hits', 2)} |")
+    L.append("\n**Block vs per-season bootstrap** (Δ vs B1 [95% CI]; \"excl. 0\" = interval excludes 0)\n")
+    L.append("| League | Model | Metric | Per-season (block 1) | Excl. 0 | Moving block (3) | Excl. 0 |")
+    L.append("|---|---|---|---|---|---|---|")
+    for _, r in met[met.model.isin(["Elastic net", "L1 logistic"]) & met.run.isin(["MLB", "NHL"])].iterrows():
+        for k, nd in (("spearman_mean", 3), ("mae", 1), ("auc", 3), ("brier", 3)):
+            if pd.isna(r.get(f"d_{k}")):
+                continue
+            L.append(f"| {r.run} | {r.model} | {k} | {fdiff(r, k, nd, 's')} | {excl0(r, k, 's')} | "
+                     f"{fdiff(r, k, nd)} | {excl0(r, k)} |")
     L.append("\n**Elastic net standardized coefficients across folds** (doom points per SD; median [min, max], "
              "% folds at 0, % non-zero folds with the minority sign). L1 logistic: `m1_coef_stability.csv`.\n")
     en = stab[stab.model == "Elastic net"]

@@ -356,6 +356,18 @@ def block(c):
 slim = pd.read_csv(P("data", "processed", "mlb_nhl_model_slim.csv"), low_memory=False)
 SLIM_COLS = [c for c, _, _ in build_slim.KEPT]
 assert list(slim.columns) == SLIM_COLS and len(slim) == len(df)
+KEYS = ["league", "season_start_year", "franchise_id"]
+assert (slim[KEYS].astype(str).to_numpy() == df[KEYS].astype(str).to_numpy()).all()
+for c in build_slim.DERIVED:                      # slim-only derived columns (D71): stats from the slim table
+    src = build_slim.DERIVED[c]
+    df[c] = slim[c].to_numpy()
+    META[c] = (f"Within league-season percentile of `{src}`: (average rank − 1)/(n − 1) × 100 (D59, D71). "
+               "Slim table only.", f"`{src}` expressed as 0–100 relative to the same league and season.",
+               "Recent trajectory on a scale comparable across leagues.", META[src][3])
+    COLS[c] = None
+M, N = df[df.league == "MLB"], df[df.league == "NHL"]
+for c in build_slim.DERIVED:
+    COLS[c] = col_stats(c)
 SLIM_GROUP = {c: g for c, g, _ in build_slim.KEPT}
 S["slim_cols"] = SLIM_COLS
 S["slim_n"] = len(SLIM_COLS)
@@ -569,7 +581,7 @@ DG = f"""# MLB + NHL doom dataset: guide
 
 ## 1. Model table (slim): start here
 
-`mlb_nhl_model_slim.csv` has the same rows as the full table and {S['slim_n']} of its columns: identifiers and the season-t record, **one `_lpct` feature per concept**, two flags, and the labels. Columns were **chosen by concept, not by correlation with the label** (D61). Where a concept has several candidate columns, the one listed in `FEATURE_CROSSWALK.md` is used. `SLIM_SELECTION.md` lists all {S['cols']} full-table columns as kept or dropped, with a reason for each. The other {S['extended_n']} columns are under [Extended columns](#4-extended-columns-full-table-only) below.
+`mlb_nhl_model_slim.csv` has the same rows as the full table and {S['slim_n']} columns ({S['slim_n'] - len(build_slim.DERIVED)} copied from it, {len(build_slim.DERIVED)} derived): identifiers and the season-t record, **one `_lpct` feature per concept** plus current standing and trajectory, three flags, and the labels. Columns were **chosen by concept, not by correlation with the label** (D61). Where a concept has several candidate columns, the one listed in `FEATURE_CROSSWALK.md` is used. `SLIM_SELECTION.md` lists all {S['cols']} full-table columns as kept or dropped, with a reason for each. The other {S['extended_n']} columns are under [Extended columns](#4-extended-columns-full-table-only) below.
 
 `_lpct` = within-league-season percentile, 0 = lowest value that season, 100 = highest (same formula as `win_pct_percentile`, D59). Use these when stacking MLB and NHL: raw units differ. Missing values are left missing: `spending_lpct` is empty for every NHL row (D57), `underlying_quality_lpct` for NHL 2005–07, `gm_tenure_lpct` where the GM is vacant or unknown, `ot_losses` for MLB.
 

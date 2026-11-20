@@ -1,10 +1,10 @@
 # MLB + NHL doom dataset: guide
 
-*Files: **`data/processed/mlb_nhl_model_slim.csv`** (1,454 rows × 27 columns, the table to model from) and the full `data/processed/mlb_nhl_team_seasons.csv` (1,454 rows × 104 columns, a superset). All numbers come from `docs/make_doc_stats.py`. D-numbers refer to `DECISIONS.md`.*
+*Files: **`data/processed/mlb_nhl_model_slim.csv`** (1,454 rows × 29 columns, the table to model from) and the full `data/processed/mlb_nhl_team_seasons.csv` (1,454 rows × 104 columns, a superset). All numbers come from `docs/make_doc_stats.py`. D-numbers refer to `DECISIONS.md`.*
 
 ## 1. Model table (slim): start here
 
-`mlb_nhl_model_slim.csv` has the same rows as the full table and 27 of its columns: identifiers and the season-t record, **one `_lpct` feature per concept**, two flags, and the labels. Columns were **chosen by concept, not by correlation with the label** (D61). Where a concept has several candidate columns, the one listed in `FEATURE_CROSSWALK.md` is used. `SLIM_SELECTION.md` lists all 104 full-table columns as kept or dropped, with a reason for each. The other 77 columns are under [Extended columns](#4-extended-columns-full-table-only) below.
+`mlb_nhl_model_slim.csv` has the same rows as the full table and 29 columns (28 copied from it, 1 derived): identifiers and the season-t record, **one `_lpct` feature per concept** plus current standing and trajectory, three flags, and the labels. Columns were **chosen by concept, not by correlation with the label** (D61). Where a concept has several candidate columns, the one listed in `FEATURE_CROSSWALK.md` is used. `SLIM_SELECTION.md` lists all 104 full-table columns as kept or dropped, with a reason for each. The other 76 columns are under [Extended columns](#4-extended-columns-full-table-only) below.
 
 `_lpct` = within-league-season percentile, 0 = lowest value that season, 100 = highest (same formula as `win_pct_percentile`, D59). Use these when stacking MLB and NHL: raw units differ. Missing values are left missing: `spending_lpct` is empty for every NHL row (D57), `underlying_quality_lpct` for NHL 2005–07, `gm_tenure_lpct` where the GM is vacant or unknown, `ot_losses` for MLB.
 
@@ -30,8 +30,10 @@
 | `spending_lpct` | feature | Within league-season percentile (0–100): Payroll relative to league-season mean | `spending` ← MLB `payroll_rel_league_mean` / NHL **unavailable** | MLB 100% (2000–2026); NHL 0% |
 | `win_pct_percentile` | feature | Within league-season: (average rank − 1)/(n − 1) × 100 of win_pct; worst 0, best 100 (D10). | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
 | `win_pct_trailing_3_seasons` | feature | Mean win_pct of the franchise's last 3 played seasons incl. t (min 1; D08, D09). | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `win_pct_trailing_3_seasons_lpct` | feature | Within league-season percentile of `win_pct_trailing_3_seasons`: (average rank − 1)/(n − 1) × 100 (D59, D71). Slim table only. | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
 | `short_season` | flag | True for MLB 2020 and NHL 2012–13, 2019–20, 2020–21 (D14). | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
 | `seasons_of_history` | flag | Number of franchise seasons available up to t (history fetched from 1997 MLB / 2002 NHL). | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `personnel_lead_vacant` | flag | 1 if the source shows no one held the GM title (D42). | — | MLB 96% (2000–2026); NHL 100% (2005–2025) |
 | `y_doom_3yr` | label | 100 − mean(y_pct_t1, y_pct_t2, y_pct_t3); NaN unless all three exist (D11). | — | MLB 89% (2000–2023); NHL 85% (2005–2022) |
 | `y_doomed_bottom25` | label | y_doom_3yr ≥ 75 (binary). | — | MLB 89% (2000–2023); NHL 85% (2005–2022) |
 | `y_pct_t1` | label | win_pct_percentile in season t+1. | — | MLB 96% (2000–2025); NHL 95% (2005–2024) |
@@ -200,6 +202,14 @@
 - Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
 - Typical range (min / median / max): 0.323 / 0.525 / 0.715
 
+**`win_pct_trailing_3_seasons_lpct`**  
+- Definition: Within league-season percentile of `win_pct_trailing_3_seasons`: (average rank − 1)/(n − 1) × 100 (D59, D71). Slim table only.
+- Plain English: `win_pct_trailing_3_seasons` expressed as 0–100 relative to the same league and season.
+- Why it might relate to doom: Recent trajectory on a scale comparable across leagues.
+- Known: End of season t (before the prediction moment)
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 0.000 / 50.81 / 100.0
+
 **`short_season`**  
 - Definition: True for MLB 2020 and NHL 2012–13, 2019–20, 2020–21 (D14).
 - Plain English: Seasons cut short (lockout or pandemic).
@@ -215,6 +225,14 @@
 - Known: End of season t (before the prediction moment)
 - Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
 - Typical range (min / median / max): 1 / 15.00 / 30
+
+**`personnel_lead_vacant`**  
+- Definition: 1 if the source shows no one held the GM title (D42).
+- Plain English: The team had no GM at that moment.
+- Why it might relate to doom: Vacancies often follow upheaval.
+- Known: At the prediction moment (MLB Nov 15 of t; NHL Jun 15 of t+1)
+- Leagues: MLB, NHL · Coverage: MLB 96% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 0/1; share 1 = 1.2%
 
 ### Labels: never use these as features
 
@@ -328,7 +346,7 @@ Labels exist only for seasons with three played follow-up seasons: MLB through 2
 
 ## 4. Extended columns (full table only)
 
-The 77 columns below are in `mlb_nhl_team_seasons.csv` but not in the slim table: raw concept aliases (league units), league source columns, alternatives, audit columns and the duplicate label. Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining columns. "Coverage" is the share of rows that are non-missing, per league. "Typical range" is min / median / max over all rows.
+The 76 columns below are in `mlb_nhl_team_seasons.csv` but not in the slim table: raw concept aliases (league units), league source columns, alternatives, audit columns and the duplicate label. Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining columns. "Coverage" is the share of rows that are non-missing, per league. "Typical range" is min / median / max over all rows.
 
 ### Playing-time weight
 
@@ -685,14 +703,6 @@ The 77 columns below are in `mlb_nhl_team_seasons.csv` but not in the slim table
 - Known: At the prediction moment (MLB Nov 15 of t; NHL Jun 15 of t+1)
 - Leagues: MLB, NHL · Coverage: MLB 94% (2000–2026); NHL 100% (2005–2025)
 - Typical range (min / median / max): e.g. `Brian Cashman`, `Ken Holland`
-
-**`personnel_lead_vacant`**  
-- Definition: 1 if the source shows no one held the GM title (D42).
-- Plain English: The team had no GM at that moment.
-- Why it might relate to doom: Vacancies often follow upheaval.
-- Known: At the prediction moment (MLB Nov 15 of t; NHL Jun 15 of t+1)
-- Leagues: MLB, NHL · Coverage: MLB 96% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 0/1; share 1 = 1.2%
 
 **`personnel_lead_gap_carried`**  
 - Definition: 1 if the previous GM was carried across a short gap caused by year-only dates (D30, D37).

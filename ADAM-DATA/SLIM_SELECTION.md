@@ -1,8 +1,9 @@
 # Slim model table: column selection
 
-`data/processed/mlb_nhl_model_slim.csv` (1,454 rows × 27 columns) is a subset of the full table
-`data/processed/mlb_nhl_team_seasons.csv` (1,454 rows × 104 columns), which is unchanged.
-Built by `src/build_slim.py`. Decision **D61** in `DECISIONS.md`.
+`data/processed/mlb_nhl_model_slim.csv` (1,454 rows × 29 columns) is a subset of the full table
+`data/processed/mlb_nhl_team_seasons.csv` (1,454 rows × 104 columns), which is unchanged,
+plus 1 derived column computed from it (marked "derived", last row). Built by `src/build_slim.py`.
+Decisions **D61**, **D71** in `DECISIONS.md`.
 
 **Chosen by concept, not by correlation with the label.** One `_lpct` column per concept; where a concept has
 several candidate columns, the one listed in `FEATURE_CROSSWALK.md` is used. No column was picked or dropped
@@ -84,7 +85,7 @@ No imputation.
 | 66 | `personnel_lead_name` | dropped |  | 96% | Name (text), not a feature. |
 | 67 | `personnel_lead_tenure_left_censored` | dropped |  | 98% | Data-quality flag for gm_tenure; kept in the full table. |
 | 68 | `personnel_lead_gap_carried` | dropped |  | 98% | Data-quality flag for gm_tenure; kept in the full table. |
-| 69 | `personnel_lead_vacant` | dropped |  | 98% | Explains NaN gm_tenure; kept in the full table (not in the requested flags). |
+| 69 | `personnel_lead_vacant` | **kept** | flag | 98% | Model feature (D71): explains NaN gm_tenure (vacancy is known, not missing). |
 | 70 | `attendance_per_game` | dropped |  | 54% | League source column of `market`; market concept not in the slim set. |
 | 71 | `attendance_restricted` | dropped |  | 56% | Market concept dropped. |
 | 72 | `attendance_rank` | dropped |  | 54% | Market concept dropped. |
@@ -120,5 +121,6 @@ No imputation.
 | 102 | `y_pct_t3` | **kept** | label | 87% | Component label: percentile in t+3. LABEL. |
 | 103 | `y_doom_3yr` | **kept** | label | 87% | Primary label (t+1..t+3). LABEL, not a feature. |
 | 104 | `y_doomed_bottom25` | **kept** | label | 87% | Binary label (doom >= 75). LABEL, not a feature. |
+| 105 | `win_pct_trailing_3_seasons_lpct` (derived) | **kept** | feature | 100% | Derived (D71): within-league-season percentile of win_pct_trailing_3_seasons, comparable across leagues. |
 
-Kept 27, dropped 77, total 104.
+Full-table columns: kept 28, dropped 76, total 104; plus 1 derived → 29 slim columns.

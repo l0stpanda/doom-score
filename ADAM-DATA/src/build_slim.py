@@ -1,4 +1,4 @@
-"""Slim model table: one column per concept, chosen by concept (not by correlation with the label). Decision D61.
+"""Slim model table: one column per concept, chosen by concept (not by correlation with the label). Decisions D61, D71.
 
 Reads  data/processed/mlb_nhl_team_seasons.csv (never modified; checked by hash).
 Writes data/processed/mlb_nhl_model_slim.csv and SLIM_SELECTION.md (kept/dropped + one-line reason per column).
@@ -30,8 +30,11 @@ KEPT = [
      for c in CONCEPTS] + [
     ("win_pct_percentile", "feature", "Current standing, already a within-league-season percentile."),
     ("win_pct_trailing_3_seasons", "feature", "Recent-trajectory concept: mean win% over the last 3 played seasons."),
+    ("win_pct_trailing_3_seasons_lpct", "feature", "Derived (D71): within-league-season percentile of "
+                                                    "win_pct_trailing_3_seasons, comparable across leagues."),
     ("short_season", "flag", "Flags shortened seasons (MLB 2020; NHL 2012, 2019, 2020)."),
     ("seasons_of_history", "flag", "How many seasons the trailing features rest on (expansion teams)."),
+    ("personnel_lead_vacant", "flag", "Model feature (D71): explains NaN gm_tenure (vacancy is known, not missing)."),
     ("y_doom_3yr", "label", "Primary label (t+1..t+3). LABEL, not a feature."),
     ("y_doomed_bottom25", "label", "Binary label (doom >= 75). LABEL, not a feature."),
     ("y_pct_t1", "label", "Component label: percentile in t+1. LABEL."),
@@ -80,7 +83,6 @@ DROPPED = {
     "personnel_lead_name": "Name (text), not a feature.",
     "personnel_lead_tenure_left_censored": "Data-quality flag for gm_tenure; kept in the full table.",
     "personnel_lead_gap_carried": "Data-quality flag for gm_tenure; kept in the full table.",
-    "personnel_lead_vacant": "Explains NaN gm_tenure; kept in the full table (not in the requested flags).",
     "attendance_per_game": "League source column of `market`; market concept not in the slim set.",
     "share_production_age32plus": "League source column of `vet_share`; concept not in the slim set.",
     "attendance_restricted": "Market concept dropped.",
@@ -110,6 +112,17 @@ DROPPED = {
 }
 
 
+# Slim-only columns computed here from full-table columns (not in the full table). D71.
+DERIVED = {"win_pct_trailing_3_seasons_lpct": "win_pct_trailing_3_seasons"}
+
+
+def lpct(s):
+    """Within league-season percentile, same formula as win_pct_percentile / FEATURE_CROSSWALK _lpct (D59)."""
+    r = s.rank(method="average")
+    n = s.notna().sum()
+    return (r - 1) / (n - 1) * 100 if n > 1 else r * float("nan")
+
+
 def sha(p):
     return hashlib.sha256(open(p, "rb").read()).hexdigest()
 
@@ -118,8 +131,14 @@ def main():
     before = sha(FULL)
     df = pd.read_csv(FULL, low_memory=False)
     slim_cols = [c for c, _, _ in KEPT]
+    for c, src in DERIVED.items():
+        df[c] = df.groupby(["league", "season_start_year"])[src].transform(lpct)
+    # D59 check: the same formula reproduces win_pct_percentile exactly
+    chk = df.groupby(["league", "season_start_year"]).win_pct.transform(lpct)
+    assert (chk - df.win_pct_percentile).abs().max() < 1e-9
+    full_cols = [c for c in df.columns if c not in DERIVED]
     reasons = {c: r for c, _, r in KEPT}
-    for c in df.columns:
+    for c in full_cols:
         if c in reasons:
             continue
         if c in DROPPED:
@@ -134,6 +153,7 @@ def main():
     missing = [c for c in slim_cols if c not in df.columns]
     assert not missing, missing
     assert set(reasons) == set(df.columns), set(reasons) ^ set(df.columns)
+    assert set(DERIVED) <= set(slim_cols)
     assert len(slim_cols) == len(set(slim_cols))
 
     slim = df[slim_cols]
@@ -144,19 +164,23 @@ def main():
     back = pd.read_csv(SLIM, low_memory=False)
     assert back.shape == (len(df), len(slim_cols))
     assert back.astype(str).equals(df[slim_cols].astype(str))
+    vac = back.personnel_lead_vacant
+    assert vac.isna().sum() == df.personnel_lead_vacant.isna().sum() and set(vac.dropna().unique()) <= {0, 1}
 
     group = {c: g for c, g, _ in KEPT}
     rows = []
-    for i, c in enumerate(df.columns, 1):
+    for i, c in enumerate(full_cols + list(DERIVED), 1):
         kept = c in group
         nn = df[c].notna().mean() * 100
-        rows.append(f"| {i} | `{c}` | {'**kept**' if kept else 'dropped'} | {group.get(c, '')} | {nn:.0f}% | {reasons[c]} |")
+        tag = " (derived)" if c in DERIVED else ""
+        rows.append(f"| {i} | `{c}`{tag} | {'**kept**' if kept else 'dropped'} | {group.get(c, '')} | {nn:.0f}% | {reasons[c]} |")
     n_keep = len(slim_cols)
     md = f"""# Slim model table: column selection
 
 `data/processed/mlb_nhl_model_slim.csv` ({len(df):,} rows × {n_keep} columns) is a subset of the full table
-`data/processed/mlb_nhl_team_seasons.csv` ({len(df):,} rows × {len(df.columns)} columns), which is unchanged.
-Built by `src/build_slim.py`. Decision **D61** in `DECISIONS.md`.
+`data/processed/mlb_nhl_team_seasons.csv` ({len(df):,} rows × {len(full_cols)} columns), which is unchanged,
+plus {len(DERIVED)} derived column computed from it (marked "derived", last row). Built by `src/build_slim.py`.
+Decisions **D61**, **D71** in `DECISIONS.md`.
 
 **Chosen by concept, not by correlation with the label.** One `_lpct` column per concept; where a concept has
 several candidate columns, the one listed in `FEATURE_CROSSWALK.md` is used. No column was picked or dropped
@@ -172,10 +196,11 @@ No imputation.
 |---|---|---|---|---|---|
 """ + "\n".join(rows) + f"""
 
-Kept {n_keep}, dropped {len(df.columns) - n_keep}, total {len(df.columns)}.
+Full-table columns: kept {n_keep - len(DERIVED)}, dropped {len(full_cols) - n_keep + len(DERIVED)}, total {len(full_cols)}; plus {len(DERIVED)} derived → {n_keep} slim columns.
 """
     open(DOC, "w", encoding="utf-8").write(md)
-    print(f"slim: {slim.shape}; kept {n_keep} / {len(df.columns)}; full table unchanged ({before[:12]})")
+    print(f"slim: {slim.shape}; kept {n_keep - len(DERIVED)} / {len(full_cols)} + {len(DERIVED)} derived; "
+          f"full table unchanged ({before[:12]})")
 
 
 if __name__ == "__main__":

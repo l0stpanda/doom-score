@@ -42,14 +42,11 @@ def lpct(s):
 
 
 def load():
-    """Slim table + personnel_lead_vacant (full table) + win_pct_trailing_3_seasons_lpct (computed). D62."""
+    """Slim table; personnel_lead_vacant and win_pct_trailing_3_seasons_lpct are built by src/build_slim.py (D71)."""
     df = pd.read_csv(SLIM, low_memory=False)
-    full = pd.read_csv(FULL, usecols=KEY + ["personnel_lead_vacant"], low_memory=False)
-    n = len(df)
-    df = df.merge(full, on=KEY, how="left", validate="one_to_one")
-    assert len(df) == n
-    df["win_pct_trailing_3_seasons_lpct"] = (df.groupby(["league", SEASON]).win_pct_trailing_3_seasons
-                                             .transform(lpct))
+    missing = [f for f in FEATURES if f not in df.columns]
+    assert not missing, f"slim table lacks {missing}; run src/build_slim.py"
+    assert not df.duplicated(KEY).any()
     df["short_season"] = df.short_season.astype(str).eq("True").astype(float)
     df["personnel_lead_vacant"] = pd.to_numeric(df.personnel_lead_vacant, errors="coerce")
     df[Y_CLF] = df[Y_CLF].map({"True": 1.0, "False": 0.0, True: 1.0, False: 0.0})
@@ -200,9 +197,21 @@ def _fast_metrics(p, pick, rows):
     return m
 
 
-def bootstrap_diff(d_model, d_base, n_boot=2000, seed=2026):
-    """95% interval for metric(model) - metric(base), resampling test seasons with replacement (same draw for
-    both). Returns {metric: (diff, lo, hi)}."""
+BLOCK = 3   # moving-block length in test seasons (D72): adjacent labels share up to two future seasons
+
+
+def block_pick(rng, n, block=BLOCK):
+    """Moving-block bootstrap draw of n season positions: ceil(n / block) blocks of `block` consecutive test
+    seasons, start chosen uniformly from the n - block + 1 possible starts (no wrap-around), truncated to n.
+    block = 1 is the ordinary per-season bootstrap."""
+    k = int(np.ceil(n / block))
+    starts = rng.integers(0, n - block + 1, size=k)
+    return (starts[:, None] + np.arange(block)[None, :]).ravel()[:n]
+
+
+def bootstrap_diff(d_model, d_base, n_boot=2000, seed=2026, block=BLOCK):
+    """95% interval for metric(model) - metric(base) from a moving-block bootstrap over test seasons (same draw
+    for both). Returns {metric: (diff, lo, hi)}."""
     rng = np.random.default_rng(seed)
     assert (d_model[["season", "franchise_id"]].to_numpy() == d_base[["season", "franchise_id"]].to_numpy()).all()
     seasons = np.sort(d_model.season.unique())
@@ -211,7 +220,7 @@ def bootstrap_diff(d_model, d_base, n_boot=2000, seed=2026):
     fm, fb = _fast_prep(d_model, idx), _fast_prep(d_base, idx)
     draws = {k: [] for k in METRICS}
     for _ in range(n_boot):
-        pick = rng.integers(0, len(seasons), size=len(seasons))
+        pick = block_pick(rng, len(seasons), block)
         rows = np.concatenate([idx[i] for i in pick])
         a, b = _fast_metrics(fm, pick, rows), _fast_metrics(fb, pick, rows)
         for k in METRICS:
