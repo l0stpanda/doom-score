@@ -1,0 +1,7 @@
+league,franchise_id,role,missing_seasons,person,start_date,end_date,date_precision,source_url
+MLB,atlanta-braves,gm_or_baseball_ops_president,27,,,,,
+MLB,baltimore-orioles,gm_or_baseball_ops_president,27,,,,,
+MLB,cincinnati-reds,gm_or_baseball_ops_president,27,,,,,
+NHL,philadelphia-flyers,head_coach,3,,,,,
+NHL,toronto-maple-leafs,head_coach,4,,,,,
+NHL,winnipeg-jets,head_coach,1,,,,,
