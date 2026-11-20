@@ -108,6 +108,8 @@ def run_league(df, league, feats, chosen):
         assert tr[bt.SEASON].max() <= (T - bt.GAP if pred_type == "backtest" else T - 1)
         est = fit(tr, f_doom, bt.Y_REG, mk_doom, bt.GAP)
         pred, C, Z, names = contributions(est, te[f_doom])
+        # B1 (standing only) on the same training rows, for the dashboard's "doom vs. standing" view (D102)
+        b1 = fit(tr, ["win_pct_percentile"], bt.Y_REG, make_ols, bt.GAP).predict(te[["win_pct_percentile"]])
         trc = g[g[bt.Y_CLF].notna() & (g[bt.SEASON] <= last_lab)]
         p_doom = fit(trc, f_clf, bt.Y_CLF, mk_clf, bt.GAP).predict_proba(te[f_clf])[:, 1]
         proj = []
@@ -119,6 +121,8 @@ def run_league(df, league, feats, chosen):
             proj.append(fit(trh, f_hor, h, mk_hor, k).predict(te[f_hor]))
         out = te[bt.KEY + ["team", "wins", "losses", "ot_losses", "games", "win_pct", "win_pct_percentile"]].copy()
         out["doom_pred"], out["p_doomed"], out["pred_type"] = pred, p_doom, pred_type
+        out["b1_pred"] = b1
+        out["doom_vs_standing"] = pred - b1
         for h, p in zip(HORIZONS, proj):
             out[f"raw_proj_{h[2:]}"] = p
         out["actual_doom"] = te[bt.Y_REG].to_numpy()
@@ -475,7 +479,7 @@ def main():
 
     cols = (["league", "season_start_year", "franchise_id", "team", "wins", "losses", "ot_losses", "games",
              "win_pct", "win_pct_percentile", "doom_pred", "doom_lo80", "doom_hi80", "interval_available", "p_doom75",
-             "doom_band", "p_doomed",
+             "doom_band", "p_doomed", "b1_pred", "doom_vs_standing",
              "proj_pct_t1", "proj_pct_t2", "proj_pct_t3", "path_clipped", "pred_type", "actual_doom",
              "actual_pct_t1", "actual_pct_t2", "actual_pct_t3"]
             + [f"driver_up_{i}" for i in (1, 2, 3)] + [f"driver_down_{i}" for i in (1, 2, 3)] + ["driver_note"])

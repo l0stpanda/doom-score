@@ -1,2 +1,5 @@
 ADAM-DATA/data/raw/
 __pycache__/
+ADAM-DATA/dashboard/assets/logos/
+# built file embeds the (trademarked) logos as base64; rebuild with ADAM-DATA/src/viz/build_scatter.py
+ADAM-DATA/dashboard/doom_scatter.html
