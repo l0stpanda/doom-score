@@ -1,0 +1,3 @@
+league,headline_model,n_rows,raw_mean_abs_gap,raw_max_abs_gap,max_abs_error_after_shift,path_values_outside_0_100
+MLB,B1 OLS pct,480,0.20452281957068363,1.674915224462353,2.1316282072803006e-14,0
+NHL,Elastic net,308,1.2413719472657296,8.880171276130255,2.1316282072803006e-14,1

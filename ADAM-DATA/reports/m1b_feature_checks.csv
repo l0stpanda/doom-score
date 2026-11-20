@@ -1,0 +1,14 @@
+check,value
+schedule games = standings games,1.0
+schedule runs scored = standings runs (share of rows),1.0
+team-totals runs = standings runs (share of rows),1.0
+"team-totals actual margin vs standings margin, max abs diff",1.5543122344752192e-15
+"BaseRuns margin vs actual margin, Pearson r",0.957752336029803
+"farm affiliates per org, min",4.0
+"farm affiliates per org, median",4.0
+coverage second_half_margin,1.0
+coverage baserun_margin,1.0
+coverage sequencing_luck,1.0
+coverage value_age_hitters,1.0
+coverage value_age_pitchers,1.0
+coverage farm_strength,0.7777777777777778
