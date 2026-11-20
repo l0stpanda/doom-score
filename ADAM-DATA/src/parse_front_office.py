@@ -68,6 +68,8 @@ def clean(s):
     s = re.sub(r"\{\{[^{}]*\}\}", "", s)
     s = re.sub(r"\[\[(?:[^|\]]*\|)?([^\]]+)\]\]", r"\1", s)
     s = re.sub(r"'''?|style=\"[^\"]*\"\s*\|?|align=\"?\w+\"?\s*\|?|scope=\"?\w+\"?\s*\|?|bgcolor=\S+", "", s)
+    # other cell attributes before the content, e.g. 'rowspan="2"| November 13, 2007 – ...' (Dallas co-GMs)
+    s = re.sub(r"^\s*(?:(?:rowspan|colspan|class|width|valign|data-sort-value)=\"?[^\"|]*\"?\s*)+\|", "", s)
     s = s.replace("&nbsp;", " ").replace("*", "")
     s = re.sub(r"[†‡§¤#^!]", "", s)
     return re.sub(r"\s+", " ", s).strip(" |!")
@@ -141,6 +143,17 @@ def table_rows(body):
             yield cells, t_role
 
 
+NOT_A_NAME = re.compile(r"^(won|division|conference|stanley|presidents|playoff|no |none|vacant|tbd|n/a)|trophy|award|championship|title|appearance", re.I)
+
+
+def is_list_page(page):
+    p = os.path.join(WIKI, page.replace("/", "_") + ".json")
+    if not os.path.exists(p):
+        return True
+    with open(p, encoding="utf-8") as f:
+        return json.load(f)["parse"]["title"].startswith("List of")
+
+
 def person_from(cell):
     raw = strip_refs(cell)
     if not re.search(r"\[\[|\{\{[Ss]ortname|\{\{[Ss]ort\||[A-Z][a-z]+ [A-Z]", raw):
@@ -148,7 +161,7 @@ def person_from(cell):
     name = clean(raw)
     interim = bool(re.search(r"interim|acting", name, flags=re.I))
     name = re.sub(r"\s*\((?:interim|acting)[^)]*\)|\s*(?:interim|acting)\b", "", name, flags=re.I).strip(" ,*")
-    if not name or re.search(r"\d", name) or len(name) > 40:
+    if not name or re.search(r"\d", name) or len(name) > 40 or NOT_A_NAME.search(name):
         return None
     return name, interim
 
@@ -226,7 +239,8 @@ def spans_from_page(page, franchise_id, league, default_role):
             if role:
                 out.append(dict(franchise_id=franchise_id, role=role, person=person, interim=interim,
                                 term_raw=term, page=page, row_idx=len(out)))
-        if league == "NHL" and role_of(heading.split(" / ")[-1]) == default_role:
+        if league == "NHL" and not is_list_page(page) and role_of(heading.split(" / ")[-1]) == default_role:
+            # only on team main articles (Utah); on list pages bullets are achievements ("Won Presidents' Trophy")
             # e.g. Utah main article: '* [[Andre Tourigny]], 2024–present' under 'Head coaches'
             for person, title, term in rows_from_bullets(body):
                 out.append(dict(franchise_id=franchise_id, role=default_role, person=person,
@@ -243,8 +257,10 @@ def spans_from_page(page, franchise_id, league, default_role):
     return out
 
 
-def resolve_dates(rows, league):
-    """Turn term_raw into dates following the module docstring rules."""
+def resolve_dates(rows, league, season_based=False):
+    """Turn term_raw into dates following the module docstring rules.
+    season_based=True (D39: Giants, Rays pages): a year-only span A-B means seasons A..B in charge, so the
+    start is placed after season A-1 and the end after season B (no extra shift)."""
     res = []
     for r in rows:
         ys = season_years(r["term_raw"])
@@ -263,7 +279,7 @@ def resolve_dates(rows, league):
         if not t:
             continue
         (a, pa), (b, pb) = t
-        r["start_date"] = year_boundary(a, league) if pa == "year" else a
+        r["start_date"] = (year_boundary(a - 1 if season_based else a, league)) if pa == "year" else a
         r["end_date"] = None if pb == "open" else (year_boundary(b, league) if pb == "year" else b)
         r["date_precision_start"], r["date_precision_end"] = pa, pb
         if r["role"] == "head_coach":  # dated coach rows -> NHL seasons (season t = Oct t .. Apr t+1)

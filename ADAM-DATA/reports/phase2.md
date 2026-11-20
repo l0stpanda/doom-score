@@ -46,4 +46,26 @@ Template (`front_office_template.csv`), MLB GM seasons only:
 ## Checks
 5/5 PASS: Giants 2023 ≠ Melvin; Phillies 2022 change = 1 (Thomson); MLB 2020 attendance NaN; unique keys; draft timing. Manager fallback rows: 4.
 
-Phase 2 complete. Stopped for review before Phase 3.
+## Review 3 (this round)
+1. **Giants and Rays are read as season-based** (A–B = seasons A..B, no extra shift). All other MLB pages keep the shift (D39). Check: Evans is Giants GM for the 2015 season, and the Giants have no GM in 2019 (Zaidi as president).
+2. **New checks** (D43):
+   - **Tenure consistency: PASS (0 rows).** The first run flagged 30 rows. Those exposed one-day junk spans ("Won Presidents' Trophy" parsed as GMs) and a lost Dallas co-GM (`rowspan` cell attribute). Both are fixed (D44); spans went from 716 to 682.
+   - **GM changes per league-season: FLAG only MLB 2026 = 0.** Every 2026 MLB change in the sources is year-only, so it lands on Dec 31, after the Nov 15 moment, and MLB 2026 is unlabelled. Range otherwise MLB 1–9, NHL 1–8.
+3. **`personnel_lead_vacant`** (D42): **17 rows** (MLB 15, NHL 2), each with source evidence:
+   - **President but no GM:** Red Sox 2016–18 and 2023–26, Mariners 2022, Cardinals 2025, Giants 2019.
+   - **Page statement:** Dodgers 2019–21.
+   - **Exactly dated gap:** Red Sox 2005, Cubs 2011, Panthers 2008, Maple Leafs 2014.
+   - A gap with no known successor stays plain missing (the Reds after 2008).
+
+**GM lead coverage:**
+
+| League | Named | Named or vacant | Carried |
+|---|---|---|---|
+| MLB | 93.7% | 95.6% | 24 |
+| NHL | 99.7% | 100% | 3 |
+
+**Template:** 8 rows. The Reds 2009–26 account for most of them.
+
+Checks: 7 PASS, 1 FLAG (explained). Output is now 1,454 × 53 (adds `personnel_lead_vacant`).
+
+Phase 2 complete.

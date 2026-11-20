@@ -1,19 +1,20 @@
 core loaded: 1454 rows
 drafts merged: 100.0% non-missing
-front_office_spans.csv: 716 spans; precision counts {'season': 285, 'day': 226, 'year': 195, 'month': 10}
+front_office_spans.csv: 682 spans; precision counts {'season': 285, 'day': 227, 'year': 160, 'month': 10}
 coaches merged: MLB 100.0%, NHL 100.0%
-personnel lead merged: MLB 94.7%, NHL 100.0%
+page-stated GM vacancies: {'los-angeles-dodgers': [2018, 2019, 2020, 2021]}
+personnel lead merged: MLB 93.7%, NHL 99.7%
 attendance merged: MLB 96.3%
-wrote mlb_nhl_core_phase2.csv: 1454 rows x 52 cols
-manual template rows: 10
+wrote mlb_nhl_core_phase2.csv: 1454 rows x 53 cols
+manual template rows: 8
 MLB franchises without dated baseball-ops president spans: 25 of 30
 league                              column  pct_non_missing  first   last
    MLB                    draft_picks_used            100.0 2000.0 2026.0
    MLB                   draft_picks_rd1_2            100.0 2000.0 2026.0
    MLB             draft_first_pick_number            100.0 2000.0 2026.0
    MLB             draft_picks_used_pctile            100.0 2000.0 2026.0
-   MLB         personnel_lead_tenure_years             94.7 2000.0 2026.0
-   MLB    personnel_lead_changed_past_year             93.6 2000.0 2026.0
+   MLB         personnel_lead_tenure_years             93.7 2000.0 2026.0
+   MLB    personnel_lead_changed_past_year             94.7 2000.0 2026.0
    MLB                  coach_tenure_years            100.0 2000.0 2026.0
    MLB coach_changed_during_regular_season            100.0 2000.0 2026.0
    MLB                 attendance_per_game             96.3 2000.0 2026.0
@@ -22,7 +23,7 @@ league                              column  pct_non_missing  first   last
    NHL                   draft_picks_rd1_2            100.0 2005.0 2025.0
    NHL             draft_first_pick_number            100.0 2005.0 2025.0
    NHL             draft_picks_used_pctile            100.0 2005.0 2025.0
-   NHL         personnel_lead_tenure_years            100.0 2005.0 2025.0
+   NHL         personnel_lead_tenure_years             99.7 2005.0 2025.0
    NHL    personnel_lead_changed_past_year            100.0 2005.0 2025.0
    NHL                  coach_tenure_years            100.0 2005.0 2025.0
    NHL coach_changed_during_regular_season            100.0 2005.0 2025.0
@@ -33,5 +34,8 @@ league                              column  pct_non_missing  first   last
 [PASS] MLB 2020 attendance is NaN (not 0) 
 [PASS] one row per key after merges 
 [PASS] no draft data after season t (NHL draft year == season_start_year) by construction
+[PASS] tenure consistency (GM and coach) 0 flagged rows
+[FLAG] GM changes per league-season within 1..10 (flag check) flagged: MLB 2026=0 | range MLB 0-9, NHL 1-8
+[PASS] Giants/Rays read as season-based (D39) by construction
 fallback-resolved manager rows (in output seasons): 4
-year-only spans: 195 of 716
+year-only spans: 160 of 682

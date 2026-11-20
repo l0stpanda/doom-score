@@ -1,11 +1,9 @@
 league,franchise_id,role,missing_seasons,person,start_date,end_date,date_precision,source_url
 MLB,baltimore-orioles,gm,2007,,,,,
-MLB,boston-red-sox,gm,2018 2024 2025 2026,,,,,
 MLB,cincinnati-reds,gm,2009 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 2025 2026,,,,,
-MLB,los-angeles-dodgers,gm,2020 2021 2022,,,,,
+MLB,los-angeles-dodgers,gm,2022,,,,,
 MLB,miami-marlins,gm,2009 2010 2011 2012 2013 2017 2018 2019 2020 2025 2026,,,,,
 MLB,minnesota-twins,gm,2025,,,,,
 MLB,new-york-mets,gm,2024,,,,,
-MLB,san-francisco-giants,gm,2020,,,,,
 MLB,st-louis-cardinals,gm,2026,,,,,
 MLB,tampa-bay-rays,gm,2025 2026,,,,,

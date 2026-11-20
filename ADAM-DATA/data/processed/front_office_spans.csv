@@ -3,9 +3,7 @@ NHL,anaheim-ducks,gm,Pierre Gauthier,1998-08-06,2002-04-19,day,day,day,False,,,,
 NHL,anaheim-ducks,gm,Bryan Murray,2002-05-02,2004-06-08,day,day,day,False,,,,2,https://en.wikipedia.org/wiki/List_of_Anaheim_Ducks_general_managers,,True
 NHL,anaheim-ducks,gm,Al Coates,2004-06-08,2005-06-20,day,day,day,True,,,,3,https://en.wikipedia.org/wiki/List_of_Anaheim_Ducks_general_managers,,True
 NHL,anaheim-ducks,gm,Brian Burke,2005-06-20,2008-11-12,day,day,day,False,,,,4,https://en.wikipedia.org/wiki/List_of_Anaheim_Ducks_general_managers,,True
-NHL,anaheim-ducks,gm,Won Stanley Cup,2007-07-01,2007-07-01,year,year,year,False,,,,8,https://en.wikipedia.org/wiki/List_of_Anaheim_Ducks_general_managers,,True
 NHL,anaheim-ducks,gm,Bob Murray,2008-11-12,2021-11-10,day,day,day,False,,,,5,https://en.wikipedia.org/wiki/List_of_Anaheim_Ducks_general_managers,,True
-NHL,anaheim-ducks,gm,Won General Manager of the Year Award,2013-07-01,2013-07-01,year,year,year,False,,,,9,https://en.wikipedia.org/wiki/List_of_Anaheim_Ducks_general_managers,,True
 NHL,anaheim-ducks,gm,Jeff Solomon,2021-11-16,2022-02-03,day,day,day,True,,,,6,https://en.wikipedia.org/wiki/List_of_Anaheim_Ducks_general_managers,,True
 NHL,anaheim-ducks,gm,Pat Verbeek,2022-02-03,,day,day,open,False,,,,7,https://en.wikipedia.org/wiki/List_of_Anaheim_Ducks_general_managers,,True
 NHL,anaheim-ducks,head_coach,Craig Hartsburg,1998-10-01,2001-01-15,season,season,season,False,False,1998.0,2000.0,2,https://en.wikipedia.org/wiki/List_of_Anaheim_Ducks_head_coaches,,True
@@ -45,9 +43,7 @@ NHL,boston-bruins,gm,Harry Sinden,1972-10-05,2000-11-01,day,day,day,False,,,,4,h
 NHL,boston-bruins,gm,Mike O'Connell,2000-11-01,2006-03-25,day,day,day,False,,,,5,https://en.wikipedia.org/wiki/List_of_Boston_Bruins_general_managers,,True
 NHL,boston-bruins,gm,Jeff Gorton,2006-03-25,2006-05-26,day,day,day,True,,,,6,https://en.wikipedia.org/wiki/List_of_Boston_Bruins_general_managers,,True
 NHL,boston-bruins,gm,Peter Chiarelli,2006-05-26,2015-04-15,day,day,day,False,,,,7,https://en.wikipedia.org/wiki/List_of_Boston_Bruins_general_managers,,True
-NHL,boston-bruins,gm,Won Presidents' Trophy,2013-07-01,2013-07-01,year,year,year,False,,,,10,https://en.wikipedia.org/wiki/List_of_Boston_Bruins_general_managers,,True
 NHL,boston-bruins,gm,Don Sweeney,2015-05-20,,day,day,open,False,,,,8,https://en.wikipedia.org/wiki/List_of_Boston_Bruins_general_managers,,True
-NHL,boston-bruins,gm,Won General Manager of the Year Award,2018-07-01,2018-07-01,year,year,year,False,,,,11,https://en.wikipedia.org/wiki/List_of_Boston_Bruins_general_managers,,True
 NHL,boston-bruins,head_coach,Pat Burns,1997-10-01,2001-01-15,season,season,season,False,False,1997.0,2000.0,24,https://en.wikipedia.org/wiki/List_of_Boston_Bruins_head_coaches,,True
 NHL,boston-bruins,head_coach,Mike Keenan,2001-01-15,2001-04-30,season,season,season,False,True,2000.0,2000.0,25,https://en.wikipedia.org/wiki/List_of_Boston_Bruins_head_coaches,,True
 NHL,boston-bruins,head_coach,Robbie Ftorek,2001-10-01,2003-01-15,season,season,season,False,False,2001.0,2002.0,26,https://en.wikipedia.org/wiki/List_of_Boston_Bruins_head_coaches,,True
@@ -61,6 +57,7 @@ NHL,boston-bruins,head_coach,—,2025-01-15,2025-04-30,season,season,season,Fals
 NHL,boston-bruins,head_coach,Marco Sturm,2025-10-01,,season,season,season,False,False,2025.0,,34,https://en.wikipedia.org/wiki/List_of_Boston_Bruins_head_coaches,,True
 MLB,boston-red-sox,baseball_ops_president,Dave Dombrowski,2015-12-31,2019-12-31,year,year,year,False,,,,0,https://en.wikipedia.org/wiki/List_of_Boston_Red_Sox_owners_and_executives,,True
 MLB,boston-red-sox,baseball_ops_president,Chaim Bloom,2020-12-31,2023-12-31,year,year,year,False,,,,1,https://en.wikipedia.org/wiki/List_of_Boston_Red_Sox_owners_and_executives,,True
+MLB,boston-red-sox,baseball_ops_president,Brian O'Halloran,2023-12-31,,year,year,open,False,,,,2,https://en.wikipedia.org/wiki/List_of_Boston_Red_Sox_owners_and_executives,,True
 MLB,boston-red-sox,gm,Dan Duquette,1994-01-27,2002-02-28,day,day,day,False,,,,12,https://en.wikipedia.org/wiki/List_of_Boston_Red_Sox_owners_and_executives,,True
 MLB,boston-red-sox,gm,Mike Port,2002-02-28,2002-11-25,day,day,day,True,,,,13,https://en.wikipedia.org/wiki/List_of_Boston_Red_Sox_owners_and_executives,,True
 MLB,boston-red-sox,gm,Theo Epstein,2002-11-25,2005-10-31,day,day,day,False,,,,14,https://en.wikipedia.org/wiki/List_of_Boston_Red_Sox_owners_and_executives,,True
@@ -70,7 +67,6 @@ MLB,boston-red-sox,gm,Ben Cherington,2011-10-25,2015-08-18,day,day,day,False,,,,
 MLB,boston-red-sox,gm,Mike Hazen,2015-09-24,2016-10-16,day,day,day,False,,,,18,https://en.wikipedia.org/wiki/List_of_Boston_Red_Sox_owners_and_executives,,True
 MLB,boston-red-sox,gm,Brian O'Halloran,2019-10-31,2023-09-30,month,month,month,False,,,,19,https://en.wikipedia.org/wiki/List_of_Boston_Red_Sox_owners_and_executives,,True
 NHL,buffalo-sabres,gm,Darcy Regier,1997-06-11,2013-11-13,day,day,day,False,,,,5,https://en.wikipedia.org/wiki/List_of_Buffalo_Sabres_general_managers,,True
-NHL,buffalo-sabres,gm,Won Presidents' Trophy,2006-07-01,2006-07-01,year,year,year,False,,,,10,https://en.wikipedia.org/wiki/List_of_Buffalo_Sabres_general_managers,,True
 NHL,buffalo-sabres,gm,Tim Murray,2014-01-09,2017-04-20,day,day,day,False,,,,6,https://en.wikipedia.org/wiki/List_of_Buffalo_Sabres_general_managers,,True
 NHL,buffalo-sabres,gm,Jason Botterill,2017-05-11,2020-06-16,day,day,day,False,,,,7,https://en.wikipedia.org/wiki/List_of_Buffalo_Sabres_general_managers,,True
 NHL,buffalo-sabres,gm,Kevyn Adams,2020-06-16,2025-12-15,day,day,day,False,,,,8,https://en.wikipedia.org/wiki/List_of_Buffalo_Sabres_general_managers,,True
@@ -109,7 +105,6 @@ NHL,carolina-hurricanes,gm,Jim Rutherford,1994-06-28,2014-04-28,day,day,day,Fals
 NHL,carolina-hurricanes,gm,Ron Francis,2014-04-28,2018-03-07,day,day,day,False,,,,9,https://en.wikipedia.org/wiki/List_of_Carolina_Hurricanes_general_managers,,True
 NHL,carolina-hurricanes,gm,Don Waddell,2018-05-08,2024-05-24,day,day,day,False,,,,10,https://en.wikipedia.org/wiki/List_of_Carolina_Hurricanes_general_managers,,True
 NHL,carolina-hurricanes,gm,Eric Tulsky,2024-05-24,,day,day,open,False,,,,11,https://en.wikipedia.org/wiki/List_of_Carolina_Hurricanes_general_managers,,True
-NHL,carolina-hurricanes,gm,Won Stanley Cup,2026-07-01,2026-07-01,year,year,year,False,,,,13,https://en.wikipedia.org/wiki/List_of_Carolina_Hurricanes_general_managers,,True
 NHL,carolina-hurricanes,head_coach,Paul Maurice,1997-10-01,2004-01-15,season,season,season,False,False,1997.0,2003.0,0,https://en.wikipedia.org/wiki/List_of_Carolina_Hurricanes_head_coaches,,True
 NHL,carolina-hurricanes,head_coach,Peter Laviolette,2004-01-15,2009-01-15,season,season,season,False,True,2003.0,2008.0,1,https://en.wikipedia.org/wiki/List_of_Carolina_Hurricanes_head_coaches,,True
 NHL,carolina-hurricanes,head_coach,Paul Maurice,2009-01-15,2012-01-15,season,season,season,False,True,2008.0,2011.0,2,https://en.wikipedia.org/wiki/List_of_Carolina_Hurricanes_head_coaches,,True
@@ -122,7 +117,6 @@ NHL,chicago-blackhawks,gm,Mike Smith,2000-09-22,2003-10-24,day,day,day,False,,,,
 NHL,chicago-blackhawks,gm,Bob Pulford,2003-10-24,2005-06-21,day,day,day,False,,,,9,https://en.wikipedia.org/wiki/List_of_Chicago_Blackhawks_general_managers,,True
 NHL,chicago-blackhawks,gm,Dale Tallon,2005-06-21,2009-07-14,day,day,day,False,,,,10,https://en.wikipedia.org/wiki/List_of_Chicago_Blackhawks_general_managers,,True
 NHL,chicago-blackhawks,gm,Stan Bowman,2009-07-14,2021-10-26,day,day,day,False,,,,11,https://en.wikipedia.org/wiki/List_of_Chicago_Blackhawks_general_managers,,True
-NHL,chicago-blackhawks,gm,Won Presidents' Trophy,2012-07-01,2012-07-01,year,year,year,False,,,,14,https://en.wikipedia.org/wiki/List_of_Chicago_Blackhawks_general_managers,,True
 NHL,chicago-blackhawks,gm,Kyle Davidson,2021-10-26,,day,day,open,False,,,,12,https://en.wikipedia.org/wiki/List_of_Chicago_Blackhawks_general_managers,,True
 NHL,chicago-blackhawks,head_coach,Dirk Graham,1998-10-01,1999-01-15,season,season,season,False,False,1998.0,1998.0,35,https://en.wikipedia.org/wiki/List_of_Chicago_Blackhawks_head_coaches,,True
 NHL,chicago-blackhawks,head_coach,Lorne Molleken,1999-01-15,2000-01-15,season,season,season,False,True,1998.0,1999.0,36,https://en.wikipedia.org/wiki/List_of_Chicago_Blackhawks_head_coaches,,True
@@ -193,6 +187,7 @@ NHL,columbus-blue-jackets,head_coach,Dean Evason,2024-10-01,2026-01-15,season,se
 NHL,columbus-blue-jackets,head_coach,Rick Bowness,2026-01-15,,season,season,season,False,True,2025.0,,13,https://en.wikipedia.org/wiki/List_of_Columbus_Blue_Jackets_head_coaches,,True
 NHL,dallas-stars,gm,Bob Gainey,1992-06-20,2002-01-25,day,day,day,False,,,,5,https://en.wikipedia.org/wiki/List_of_Dallas_Stars_general_managers,,True
 NHL,dallas-stars,gm,Doug Armstrong,2002-01-25,2007-11-13,day,day,day,False,,,,6,https://en.wikipedia.org/wiki/List_of_Dallas_Stars_general_managers,,True
+NHL,dallas-stars,gm,Brett Hull,2007-11-13,2009-05-31,day,day,day,False,,,,7,https://en.wikipedia.org/wiki/List_of_Dallas_Stars_general_managers,,True
 NHL,dallas-stars,gm,Joe Nieuwendyk,2009-05-31,2013-04-28,day,day,day,False,,,,8,https://en.wikipedia.org/wiki/List_of_Dallas_Stars_general_managers,,True
 NHL,dallas-stars,gm,Jim Nill,2013-04-29,,day,day,open,False,,,,9,https://en.wikipedia.org/wiki/List_of_Dallas_Stars_general_managers,,True
 NHL,dallas-stars,head_coach,Ken Hitchcock,1996-01-15,2002-01-15,season,season,season,False,True,1995.0,2001.0,1,https://en.wikipedia.org/wiki/List_of_Dallas_Stars_head_coaches,,True
@@ -251,7 +246,6 @@ NHL,florida-panthers,gm,Dale Tallon,2010-05-17,2016-05-16,day,day,day,False,,,,8
 NHL,florida-panthers,gm,Tom Rowe,2016-05-16,2017-04-10,day,day,day,False,,,,9,https://en.wikipedia.org/wiki/List_of_Florida_Panthers_general_managers,,True
 NHL,florida-panthers,gm,Dale Tallon,2017-04-10,2020-08-10,day,day,day,False,,,,10,https://en.wikipedia.org/wiki/List_of_Florida_Panthers_general_managers,,True
 NHL,florida-panthers,gm,Bill Zito,2020-09-02,,day,day,open,False,,,,11,https://en.wikipedia.org/wiki/List_of_Florida_Panthers_general_managers,,True
-NHL,florida-panthers,gm,Presidents’ Trophy,2022-07-01,2022-07-01,year,year,year,False,,,,12,https://en.wikipedia.org/wiki/List_of_Florida_Panthers_general_managers,,True
 NHL,florida-panthers,head_coach,Terry Murray,1998-10-01,2001-01-15,season,season,season,False,False,1998.0,2000.0,3,https://en.wikipedia.org/wiki/List_of_Florida_Panthers_head_coaches,,True
 NHL,florida-panthers,head_coach,Duane Sutter,2001-01-15,2002-01-15,season,season,season,False,True,2000.0,2001.0,4,https://en.wikipedia.org/wiki/List_of_Florida_Panthers_head_coaches,,True
 NHL,florida-panthers,head_coach,Mike Keenan,2002-01-15,2004-01-15,season,season,season,False,True,2001.0,2003.0,5,https://en.wikipedia.org/wiki/List_of_Florida_Panthers_head_coaches,,True
@@ -339,9 +333,7 @@ NHL,montreal-canadiens,gm,Andre Savard,2000-11-20,2003-06-02,day,day,day,False,,
 NHL,montreal-canadiens,gm,Bob Gainey,2003-06-02,2010-02-08,day,day,day,False,,,,13,https://en.wikipedia.org/wiki/List_of_Montreal_Canadiens_general_managers,,True
 NHL,montreal-canadiens,gm,Pierre Gauthier,2010-02-08,2012-03-29,day,day,day,False,,,,14,https://en.wikipedia.org/wiki/List_of_Montreal_Canadiens_general_managers,,True
 NHL,montreal-canadiens,gm,Marc Bergevin,2012-05-02,2021-11-28,day,day,day,False,,,,15,https://en.wikipedia.org/wiki/List_of_Montreal_Canadiens_general_managers,,True
-NHL,montreal-canadiens,gm,Lost in Stanley Cup Final,2021-07-01,2021-07-01,year,year,year,False,,,,20,https://en.wikipedia.org/wiki/List_of_Montreal_Canadiens_general_managers,,True
 NHL,montreal-canadiens,gm,Kent Hughes,2022-01-18,,day,day,open,False,,,,16,https://en.wikipedia.org/wiki/List_of_Montreal_Canadiens_general_managers,,True
-NHL,montreal-canadiens,gm,Lost in Conference Final,2026-07-01,2026-07-01,year,year,year,False,,,,21,https://en.wikipedia.org/wiki/List_of_Montreal_Canadiens_general_managers,,True
 NHL,montreal-canadiens,head_coach,Alain Vigneault,1997-10-01,2001-01-15,season,season,season,False,False,1997.0,2000.0,24,https://en.wikipedia.org/wiki/List_of_Montreal_Canadiens_head_coaches,,True
 NHL,montreal-canadiens,head_coach,Michel Therrien,2001-01-15,2003-01-15,season,season,season,False,True,2000.0,2002.0,25,https://en.wikipedia.org/wiki/List_of_Montreal_Canadiens_head_coaches,,True
 NHL,montreal-canadiens,head_coach,Claude Julien,2003-01-15,2006-01-15,season,season,season,False,True,2002.0,2005.0,26,https://en.wikipedia.org/wiki/List_of_Montreal_Canadiens_head_coaches,,True
@@ -355,8 +347,6 @@ NHL,montreal-canadiens,head_coach,Claude Julien,2017-01-15,2021-01-15,season,sea
 NHL,montreal-canadiens,head_coach,Dominique Ducharme,2021-01-15,2022-01-15,season,season,season,False,True,2020.0,2021.0,34,https://en.wikipedia.org/wiki/List_of_Montreal_Canadiens_head_coaches,,True
 NHL,montreal-canadiens,head_coach,Martin St. Louis,2022-01-15,,season,season,season,False,True,2021.0,,35,https://en.wikipedia.org/wiki/List_of_Montreal_Canadiens_head_coaches,,True
 NHL,nashville-predators,gm,David Poile,1997-07-09,2023-06-30,day,day,day,False,,,,0,https://en.wikipedia.org/wiki/List_of_Nashville_Predators_general_managers,,True
-NHL,nashville-predators,gm,Won General Manager of the Year Award,2016-07-01,2016-07-01,year,year,year,False,,,,3,https://en.wikipedia.org/wiki/List_of_Nashville_Predators_general_managers,,True
-NHL,nashville-predators,gm,Won Presidents' Trophy,2017-07-01,2017-07-01,year,year,year,False,,,,4,https://en.wikipedia.org/wiki/List_of_Nashville_Predators_general_managers,,True
 NHL,nashville-predators,gm,Barry Trotz,2023-07-01,2026-06-02,day,day,day,False,,,,1,https://en.wikipedia.org/wiki/List_of_Nashville_Predators_general_managers,,True
 NHL,nashville-predators,gm,Chris MacFarland,2026-06-02,,day,day,open,False,,,,2,https://en.wikipedia.org/wiki/List_of_Nashville_Predators_general_managers,,True
 NHL,nashville-predators,head_coach,Barry Trotz,1998-10-01,2014-04-30,season,season,season,False,False,1998.0,2013.0,0,https://en.wikipedia.org/wiki/List_of_Nashville_Predators_head_coaches,,True
@@ -364,10 +354,6 @@ NHL,nashville-predators,head_coach,Peter Laviolette,2014-10-01,2020-01-15,season
 NHL,nashville-predators,head_coach,John Hynes,2020-01-15,2023-04-30,season,season,season,False,True,2019.0,2022.0,2,https://en.wikipedia.org/wiki/List_of_Nashville_Predators_head_coaches,,True
 NHL,nashville-predators,head_coach,Andrew Brunette,2023-10-01,,season,season,season,False,False,2023.0,,3,https://en.wikipedia.org/wiki/List_of_Nashville_Predators_head_coaches,,True
 NHL,new-jersey-devils,gm,Lou Lamoriello,1987-09-10,2015-05-04,day,day,day,False,,,,4,https://en.wikipedia.org/wiki/List_of_New_Jersey_Devils_general_managers,,True
-NHL,new-jersey-devils,gm,Won Stanley Cup three times in five Stanley Cup Final appearances,2000-07-01,2000-07-01,year,year,year,False,,,,9,https://en.wikipedia.org/wiki/List_of_New_Jersey_Devils_general_managers,,True
-NHL,new-jersey-devils,gm,Won Stanley Cup three times in five Stanley Cup Final appearances,2001-07-01,2001-07-01,year,year,year,False,,,,10,https://en.wikipedia.org/wiki/List_of_New_Jersey_Devils_general_managers,,True
-NHL,new-jersey-devils,gm,Won Stanley Cup three times in five Stanley Cup Final appearances,2003-07-01,2003-07-01,year,year,year,False,,,,11,https://en.wikipedia.org/wiki/List_of_New_Jersey_Devils_general_managers,,True
-NHL,new-jersey-devils,gm,Won Stanley Cup three times in five Stanley Cup Final appearances,2012-07-01,2012-07-01,year,year,year,False,,,,12,https://en.wikipedia.org/wiki/List_of_New_Jersey_Devils_general_managers,,True
 NHL,new-jersey-devils,gm,Ray Shero,2015-05-04,2020-01-12,day,day,day,False,,,,5,https://en.wikipedia.org/wiki/List_of_New_Jersey_Devils_general_managers,,True
 NHL,new-jersey-devils,gm,Tom Fitzgerald,2020-01-12,2026-04-06,day,day,day,False,,,,6,https://en.wikipedia.org/wiki/List_of_New_Jersey_Devils_general_managers,,True
 NHL,new-jersey-devils,gm,Sunny Mehta,2026-04-16,,day,day,open,False,,,,7,https://en.wikipedia.org/wiki/List_of_New_Jersey_Devils_general_managers,,True
@@ -418,20 +404,18 @@ MLB,new-york-mets,gm,Omar Minaya,2005-12-31,2010-12-31,year,year,year,False,,,,1
 MLB,new-york-mets,gm,Sandy Alderson,2010-12-31,2018-12-31,year,year,year,False,,,,14,https://en.wikipedia.org/wiki/List_of_New_York_Mets_owners_and_executives,,True
 MLB,new-york-mets,gm,John Ricco,2010-12-31,2010-12-31,year,year,year,True,,,,13,https://en.wikipedia.org/wiki/List_of_New_York_Mets_owners_and_executives,,True
 MLB,new-york-mets,gm,Brodie Van Wagenen,2018-12-31,2020-12-31,year,year,year,False,,,,18,https://en.wikipedia.org/wiki/List_of_New_York_Mets_owners_and_executives,,True
-MLB,new-york-mets,gm,J. P. Ricciardi,2018-12-31,2018-12-31,year,year,year,True,,,,17,https://en.wikipedia.org/wiki/List_of_New_York_Mets_owners_and_executives,,True
 MLB,new-york-mets,gm,John Ricco,2018-12-31,2018-12-31,year,year,year,True,,,,15,https://en.wikipedia.org/wiki/List_of_New_York_Mets_owners_and_executives,,True
 MLB,new-york-mets,gm,Omar Minaya,2018-12-31,2018-12-31,year,year,year,True,,,,16,https://en.wikipedia.org/wiki/List_of_New_York_Mets_owners_and_executives,,True
+MLB,new-york-mets,gm,J. P. Ricciardi,2018-12-31,2018-12-31,year,year,year,True,,,,17,https://en.wikipedia.org/wiki/List_of_New_York_Mets_owners_and_executives,,True
 MLB,new-york-mets,gm,Jared Porter,2020-12-31,2021-12-31,year,year,year,False,,,,19,https://en.wikipedia.org/wiki/List_of_New_York_Mets_owners_and_executives,,True
 MLB,new-york-mets,gm,Billy Eppler,2021-12-31,2023-12-31,year,year,year,False,,,,22,https://en.wikipedia.org/wiki/List_of_New_York_Mets_owners_and_executives,,True
-MLB,new-york-mets,gm,Sandy Alderson,2021-12-31,2021-12-31,year,year,year,True,,,,21,https://en.wikipedia.org/wiki/List_of_New_York_Mets_owners_and_executives,,True
 MLB,new-york-mets,gm,Zack Scott,2021-12-31,2021-12-31,year,year,year,True,,,,20,https://en.wikipedia.org/wiki/List_of_New_York_Mets_owners_and_executives,,True
+MLB,new-york-mets,gm,Sandy Alderson,2021-12-31,2021-12-31,year,year,year,True,,,,21,https://en.wikipedia.org/wiki/List_of_New_York_Mets_owners_and_executives,,True
 MLB,new-york-mets,gm,David Stearns,2024-12-31,,year,year,open,False,,,,23,https://en.wikipedia.org/wiki/List_of_New_York_Mets_owners_and_executives,,True
 NHL,new-york-rangers,gm,Neil Smith,1989-07-17,2000-03-28,day,day,day,False,,,,9,https://en.wikipedia.org/wiki/List_of_New_York_Rangers_general_managers,,True
 NHL,new-york-rangers,gm,Glen Sather,2000-06-01,2015-07-01,day,day,day,False,,,,10,https://en.wikipedia.org/wiki/List_of_New_York_Rangers_general_managers,,True
-NHL,new-york-rangers,gm,Won Presidents' Trophy,2014-07-01,2014-07-01,year,year,year,False,,,,16,https://en.wikipedia.org/wiki/List_of_New_York_Rangers_general_managers,,True
 NHL,new-york-rangers,gm,Jeff Gorton,2015-07-01,2021-05-05,day,day,day,False,,,,11,https://en.wikipedia.org/wiki/List_of_New_York_Rangers_general_managers,,True
 NHL,new-york-rangers,gm,Chris Drury,2021-05-05,,day,day,open,False,,,,12,https://en.wikipedia.org/wiki/List_of_New_York_Rangers_general_managers,,True
-NHL,new-york-rangers,gm,Won Presidents' Trophy,2023-07-01,2023-07-01,year,year,year,False,,,,17,https://en.wikipedia.org/wiki/List_of_New_York_Rangers_general_managers,,True
 NHL,new-york-rangers,head_coach,John Muckler,1998-01-15,2000-01-15,season,season,season,False,True,1997.0,1999.0,34,https://en.wikipedia.org/wiki/List_of_New_York_Rangers_head_coaches,,True
 NHL,new-york-rangers,head_coach,John Tortorella,2000-01-15,2000-04-30,season,season,season,False,True,1999.0,1999.0,35,https://en.wikipedia.org/wiki/List_of_New_York_Rangers_head_coaches,,True
 NHL,new-york-rangers,head_coach,Ron Low,2000-10-01,2002-04-30,season,season,season,False,False,2000.0,2001.0,36,https://en.wikipedia.org/wiki/List_of_New_York_Rangers_head_coaches,,True
@@ -448,7 +432,6 @@ MLB,new-york-yankees,gm,Brian Cashman,1998-12-31,,year,year,open,False,,,,18,htt
 NHL,ottawa-senators,gm,Rick Dudley,1998-06-30,1999-06-08,day,day,day,False,,,,3,https://en.wikipedia.org/wiki/List_of_Ottawa_Senators_general_managers,,True
 NHL,ottawa-senators,gm,Marshall Johnston,1999-06-08,2002-06-30,day,day,day,False,,,,4,https://en.wikipedia.org/wiki/List_of_Ottawa_Senators_general_managers,,True
 NHL,ottawa-senators,gm,John Muckler,2002-07-01,2007-06-18,day,day,day,False,,,,5,https://en.wikipedia.org/wiki/List_of_Ottawa_Senators_general_managers,,True
-NHL,ottawa-senators,gm,Won Presidents' Trophy,2002-07-01,2002-07-01,year,year,year,False,,,,9,https://en.wikipedia.org/wiki/List_of_Ottawa_Senators_general_managers,,True
 NHL,ottawa-senators,gm,Bryan Murray,2007-06-18,2016-04-10,day,day,day,False,,,,6,https://en.wikipedia.org/wiki/List_of_Ottawa_Senators_general_managers,,True
 NHL,ottawa-senators,gm,Pierre Dorion,2016-04-10,2023-11-01,day,day,day,False,,,,7,https://en.wikipedia.org/wiki/List_of_Ottawa_Senators_general_managers,,True
 NHL,ottawa-senators,gm,Steve Staios,2023-11-01,,day,day,open,False,,,,8,https://en.wikipedia.org/wiki/List_of_Ottawa_Senators_general_managers,,True
@@ -524,16 +507,15 @@ MLB,san-diego-padres,gm,Kevin Towers,1996-12-31,2009-12-31,year,year,year,False,
 MLB,san-diego-padres,gm,Jed Hoyer,2009-12-31,2011-12-31,year,year,year,False,,,,7,https://en.wikipedia.org/wiki/List_of_San_Diego_Padres_owners_and_executives,,True
 MLB,san-diego-padres,gm,Josh Byrnes,2012-12-31,2014-12-31,year,year,year,False,,,,8,https://en.wikipedia.org/wiki/List_of_San_Diego_Padres_owners_and_executives,,True
 MLB,san-diego-padres,gm,A. J. Preller,2014-12-31,,year,year,open,False,,,,9,https://en.wikipedia.org/wiki/List_of_San_Diego_Padres_owners_and_executives,,True
-MLB,san-francisco-giants,baseball_ops_president,Farhan Zaidi,2019-12-31,2024-12-31,year,year,year,False,,,,0,https://en.wikipedia.org/wiki/List_of_San_Francisco_Giants_owners_and_executives,,True
-MLB,san-francisco-giants,baseball_ops_president,Buster Posey,2025-12-31,,year,year,open,False,,,,1,https://en.wikipedia.org/wiki/List_of_San_Francisco_Giants_owners_and_executives,,True
-MLB,san-francisco-giants,gm,Brian Sabean,1996-12-31,2014-12-31,year,year,year,False,,,,8,https://en.wikipedia.org/wiki/List_of_San_Francisco_Giants_owners_and_executives,,True
-MLB,san-francisco-giants,gm,Bobby Evans,2015-12-31,2018-12-31,year,year,year,False,,,,9,https://en.wikipedia.org/wiki/List_of_San_Francisco_Giants_owners_and_executives,,True
-MLB,san-francisco-giants,gm,Scott Harris,2020-12-31,2022-12-31,year,year,year,False,,,,10,https://en.wikipedia.org/wiki/List_of_San_Francisco_Giants_owners_and_executives,,True
-MLB,san-francisco-giants,gm,Pete Putila,2023-12-31,2024-12-31,year,year,year,False,,,,11,https://en.wikipedia.org/wiki/List_of_San_Francisco_Giants_owners_and_executives,,True
-MLB,san-francisco-giants,gm,Zack Minasian,2025-12-31,,year,year,open,False,,,,12,https://en.wikipedia.org/wiki/List_of_San_Francisco_Giants_owners_and_executives,,True
+MLB,san-francisco-giants,baseball_ops_president,Farhan Zaidi,2018-12-31,2024-12-31,year,year,year,False,,,,0,https://en.wikipedia.org/wiki/List_of_San_Francisco_Giants_owners_and_executives,,True
+MLB,san-francisco-giants,baseball_ops_president,Buster Posey,2024-12-31,,year,year,open,False,,,,1,https://en.wikipedia.org/wiki/List_of_San_Francisco_Giants_owners_and_executives,,True
+MLB,san-francisco-giants,gm,Brian Sabean,1995-12-31,2014-12-31,year,year,year,False,,,,8,https://en.wikipedia.org/wiki/List_of_San_Francisco_Giants_owners_and_executives,,True
+MLB,san-francisco-giants,gm,Bobby Evans,2014-12-31,2018-12-31,year,year,year,False,,,,9,https://en.wikipedia.org/wiki/List_of_San_Francisco_Giants_owners_and_executives,,True
+MLB,san-francisco-giants,gm,Scott Harris,2019-12-31,2022-12-31,year,year,year,False,,,,10,https://en.wikipedia.org/wiki/List_of_San_Francisco_Giants_owners_and_executives,,True
+MLB,san-francisco-giants,gm,Pete Putila,2022-12-31,2024-12-31,year,year,year,False,,,,11,https://en.wikipedia.org/wiki/List_of_San_Francisco_Giants_owners_and_executives,,True
+MLB,san-francisco-giants,gm,Zack Minasian,2024-12-31,,year,year,open,False,,,,12,https://en.wikipedia.org/wiki/List_of_San_Francisco_Giants_owners_and_executives,,True
 NHL,san-jose-sharks,gm,Dean Lombardi,1996-03-06,2003-03-18,day,day,day,False,,,,2,https://en.wikipedia.org/wiki/List_of_San_Jose_Sharks_general_managers,,True
 NHL,san-jose-sharks,gm,Doug Wilson,2003-05-13,2022-04-07,day,day,day,False,,,,3,https://en.wikipedia.org/wiki/List_of_San_Jose_Sharks_general_managers,,True
-NHL,san-jose-sharks,gm,Won Presidents' Trophy,2008-07-01,2008-07-01,year,year,year,False,,,,6,https://en.wikipedia.org/wiki/List_of_San_Jose_Sharks_general_managers,,True
 NHL,san-jose-sharks,gm,Joe Will,2022-04-07,2022-07-05,day,day,day,True,,,,4,https://en.wikipedia.org/wiki/List_of_San_Jose_Sharks_general_managers,,True
 NHL,san-jose-sharks,gm,Mike Grier,2022-07-05,,day,day,open,False,,,,5,https://en.wikipedia.org/wiki/List_of_San_Jose_Sharks_general_managers,,True
 NHL,san-jose-sharks,head_coach,Darryl Sutter,1997-06-08,2002-12-01,day,day,day,False,False,1997.0,2002.0,4,https://en.wikipedia.org/wiki/List_of_San_Jose_Sharks_head_coaches,,True
@@ -558,10 +540,7 @@ MLB,seattle-mariners,gm,Lee Pelekoudas,2008-12-31,2008-12-31,year,year,year,True
 MLB,seattle-mariners,gm,Jerry Dipoto,2015-12-31,2021-12-31,year,year,year,False,,,,11,https://en.wikipedia.org/wiki/List_of_Seattle_Mariners_owners_and_executives,,True
 MLB,seattle-mariners,gm,Justin Hollander,2022-12-31,,year,year,open,False,,,,12,https://en.wikipedia.org/wiki/List_of_Seattle_Mariners_owners_and_executives,,True
 NHL,st-louis-blues,gm,Larry Pleau,1997-06-21,2010-07-01,day,day,day,False,,,,11,https://en.wikipedia.org/wiki/List_of_St._Louis_Blues_general_managers,,True
-NHL,st-louis-blues,gm,Won Presidents' Trophy,1999-07-01,2000-07-01,year,year,year,False,,,,14,https://en.wikipedia.org/wiki/List_of_St._Louis_Blues_general_managers,,True
 NHL,st-louis-blues,gm,Doug Armstrong,2010-07-01,2026-06-30,day,day,day,False,,,,12,https://en.wikipedia.org/wiki/List_of_St._Louis_Blues_general_managers,,True
-NHL,st-louis-blues,gm,Won General Manager of the Year Award,2011-07-01,2011-07-01,year,year,year,False,,,,15,https://en.wikipedia.org/wiki/List_of_St._Louis_Blues_general_managers,,True
-NHL,st-louis-blues,gm,Won Stanley Cup,2019-07-01,2019-07-01,year,year,year,False,,,,16,https://en.wikipedia.org/wiki/List_of_St._Louis_Blues_general_managers,,True
 NHL,st-louis-blues,gm,Alexander Steen,2026-06-30,,day,day,open,False,,,,13,https://en.wikipedia.org/wiki/List_of_St._Louis_Blues_general_managers,,True
 NHL,st-louis-blues,head_coach,Joel Quenneville,1997-01-15,2004-01-15,season,season,season,False,True,1996.0,2003.0,26,https://en.wikipedia.org/wiki/List_of_St._Louis_Blues_head_coaches,,True
 NHL,st-louis-blues,head_coach,Mike Kitchen,2004-01-15,2007-01-15,season,season,season,False,True,2003.0,2006.0,27,https://en.wikipedia.org/wiki/List_of_St._Louis_Blues_head_coaches,,True
@@ -581,15 +560,10 @@ MLB,st-louis-cardinals,gm,Rob Cerfolio,2027-12-31,,year,year,open,False,,,,16,ht
 NHL,tampa-bay-lightning,gm,Jacques Demers,1998-10-13,1999-07-14,day,day,day,False,,,,1,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_general_managers,,True
 NHL,tampa-bay-lightning,gm,Rick Dudley,1999-07-14,2002-02-10,day,day,day,False,,,,2,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_general_managers,,True
 NHL,tampa-bay-lightning,gm,Jay Feaster,2002-02-10,2008-07-11,day,day,day,False,,,,3,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_general_managers,,True
-NHL,tampa-bay-lightning,gm,Won Stanley Cup,2004-07-01,2004-07-01,year,year,year,False,,,,8,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_general_managers,,True
 NHL,tampa-bay-lightning,gm,Brian Lawton,2008-10-22,2010-04-12,day,day,day,False,,,,4,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_general_managers,,True
 NHL,tampa-bay-lightning,gm,Tom Kurvers,2010-04-12,2010-05-25,day,day,day,True,,,,5,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_general_managers,,True
 NHL,tampa-bay-lightning,gm,Steve Yzerman,2010-05-25,2018-09-11,day,day,day,False,,,,6,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_general_managers,,True
-NHL,tampa-bay-lightning,gm,Won General Manager of the Year Award,2014-07-01,2014-07-01,year,year,year,False,,,,9,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_general_managers,,True
-NHL,tampa-bay-lightning,gm,Won Presidents' Trophy,2018-07-01,2018-07-01,year,year,year,False,,,,12,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_general_managers,,True
 NHL,tampa-bay-lightning,gm,Julien BriseBois,2018-09-11,,day,day,open,False,,,,7,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_general_managers,,True
-NHL,tampa-bay-lightning,gm,Won Stanley Cup,2020-07-01,2020-07-01,year,year,year,False,,,,10,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_general_managers,,True
-NHL,tampa-bay-lightning,gm,Won Stanley Cup,2021-07-01,2021-07-01,year,year,year,False,,,,11,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_general_managers,,True
 NHL,tampa-bay-lightning,head_coach,Jacques Demers,1998-01-15,1999-04-30,season,season,season,False,True,1997.0,1998.0,2,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_head_coaches,,True
 NHL,tampa-bay-lightning,head_coach,Steve Ludzik,1999-10-01,2001-04-30,season,season,season,False,False,1999.0,2000.0,3,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_head_coaches,,True
 NHL,tampa-bay-lightning,head_coach,John Tortorella,2001-10-01,2008-04-30,season,season,season,False,False,2001.0,2007.0,4,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_head_coaches,,True
@@ -597,11 +571,11 @@ NHL,tampa-bay-lightning,head_coach,Barry Melrose,2008-10-01,2009-01-15,season,se
 NHL,tampa-bay-lightning,head_coach,Rick Tocchet,2009-01-15,2010-04-30,season,season,season,False,True,2008.0,2009.0,6,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_head_coaches,,True
 NHL,tampa-bay-lightning,head_coach,Guy Boucher,2010-10-01,2013-01-15,season,season,season,False,False,2010.0,2012.0,7,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_head_coaches,,True
 NHL,tampa-bay-lightning,head_coach,Jon Cooper,2013-01-15,,season,season,season,False,True,2012.0,,8,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Lightning_head_coaches,,True
-MLB,tampa-bay-rays,gm,Chuck LaMar,1998-12-31,2005-12-31,year,year,year,False,,,,0,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Rays_owners_and_executives,,True
-MLB,tampa-bay-rays,gm,Andrew Friedman,2006-12-31,2014-12-31,year,year,year,False,,,,1,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Rays_owners_and_executives,,True
-MLB,tampa-bay-rays,gm,Matthew Silverman,2015-12-31,2016-12-31,year,year,year,False,,,,2,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Rays_owners_and_executives,,True
-MLB,tampa-bay-rays,gm,Erik Neander,2017-12-31,2021-12-31,year,year,year,False,,,,3,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Rays_owners_and_executives,,True
-MLB,tampa-bay-rays,gm,Peter Bendix,2022-12-31,2023-12-31,year,year,year,False,,,,4,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Rays_owners_and_executives,,True
+MLB,tampa-bay-rays,gm,Chuck LaMar,1997-12-31,2005-12-31,year,year,year,False,,,,0,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Rays_owners_and_executives,,True
+MLB,tampa-bay-rays,gm,Andrew Friedman,2005-12-31,2014-12-31,year,year,year,False,,,,1,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Rays_owners_and_executives,,True
+MLB,tampa-bay-rays,gm,Matthew Silverman,2014-12-31,2016-12-31,year,year,year,False,,,,2,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Rays_owners_and_executives,,True
+MLB,tampa-bay-rays,gm,Erik Neander,2016-12-31,2021-12-31,year,year,year,False,,,,3,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Rays_owners_and_executives,,True
+MLB,tampa-bay-rays,gm,Peter Bendix,2021-12-31,2023-12-31,year,year,year,False,,,,4,https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Rays_owners_and_executives,,True
 MLB,texas-rangers,baseball_ops_president,Jon Daniels,2013-12-31,2022-12-31,year,year,year,False,,,,0,https://en.wikipedia.org/wiki/List_of_Texas_Rangers_owners_and_executives,,True
 MLB,texas-rangers,baseball_ops_president,Chris Young,2024-12-31,,year,year,open,False,,,,1,https://en.wikipedia.org/wiki/List_of_Texas_Rangers_owners_and_executives,,True
 MLB,texas-rangers,gm,Doug Melvin,1994-12-31,2001-12-31,year,year,year,False,,,,10,https://en.wikipedia.org/wiki/List_of_Texas_Rangers_owners_and_executives,,True
@@ -638,7 +612,6 @@ NHL,utah-mammoth,gm,Bobby Smith,1996-12-11,2001-02-17,day,day,day,False,,,,1,htt
 NHL,utah-mammoth,gm,Cliff Fletcher,2001-02-17,2001-08-28,day,day,day,False,,,,2,https://en.wikipedia.org/wiki/List_of_Arizona_Coyotes_general_managers,,True
 NHL,utah-mammoth,gm,Mike Barnett,2001-08-28,2007-04-11,day,day,day,False,,,,3,https://en.wikipedia.org/wiki/List_of_Arizona_Coyotes_general_managers,,True
 NHL,utah-mammoth,gm,Don Maloney,2007-05-29,2016-04-11,day,day,day,False,,,,4,https://en.wikipedia.org/wiki/List_of_Arizona_Coyotes_general_managers,,True
-NHL,utah-mammoth,gm,Won General Manager of the Year Award,2009-07-01,2009-07-01,year,year,year,False,,,,8,https://en.wikipedia.org/wiki/List_of_Arizona_Coyotes_general_managers,,True
 NHL,utah-mammoth,gm,John Chayka,2016-05-05,2020-07-26,day,day,day,False,,,,5,https://en.wikipedia.org/wiki/List_of_Arizona_Coyotes_general_managers,,True
 NHL,utah-mammoth,gm,Steve Sullivan,2020-07-26,2020-09-16,day,day,day,False,,,,6,https://en.wikipedia.org/wiki/List_of_Arizona_Coyotes_general_managers,,True
 NHL,utah-mammoth,gm,Bill Armstrong,2020-09-16,2024-04-18,day,day,day,False,,,,7,https://en.wikipedia.org/wiki/List_of_Arizona_Coyotes_general_managers,,True
@@ -654,7 +627,6 @@ NHL,utah-mammoth,head_coach,Andre Tourigny,2024-07-01,,year,year,open,False,Fals
 NHL,vancouver-canucks,gm,Brian Burke,1998-06-22,2004-05-03,day,day,day,False,,,,8,https://en.wikipedia.org/wiki/List_of_Vancouver_Canucks_general_managers,,True
 NHL,vancouver-canucks,gm,Dave Nonis,2004-05-06,2008-04-14,day,day,day,False,,,,9,https://en.wikipedia.org/wiki/List_of_Vancouver_Canucks_general_managers,,True
 NHL,vancouver-canucks,gm,Mike Gillis,2008-04-23,2014-04-08,day,day,day,False,,,,10,https://en.wikipedia.org/wiki/List_of_Vancouver_Canucks_general_managers,,True
-NHL,vancouver-canucks,gm,Won General Manager of the Year Award,2010-07-01,2010-07-01,year,year,year,False,,,,16,https://en.wikipedia.org/wiki/List_of_Vancouver_Canucks_general_managers,,True
 NHL,vancouver-canucks,gm,Jim Benning,2014-05-21,2021-12-05,day,day,day,False,,,,11,https://en.wikipedia.org/wiki/List_of_Vancouver_Canucks_general_managers,,True
 NHL,vancouver-canucks,gm,Stan Smyl,2021-12-05,2021-12-09,day,day,day,True,,,,12,https://en.wikipedia.org/wiki/List_of_Vancouver_Canucks_general_managers,,True
 NHL,vancouver-canucks,gm,Jim Rutherford,2021-12-09,2022-01-26,day,day,day,True,,,,13,https://en.wikipedia.org/wiki/List_of_Vancouver_Canucks_general_managers,,True
@@ -671,7 +643,6 @@ NHL,vancouver-canucks,head_coach,Rick Tocchet,2023-01-15,2025-04-30,season,seaso
 NHL,vancouver-canucks,head_coach,Adam Foote,2025-10-01,2026-04-30,season,season,season,False,False,2025.0,2025.0,24,https://en.wikipedia.org/wiki/List_of_Vancouver_Canucks_head_coaches,,True
 NHL,vancouver-canucks,head_coach,Manny Malhotra,2026-10-01,,season,season,season,False,False,2026.0,,25,https://en.wikipedia.org/wiki/List_of_Vancouver_Canucks_head_coaches,,True
 NHL,vegas-golden-knights,gm,George McPhee,2016-07-13,2019-09-01,day,day,day,False,,,,0,https://en.wikipedia.org/wiki/List_of_Vegas_Golden_Knights_general_managers,,True
-NHL,vegas-golden-knights,gm,General Manager of the Year,2017-07-01,2017-07-01,year,year,year,False,,,,2,https://en.wikipedia.org/wiki/List_of_Vegas_Golden_Knights_general_managers,,True
 NHL,vegas-golden-knights,gm,Kelly McCrimmon,2019-09-01,,day,day,open,False,,,,1,https://en.wikipedia.org/wiki/List_of_Vegas_Golden_Knights_general_managers,,True
 NHL,vegas-golden-knights,head_coach,Gerard Gallant,2017-10-01,2020-01-15,season,season,season,False,False,2017.0,2019.0,0,https://en.wikipedia.org/wiki/List_of_Vegas_Golden_Knights_head_coaches,,True
 NHL,vegas-golden-knights,head_coach,Peter DeBoer,2020-01-15,2022-04-30,season,season,season,False,True,2019.0,2021.0,1,https://en.wikipedia.org/wiki/List_of_Vegas_Golden_Knights_head_coaches,,True
@@ -679,11 +650,7 @@ NHL,vegas-golden-knights,head_coach,Bruce Cassidy,2022-10-01,2026-01-15,season,s
 NHL,vegas-golden-knights,head_coach,John Tortorella,2026-01-15,2026-04-30,season,season,season,False,True,2025.0,2025.0,3,https://en.wikipedia.org/wiki/List_of_Vegas_Golden_Knights_head_coaches,,True
 NHL,vegas-golden-knights,head_coach,Ryan Craig,2026-10-01,,season,season,season,False,False,2026.0,,4,https://en.wikipedia.org/wiki/List_of_Vegas_Golden_Knights_head_coaches,,True
 NHL,washington-capitals,gm,George McPhee,1997-06-09,2014-04-26,day,day,day,False,,,,4,https://en.wikipedia.org/wiki/List_of_Washington_Capitals_general_managers,,True
-NHL,washington-capitals,gm,Won Presidents' Trophy,2009-07-01,2009-07-01,year,year,year,False,,,,7,https://en.wikipedia.org/wiki/List_of_Washington_Capitals_general_managers,,True
 NHL,washington-capitals,gm,Brian MacLellan,2014-05-26,2024-07-08,day,day,day,False,,,,5,https://en.wikipedia.org/wiki/List_of_Washington_Capitals_general_managers,,True
-NHL,washington-capitals,gm,Won Presidents' Trophy twice,2015-07-01,2015-07-01,year,year,year,False,,,,9,https://en.wikipedia.org/wiki/List_of_Washington_Capitals_general_managers,,True
-NHL,washington-capitals,gm,Won Presidents' Trophy twice,2016-07-01,2016-07-01,year,year,year,False,,,,10,https://en.wikipedia.org/wiki/List_of_Washington_Capitals_general_managers,,True
-NHL,washington-capitals,gm,Won Stanley Cup,2018-07-01,2018-07-01,year,year,year,False,,,,8,https://en.wikipedia.org/wiki/List_of_Washington_Capitals_general_managers,,True
 NHL,washington-capitals,gm,Chris Patrick,2024-07-08,,day,day,open,False,,,,6,https://en.wikipedia.org/wiki/List_of_Washington_Capitals_general_managers,,True
 NHL,washington-capitals,head_coach,Ron Wilson,1997-10-01,2002-04-30,season,season,season,False,False,1997.0,2001.0,10,https://en.wikipedia.org/wiki/List_of_Washington_Capitals_head_coaches,,True
 NHL,washington-capitals,head_coach,Bruce Cassidy,2002-10-01,2004-01-15,season,season,season,False,False,2002.0,2003.0,11,https://en.wikipedia.org/wiki/List_of_Washington_Capitals_head_coaches,,True
@@ -700,10 +667,9 @@ MLB,washington-nationals,gm,Larry Beinfest,2001-12-31,2002-12-31,year,year,year,
 MLB,washington-nationals,gm,Omar Minaya,2002-12-31,2004-12-31,year,year,year,False,,,,10,https://en.wikipedia.org/wiki/List_of_Washington_Nationals_owners_and_executives,,True
 MLB,washington-nationals,gm,Jim Bowden,2005-12-31,2009-12-31,year,year,year,False,,,,11,https://en.wikipedia.org/wiki/List_of_Washington_Nationals_owners_and_executives,,True
 MLB,washington-nationals,gm,Mike Rizzo,2009-12-31,2025-12-31,year,year,year,False,,,,12,https://en.wikipedia.org/wiki/List_of_Washington_Nationals_owners_and_executives,,True
-NHL,winnipeg-jets,gm,Don Waddell,1998-07-01,2010-04-14,day,day,day,False,,,,5,https://en.wikipedia.org/wiki/List_of_Atlanta_Thrashers_general_managers,,True
+NHL,winnipeg-jets,gm,Don Waddell,1998-07-01,2010-04-14,day,day,day,False,,,,5,https://en.wikipedia.org/wiki/List_of_Winnipeg_Jets_general_managers,,True
 NHL,winnipeg-jets,gm,Rick Dudley,2010-04-14,2011-06-04,day,day,day,False,,,,6,https://en.wikipedia.org/wiki/List_of_Winnipeg_Jets_general_managers,,True
-NHL,winnipeg-jets,gm,Kevin Cheveldayoff,2011-06-08,,day,day,open,False,,,,7,https://en.wikipedia.org/wiki/List_of_Atlanta_Thrashers_general_managers,,True
-NHL,winnipeg-jets,gm,Won Presidents' Trophy,2024-07-01,2024-07-01,year,year,year,False,,,,9,https://en.wikipedia.org/wiki/List_of_Atlanta_Thrashers_general_managers,,True
+NHL,winnipeg-jets,gm,Kevin Cheveldayoff,2011-06-08,,day,day,open,False,,,,7,https://en.wikipedia.org/wiki/List_of_Winnipeg_Jets_general_managers,,True
 NHL,winnipeg-jets,head_coach,Curt Fraser,1999-10-01,2003-01-15,season,season,season,False,False,1999.0,2002.0,0,https://en.wikipedia.org/wiki/List_of_Atlanta_Thrashers_head_coaches,,True
 NHL,winnipeg-jets,head_coach,Bob Hartley,2003-01-15,2008-01-15,season,season,season,False,True,2002.0,2007.0,2,https://en.wikipedia.org/wiki/List_of_Atlanta_Thrashers_head_coaches,,True
 NHL,winnipeg-jets,head_coach,Don Waddell,2003-01-15,2003-01-15,season,season,season,False,True,2002.0,2002.0,1,https://en.wikipedia.org/wiki/List_of_Atlanta_Thrashers_head_coaches,,True

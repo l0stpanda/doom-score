@@ -1,5 +1,5 @@
 """Phase 2 build: add draft, front-office/coach and attendance columns to the Phase 1 core table."""
-import os, sys
+import os, re, sys
 from datetime import date, timedelta
 import numpy as np
 import pandas as pd
@@ -17,6 +17,7 @@ REP = os.path.join(ROOT, "reports")
 os.makedirs(MAN, exist_ok=True)
 KEY = ["league", "season_start_year", "franchise_id"]
 UNRESOLVED_PEOPLE = pd.DataFrame()
+SEASON_BASED_PAGES = {"san-francisco-giants", "tampa-bay-rays"}  # D39
 WINDOW_START = date(1999, 1, 1)  # spans ending before this are irrelevant (and include pre-relocation noise)
 
 
@@ -30,7 +31,8 @@ def build_spans():
     rows = []
     for fid, team in MLB_EXEC_PAGES.items():
         page = f"List of {team} owners and executives"
-        rows += pf.resolve_dates(pf.spans_from_page(page, fid, "MLB", None), "MLB")
+        rows += pf.resolve_dates(pf.spans_from_page(page, fid, "MLB", None), "MLB",
+                                 season_based=fid in SEASON_BASED_PAGES)
     for fid, names in NHL_NAMES.items():
         for n in names:
             for role, kind in (("gm", "general managers"), ("head_coach", "head coaches")):
@@ -66,48 +68,83 @@ def build_spans():
     return s[cols].sort_values(["franchise_id", "role", "start_date"]).reset_index(drop=True)
 
 
-def lead_at(spans, d):
-    """(person, gap_flag) for the top exec on date d. spans: one franchise, roles gm/baseball_ops_president."""
+VACANT = "__VACANT__"
+
+
+def active_at(spans, d):
     started = spans[spans.start_date <= d]
-    active = started[started.end_date.isna() | (started.end_date >= d)]
-    for role in ("gm",):  # GM only in both leagues (D36); president spans stay in the spans file
-        a = active[active.role == role]
-        if len(a):
-            r = a.sort_values("start_date").iloc[-1]
-            return r.person, 0, r.role
-    if len(started):  # short gap (year-only boundary): carry the most recently started person ...
+    return started, started[started.end_date.isna() | (started.end_date >= d)]
+
+
+def lead_at(gm, d, bo=None, vac_years=()):
+    """(person | VACANT | None, gap_flag) for the GM on date d (GM only, D36).
+    VACANT (D42) = source evidence that no one held the GM title: an active baseball-ops president with no
+    active GM, or an explicit 'no general manager between X and Y' on the team page. Evidence beats carrying."""
+    started, active = active_at(gm, d)
+    if len(active):
+        return active.sort_values("start_date").iloc[-1].person, 0
+    if (bo is not None and len(active_at(bo, d)[1])) or d.year in vac_years:
+        return VACANT, 0
+    if len(started):
         r = started.sort_values("start_date").iloc[-1]
+        later = gm[gm.start_date > d].sort_values("start_date")
+        precise = {"day", "month"}
+        # needs a known successor: no later span = unknown, not vacant (Reds after Krivsky are unresolved)
+        if r.date_precision_end in precise and len(later) and later.iloc[0].date_precision_start in precise:
+            return VACANT, 0  # gap between exactly dated spans = a real vacancy (e.g. Epstein resigned 2005-10-31)
+        # short gap from a year-only boundary: carry the most recently started person ...
         if r.end_date is None or pd.isna(r.end_date) or (d - r.end_date).days <= 400:
-            return r.person, 1, r.role
-    return None, 0, None  # ... but a longer vacancy stays missing (D37; e.g. Dodgers had no GM 2019-2021)
+            return r.person, 1
+    return None, 0  # ... a longer gap without vacancy evidence stays plain missing (D37)
+
+
+def page_vacancy_years():
+    """franchise_id -> calendar years the team page says had no general manager (e.g. Dodgers 2018-2021)."""
+    out = {}
+    for fid, team in MLB_EXEC_PAGES.items():
+        t = pf.wikitext(f"List of {team} owners and executives") or ""
+        for a, b in re.findall(r"no general manager (?:between|from) (\d{4}) (?:and|to|until|through) (\d{4})", t, re.I):
+            out.setdefault(fid, set()).update(range(int(a), int(b) + 1))
+    return out
 
 
 def personnel_features(core, spans):
-    leads = spans[spans.role == "gm"]
+    gms = spans[spans.role == "gm"]
+    bos = spans[spans.role == "baseball_ops_president"]
+    vac = page_vacancy_years()
+    print(f"page-stated GM vacancies: { {k: sorted(v) for k, v in vac.items()} }")
     out = []
     for (lg, fid), grp in core.groupby(["league", "franchise_id"]):
-        fs = leads[leads.franchise_id == fid]
+        fs = gms[gms.franchise_id == fid]
         if not len(fs):
             continue
+        bo, vy = bos[bos.franchise_id == fid], vac.get(fid, set())
         earliest = fs.start_date.min()
         for t in grp.season_start_year:
             m = moment(lg, t)
-            person, gap, role = lead_at(fs, m)
+            person, gap = lead_at(fs, m, bo, vy)
             if person is None:
+                continue
+            prev_year = lead_at(fs, m - timedelta(days=365), bo, vy)[0]
+            changed = np.nan if prev_year is None else int(prev_year != person)
+            if person == VACANT:
+                out.append(dict(league=lg, season_start_year=t, franchise_id=fid, personnel_lead_name=np.nan,
+                                personnel_lead_tenure_years=np.nan, personnel_lead_changed_past_year=changed,
+                                personnel_lead_tenure_left_censored=False, personnel_lead_gap_carried=0,
+                                personnel_lead_vacant=1))
                 continue
             d, months = m, 0
             while True:  # walk back monthly while the same person is the lead
                 prev = d - timedelta(days=30)
-                if prev < earliest or lead_at(fs, prev)[0] != person:
+                if prev < earliest or lead_at(fs, prev, bo, vy)[0] != person:
                     break
                 d, months = prev, months + 1
-            prev_year = lead_at(fs, m - timedelta(days=365))[0]
             out.append(dict(league=lg, season_start_year=t, franchise_id=fid, personnel_lead_name=person,
                             personnel_lead_tenure_years=round(months * 30 / 365.25, 2),
-                            personnel_lead_changed_past_year=(np.nan if prev_year is None else int(prev_year != person)),
+                            personnel_lead_changed_past_year=changed,
                             personnel_lead_tenure_left_censored=(d - timedelta(days=30) < earliest and
                                                                  earliest <= WINDOW_START),
-                            personnel_lead_gap_carried=gap))
+                            personnel_lead_gap_carried=gap, personnel_lead_vacant=0))
     return pd.DataFrame(out)
 
 
@@ -193,9 +230,10 @@ def main():
     for lg, fids in (("MLB", MLB_EXEC_PAGES), ("NHL", NHL_NAMES)):
         for fid in fids:
             sub = df[(df.league == lg) & (df.franchise_id == fid)]
-            if sub.personnel_lead_name.isna().any():
+            unknown = sub.personnel_lead_name.isna() & (sub.personnel_lead_vacant != 1)  # vacant = known, not missing
+            if unknown.any():
                 need.append(dict(league=lg, franchise_id=fid, role="gm",
-                                 missing_seasons=" ".join(map(str, sub[sub.personnel_lead_name.isna()].season_start_year))))
+                                 missing_seasons=" ".join(map(str, sub[unknown].season_start_year))))
             if lg == "NHL" and sub.coach_name.isna().any():
                 need.append(dict(league=lg, franchise_id=fid, role="head_coach",
                                  missing_seasons=" ".join(map(str, sub[sub.coach_name.isna()].season_start_year))))
@@ -243,8 +281,46 @@ def main():
         ("one row per key after merges", not df.duplicated(KEY).any(), ""),
         ("no draft data after season t (NHL draft year == season_start_year)", True, "by construction"),
     ]
-    for n, ok, det in checks:
-        print(f"[{'PASS' if ok else 'FAIL'}] {n} {det}")
+    # tenure consistency (D43): same person -> tenure +~1 per season; new person -> reset (GM <= 1.1 y; coach 0.5/1)
+    flags = []
+    s2 = df.sort_values(KEY).copy()
+    g = s2.groupby(["league", "franchise_id"])
+    for kind, name, ten, step_ok, reset_ok in (
+            ("gm", "personnel_lead_name", "personnel_lead_tenure_years",
+             lambda d: 0.9 <= d <= 1.1, lambda t: t <= 1.1),
+            ("coach", "coach_name", "coach_tenure_years",
+             lambda d: abs(d - 1) < 1e-9, lambda t: t in (0.5, 1.0))):
+        s2["prevname"], s2["prevten"], s2["prevyr"] = g[name].shift(), g[ten].shift(), g["season_start_year"].shift()
+        both = s2[name].notna() & s2.prevname.notna() & (s2.season_start_year - s2.prevyr == 1)
+        same = both & (s2[name] == s2.prevname)
+        diff = both & (s2[name] != s2.prevname)
+        bad_step = s2[same & ~(s2[ten] - s2.prevten).map(step_ok)]
+        bad_reset = s2[diff & ~s2[ten].map(reset_ok)]
+        for b, why in ((bad_step, "same person, tenure did not rise ~1"), (bad_reset, "new person, tenure did not reset")):
+            for r in b.itertuples():
+                flags.append(dict(kind=kind, league=r.league, franchise_id=r.franchise_id, season=r.season_start_year,
+                                  person=getattr(r, name), prev_person=r.prevname, tenure=getattr(r, ten), prev_tenure=r.prevten,
+                                  issue=why))
+        if kind == "gm":  # changed flag must agree with the name sequence
+            badc = s2[both & (s2.personnel_lead_changed_past_year != (s2[name] != s2.prevname).astype(int))]
+            for r in badc.itertuples():
+                flags.append(dict(kind=kind, league=r.league, franchise_id=r.franchise_id, season=r.season_start_year,
+                                  person=r.personnel_lead_name, prev_person=r.prevname, tenure=r.personnel_lead_tenure_years,
+                                  prev_tenure=r.prevten, issue="changed_past_year disagrees with name change"))
+    flags = pd.DataFrame(flags)
+    flags.to_csv(os.path.join(REP, "phase2_tenure_flags.csv"), index=False)
+    checks.append(("tenure consistency (GM and coach)", len(flags) == 0, f"{len(flags)} flagged rows"))
+
+    # GM changes per league-season (D43): flag 0 or > 10
+    ch = df.groupby(["league", "season_start_year"]).personnel_lead_changed_past_year.sum().astype(int)
+    odd = ch[(ch == 0) | (ch > 10)]
+    ch.rename("gm_changes").reset_index().to_csv(os.path.join(REP, "phase2_gm_changes_per_season.csv"), index=False)
+    checks.append(("GM changes per league-season within 1..10 (flag check)", len(odd) == 0,
+                   "flagged: " + (", ".join(f"{l} {y}={v}" for (l, y), v in odd.items()) or "none")
+                   + f" | range MLB {ch['MLB'].min()}-{ch['MLB'].max()}, NHL {ch['NHL'].min()}-{ch['NHL'].max()}"))
+    checks.append(("Giants/Rays read as season-based (D39)", True, "by construction"))
+    for n, ok, det in checks:  # a flag check reports items for review; it is not a failure (D43)
+        print(f"[{'PASS' if ok else ('FLAG' if 'flag check' in n else 'FAIL')}] {n} {det}")
     pd.DataFrame(checks, columns=["check", "pass", "detail"]).to_csv(os.path.join(REP, "phase2_checks.csv"), index=False)
     print("fallback-resolved manager rows (in output seasons):", int(df.manager_resolved_by_fallback.fillna(0).sum()))
     print("year-only spans:", int((spans.date_precision == "year").sum()), "of", len(spans))
