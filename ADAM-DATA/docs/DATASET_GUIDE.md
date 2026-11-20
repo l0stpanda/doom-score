@@ -1,13 +1,271 @@
 # MLB + NHL doom dataset: guide
 
-*File: `data/processed/mlb_nhl_team_seasons.csv` (1,454 rows × 104 columns). All numbers come from `docs/make_doc_stats.py`. D-numbers refer to `DECISIONS.md`.*
+*Files: **`data/processed/mlb_nhl_model_slim.csv`** (1,454 rows × 27 columns, the table to model from) and the full `data/processed/mlb_nhl_team_seasons.csv` (1,454 rows × 104 columns, a superset). All numbers come from `docs/make_doc_stats.py`. D-numbers refer to `DECISIONS.md`.*
 
-## 1. Quick start
+## 1. Model table (slim): start here
+
+`mlb_nhl_model_slim.csv` has the same rows as the full table and 27 of its columns: identifiers and the season-t record, **one `_lpct` feature per concept**, two flags, and the labels. Columns were **chosen by concept, not by correlation with the label** (D61). Where a concept has several candidate columns, the one listed in `FEATURE_CROSSWALK.md` is used. `SLIM_SELECTION.md` lists all 104 full-table columns as kept or dropped, with a reason for each. The other 77 columns are under [Extended columns](#4-extended-columns-full-table-only) below.
+
+`_lpct` = within-league-season percentile, 0 = lowest value that season, 100 = highest (same formula as `win_pct_percentile`, D59). Use these when stacking MLB and NHL: raw units differ. Missing values are left missing: `spending_lpct` is empty for every NHL row (D57), `underlying_quality_lpct` for NHL 2005–07, `gm_tenure_lpct` where the GM is vacant or unknown, `ot_losses` for MLB.
+
+| Column | Group | Definition | Built from | Coverage |
+|---|---|---|---|---|
+| `league` | id | `MLB` or `NHL`. | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `season_start_year` | id | Calendar year the season starts (NHL `2017` = 2017–18). | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `franchise_id` | id | Lowercase-hyphenated *current* franchise name, constant through moves and renames (D03, D05, D06). | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `team` | id | Franchise's current (2026) name, the same for every year. | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `wins` | id | Regular-season wins (source: league standings API). | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `losses` | id | Regular-season losses; NHL: regulation losses only. | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `ot_losses` | id | NHL overtime + shootout losses. | — | MLB 0%; NHL 100% (2005–2025) |
+| `games` | id | Games played (MLB W+L+T; NHL W+L+OTL). | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `win_pct` | id | (wins + 0.5 × ties) / games. NHL: equals points % (D07). | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `margin_per_game_lpct` | feature | Within league-season percentile (0–100): (scored - allowed) / games | `margin_per_game` ← MLB `point_diff_per_game` / NHL `point_diff_per_game` | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `luck_lpct` | feature | Within league-season percentile (0–100): win_pct - Pythagorean win% | `luck` ← MLB `luck` / NHL `luck` | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `underlying_quality_lpct` | feature | Within league-season percentile (0–100): Quality beyond W-L record | `underlying_quality` ← MLB `pythag_win_pct` / NHL `corsi_pct` | MLB 100% (2000–2026); NHL 86% (2008–2025) |
+| `roster_age_weighted_lpct` | feature | Within league-season percentile (0–100): Playing-time-weighted roster age | `roster_age_weighted` ← MLB `age_weighted` / NHL `age_weighted` | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `star_concentration_lpct` | feature | Within league-season percentile (0–100): Top-3 players' share of team production | `star_concentration` ← MLB `top3_concentration` / NHL `top3_concentration` | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `draft_capital_lpct` | feature | Within league-season percentile (0–100): Picks in rounds 1-2 of the year-t draft | `draft_capital` ← MLB `draft_picks_rd1_2` / NHL `draft_picks_rd1_2` | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `gm_tenure_lpct` | feature | Within league-season percentile (0–100): GM tenure at the prediction moment | `gm_tenure` ← MLB `personnel_lead_tenure_years` / NHL `personnel_lead_tenure_years` | MLB 94% (2000–2026); NHL 100% (2005–2025) |
+| `coach_tenure_lpct` | feature | Within league-season percentile (0–100): Manager/head-coach tenure at end of regular season | `coach_tenure` ← MLB `coach_tenure_years` / NHL `coach_tenure_years` | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `spending_lpct` | feature | Within league-season percentile (0–100): Payroll relative to league-season mean | `spending` ← MLB `payroll_rel_league_mean` / NHL **unavailable** | MLB 100% (2000–2026); NHL 0% |
+| `win_pct_percentile` | feature | Within league-season: (average rank − 1)/(n − 1) × 100 of win_pct; worst 0, best 100 (D10). | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `win_pct_trailing_3_seasons` | feature | Mean win_pct of the franchise's last 3 played seasons incl. t (min 1; D08, D09). | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `short_season` | flag | True for MLB 2020 and NHL 2012–13, 2019–20, 2020–21 (D14). | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `seasons_of_history` | flag | Number of franchise seasons available up to t (history fetched from 1997 MLB / 2002 NHL). | — | MLB 100% (2000–2026); NHL 100% (2005–2025) |
+| `y_doom_3yr` | label | 100 − mean(y_pct_t1, y_pct_t2, y_pct_t3); NaN unless all three exist (D11). | — | MLB 89% (2000–2023); NHL 85% (2005–2022) |
+| `y_doomed_bottom25` | label | y_doom_3yr ≥ 75 (binary). | — | MLB 89% (2000–2023); NHL 85% (2005–2022) |
+| `y_pct_t1` | label | win_pct_percentile in season t+1. | — | MLB 96% (2000–2025); NHL 95% (2005–2024) |
+| `y_pct_t2` | label | win_pct_percentile in season t+2. | — | MLB 93% (2000–2024); NHL 90% (2005–2023) |
+| `y_pct_t3` | label | win_pct_percentile in season t+3. | — | MLB 89% (2000–2023); NHL 85% (2005–2022) |
+
+### Slim column details
+
+**`league`**  
+- Definition: `MLB` or `NHL`.
+- Plain English: Which league the row belongs to.
+- Why it might relate to doom: Not a predictor; use it to group or stratify.
+- Known: Descriptive / fixed
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): e.g. `MLB`, `NHL`
+
+**`season_start_year`**  
+- Definition: Calendar year the season starts (NHL `2017` = 2017–18).
+- Plain English: The season this row describes.
+- Why it might relate to doom: Not a predictor; defines time order for train/test splits.
+- Known: Descriptive / fixed
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 2,000 / 2,014 / 2,026
+
+**`franchise_id`**  
+- Definition: Lowercase-hyphenated *current* franchise name, constant through moves and renames (D03, D05, D06).
+- Plain English: A stable ID for the club across its history.
+- Why it might relate to doom: Not a predictor; use it to follow a club over time.
+- Known: Descriptive / fixed
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): e.g. `arizona-diamondbacks`, `athletics`
+
+**`team`**  
+- Definition: Franchise's current (2026) name, the same for every year.
+- Plain English: The club's name today.
+- Why it might relate to doom: Not a predictor.
+- Known: Descriptive / fixed
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): e.g. `Arizona Diamondbacks`, `Athletics`
+
+**`wins`**  
+- Definition: Regular-season wins (source: league standings API).
+- Plain English: Games won.
+- Why it might relate to doom: Better teams now tend to stay better (persistence).
+- Known: End of season t (before the prediction moment)
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 15 / 63.00 / 116
+
+**`losses`**  
+- Definition: Regular-season losses; NHL: regulation losses only.
+- Plain English: Games lost (in hockey, losses in normal time).
+- Why it might relate to doom: Mirror of wins.
+- Known: End of season t (before the prediction moment)
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 7 / 65.00 / 121
+
+**`ot_losses`**  
+- Definition: NHL overtime + shootout losses.
+- Plain English: Hockey games lost after the normal 60 minutes.
+- Why it might relate to doom: Close losses; partly luck.
+- Known: End of season t (before the prediction moment)
+- Leagues: NHL · Coverage: MLB 0%; NHL 100% (2005–2025)
+- Typical range (min / median / max): 0.000 / 9.00 / 20.00
+
+**`games`**  
+- Definition: Games played (MLB W+L+T; NHL W+L+OTL).
+- Plain English: How many games the team played.
+- Why it might relate to doom: Flags short seasons.
+- Known: End of season t (before the prediction moment)
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 48 / 162.0 / 163
+
+**`win_pct`**  
+- Definition: (wins + 0.5 × ties) / games. NHL: equals points % (D07).
+- Plain English: Share of games won, with half credit for ties / overtime losses.
+- Why it might relate to doom: Current quality; the strongest single predictor.
+- Known: End of season t (before the prediction moment)
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 0.253 / 0.531 / 0.823
+
+**`margin_per_game_lpct`**  
+- Definition: Within league-season percentile of `margin_per_game`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
+- Plain English: `margin_per_game` expressed as 0–100 relative to the other teams in the same league and season.
+- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
+- Known: End of season t (before the prediction moment)
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 0.000 / 50.00 / 100.0
+
+**`luck_lpct`**  
+- Definition: Within league-season percentile of `luck`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
+- Plain English: `luck` expressed as 0–100 relative to the other teams in the same league and season.
+- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
+- Known: End of season t (before the prediction moment)
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 0.000 / 50.00 / 100.0
+
+**`underlying_quality_lpct`**  
+- Definition: Within league-season percentile of `underlying_quality`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
+- Plain English: `underlying_quality` expressed as 0–100 relative to the other teams in the same league and season.
+- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
+- Known: End of season t (before the prediction moment)
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 86% (2008–2025)
+- Typical range (min / median / max): 0.000 / 50.00 / 100.0
+
+**`roster_age_weighted_lpct`**  
+- Definition: Within league-season percentile of `roster_age_weighted`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
+- Plain English: `roster_age_weighted` expressed as 0–100 relative to the other teams in the same league and season.
+- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
+- Known: End of season t (before the prediction moment)
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 0.000 / 50.00 / 100.0
+
+**`star_concentration_lpct`**  
+- Definition: Within league-season percentile of `star_concentration`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
+- Plain English: `star_concentration` expressed as 0–100 relative to the other teams in the same league and season.
+- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
+- Known: End of season t (before the prediction moment)
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 0.000 / 50.00 / 100.0
+
+**`draft_capital_lpct`**  
+- Definition: Within league-season percentile of `draft_capital`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
+- Plain English: `draft_capital` expressed as 0–100 relative to the other teams in the same league and season.
+- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
+- Known: Draft held in year t (before the prediction moment)
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 0.000 / 48.28 / 100.0
+
+**`gm_tenure_lpct`**  
+- Definition: Within league-season percentile of `gm_tenure`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
+- Plain English: `gm_tenure` expressed as 0–100 relative to the other teams in the same league and season.
+- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
+- Known: At the prediction moment (MLB Nov 15 of t; NHL Jun 15 of t+1)
+- Leagues: MLB, NHL · Coverage: MLB 94% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 0.000 / 50.00 / 100.0
+
+**`coach_tenure_lpct`**  
+- Definition: Within league-season percentile of `coach_tenure`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
+- Plain English: `coach_tenure` expressed as 0–100 relative to the other teams in the same league and season.
+- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
+- Known: Last regular-season game of t
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 0.000 / 50.00 / 100.0
+
+**`spending_lpct`**  
+- Definition: Within league-season percentile of `spending`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
+- Plain English: `spending` expressed as 0–100 relative to the other teams in the same league and season.
+- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
+- Known: Opening Day of season t
+- Leagues: MLB · Coverage: MLB 100% (2000–2026); NHL 0%
+- Typical range (min / median / max): 0.000 / 50.00 / 100.0
+
+**`win_pct_percentile`**  
+- Definition: Within league-season: (average rank − 1)/(n − 1) × 100 of win_pct; worst 0, best 100 (D10).
+- Plain English: Where the team finished relative to the rest of its league that year.
+- Why it might relate to doom: Current standing; the doom label is built from future values of this.
+- Known: End of season t (before the prediction moment)
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 0.000 / 50.00 / 100.0
+
+**`win_pct_trailing_3_seasons`**  
+- Definition: Mean win_pct of the franchise's last 3 played seasons incl. t (min 1; D08, D09).
+- Plain English: Average record over the last three seasons.
+- Why it might relate to doom: Smooths one-season noise.
+- Known: End of season t (before the prediction moment)
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 0.323 / 0.525 / 0.715
+
+**`short_season`**  
+- Definition: True for MLB 2020 and NHL 2012–13, 2019–20, 2020–21 (D14).
+- Plain English: Seasons cut short (lockout or pandemic).
+- Why it might relate to doom: Records from short seasons are noisier.
+- Known: Descriptive / fixed
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): share True = 8.4%
+
+**`seasons_of_history`**  
+- Definition: Number of franchise seasons available up to t (history fetched from 1997 MLB / 2002 NHL).
+- Plain English: How much past data exists for this club.
+- Why it might relate to doom: Low values = less reliable trailing features (expansion teams).
+- Known: End of season t (before the prediction moment)
+- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
+- Typical range (min / median / max): 1 / 15.00 / 30
+
+### Labels: never use these as features
+
+These columns describe seasons *t+1* to *t+3*. Using any of them, or anything computed from them, as a model input is leakage.
+
+**`y_doom_3yr`**  
+- Definition: 100 − mean(y_pct_t1, y_pct_t2, y_pct_t3); NaN unless all three exist (D11).
+- Plain English: The doom score: higher = worse finishes over the next three seasons.
+- Why it might relate to doom: **The target.**
+- Known: Seasons t+1 to t+3 (the future) — label
+- Leagues: MLB, NHL · Coverage: MLB 89% (2000–2023); NHL 85% (2005–2022)
+- Typical range (min / median / max): 1.15 / 48.85 / 100.0
+
+**`y_doomed_bottom25`**  
+- Definition: y_doom_3yr ≥ 75 (binary).
+- Plain English: Whether the team averaged a bottom-quarter finish over the next three seasons.
+- Why it might relate to doom: **Binary target.**
+- Known: Seasons t+1 to t+3 (the future) — label
+- Leagues: MLB, NHL · Coverage: MLB 89% (2000–2023); NHL 85% (2005–2022)
+- Typical range (min / median / max): share True = 18.1%
+
+**`y_pct_t1`**  
+- Definition: win_pct_percentile in season t+1.
+- Plain English: Standing next season.
+- Why it might relate to doom: **Label.**
+- Known: Seasons t+1 to t+3 (the future) — label
+- Leagues: MLB, NHL · Coverage: MLB 96% (2000–2025); NHL 95% (2005–2024)
+- Typical range (min / median / max): 0.000 / 50.00 / 100.0
+
+**`y_pct_t2`**  
+- Definition: win_pct_percentile in season t+2.
+- Plain English: Standing two seasons ahead.
+- Why it might relate to doom: **Label.**
+- Known: Seasons t+1 to t+3 (the future) — label
+- Leagues: MLB, NHL · Coverage: MLB 93% (2000–2024); NHL 90% (2005–2023)
+- Typical range (min / median / max): 0.000 / 50.00 / 100.0
+
+**`y_pct_t3`**  
+- Definition: win_pct_percentile in season t+3.
+- Plain English: Standing three seasons ahead.
+- Why it might relate to doom: **Label.**
+- Known: Seasons t+1 to t+3 (the future) — label
+- Leagues: MLB, NHL · Coverage: MLB 89% (2000–2023); NHL 85% (2005–2022)
+- Typical range (min / median / max): 0.000 / 50.00 / 100.0
+
+## 2. Quick start
 
 **One row = one team in one season *t*.** Key columns:
 - `league`, `season_start_year`, `franchise_id`: identify the row (NHL `2017` = the 2017–18 season).
 - `win_pct_percentile`: where the team finished in its league that season.
-- The shared concept columns after the first 19 (e.g. `roster_age_weighted`, `spending`) and their `_lpct` versions.
+- The nine concept features, as `_lpct` columns (e.g. `roster_age_weighted_lpct`, `spending_lpct`); see section 1.
 - Labels: `y_doom_3yr` (0–100, higher = more doomed) and `y_doomed_bottom25` (yes/no).
 
 **Reading a percentile.** Within one league and season, teams are ranked by record; the worst gets 0, the best 100, everyone else in between (ties share an average rank). A 75 means the team finished ahead of about three quarters of the league. Because it is relative, percentiles are comparable across leagues and years even though records are not.
@@ -36,7 +294,7 @@ Average of the next three: 98.9 → doom = 100 − 98.9 = **1.1** (stored `y_doo
 
 Labels exist only for seasons with three played follow-up seasons: MLB through 2023, NHL through 2022–23.
 
-## 2. Sports primer
+## 3. Sports primer
 
 ### MLB (baseball)
 
@@ -68,9 +326,9 @@ Labels exist only for seasons with three played follow-up seasons: MLB through 2
 
 **Corsi, expected goals and PDO.** *Corsi %* is the team's share of all shot attempts (shots, misses, blocked shots) in its games; teams that control the puck tend to win later. *Expected goals %* (xG %) weights each shot by how likely a shot like it is to score (from a model), then takes the team's share. *PDO* is 5-on-5 shooting % plus save %; it averages about 1.000 and extreme values usually do not last, so it is read as a luck gauge.
 
-## 3. Feature reference
+## 4. Extended columns (full table only)
 
-Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining columns. "Coverage" is the share of rows that are non-missing, per league. "Typical range" is min / median / max over all rows.
+The 77 columns below are in `mlb_nhl_team_seasons.csv` but not in the slim table: raw concept aliases (league units), league source columns, alternatives, audit columns and the duplicate label. Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining columns. "Coverage" is the share of rows that are non-missing, per league. "Typical range" is min / median / max over all rows.
 
 ### Playing-time weight
 
@@ -139,14 +397,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Known: End of season t (before the prediction moment)
 - Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
 - Typical range (min / median / max): 25.41 / 28.63 / 33.73
-
-**`roster_age_weighted_lpct`**  
-- Definition: Within league-season percentile of `roster_age_weighted`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
-- Plain English: `roster_age_weighted` expressed as 0–100 relative to the other teams in the same league and season.
-- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
-- Known: End of season t (before the prediction moment)
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 0.000 / 50.00 / 100.0
 
 **`age_weighted`**  
 - Definition: Playing-time-weighted mean age; age on MLB Jun 30 of t / NHL Feb 1 of t+1; weights MLB PA+BF, NHL TOI per team stint (D45).
@@ -242,14 +492,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
 - Typical range (min / median / max): 0.129 / 0.221 / 0.480
 
-**`star_concentration_lpct`**  
-- Definition: Within league-season percentile of `star_concentration`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
-- Plain English: `star_concentration` expressed as 0–100 relative to the other teams in the same league and season.
-- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
-- Known: End of season t (before the prediction moment)
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 0.000 / 50.00 / 100.0
-
 **`top3_concentration`**  
 - Definition: MLB: top-3 players' share of PA+BF. NHL: top-3 skaters' share of skater points (D45).
 - Plain English: How much the team depends on its three biggest contributors.
@@ -267,14 +509,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Known: End of season t (before the prediction moment)
 - Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
 - Typical range (min / median / max): -2.62 / 0.028 / 2.27
-
-**`margin_per_game_lpct`**  
-- Definition: Within league-season percentile of `margin_per_game`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
-- Plain English: `margin_per_game` expressed as 0–100 relative to the other teams in the same league and season.
-- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
-- Known: End of season t (before the prediction moment)
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 0.000 / 50.00 / 100.0
 
 **`point_diff_per_game`**  
 - Definition: (runs or goals scored − allowed) / games.
@@ -310,14 +544,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
 - Typical range (min / median / max): -0.083 / 0.023 / 0.149
 
-**`luck_lpct`**  
-- Definition: Within league-season percentile of `luck`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
-- Plain English: `luck` expressed as 0–100 relative to the other teams in the same league and season.
-- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
-- Known: End of season t (before the prediction moment)
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 0.000 / 50.00 / 100.0
-
 ### underlying_quality
 
 **`underlying_quality`**  
@@ -327,14 +553,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Known: End of season t (before the prediction moment)
 - Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 86% (2008–2025)
 - Typical range (min / median / max): 0.272 / 0.500 / 0.715
-
-**`underlying_quality_lpct`**  
-- Definition: Within league-season percentile of `underlying_quality`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
-- Plain English: `underlying_quality` expressed as 0–100 relative to the other teams in the same league and season.
-- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
-- Known: End of season t (before the prediction moment)
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 86% (2008–2025)
-- Typical range (min / median / max): 0.000 / 50.00 / 100.0
 
 **`pythag_win_pct`**  
 - Definition: Pythagorean win %: RS^k/(RS^k+RA^k), k = 1.83 MLB, 2.0 NHL (D13).
@@ -385,14 +603,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Known: Draft held in year t (before the prediction moment)
 - Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
 - Typical range (min / median / max): 0.000 / 2.00 / 11.00
-
-**`draft_capital_lpct`**  
-- Definition: Within league-season percentile of `draft_capital`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
-- Plain English: `draft_capital` expressed as 0–100 relative to the other teams in the same league and season.
-- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
-- Known: Draft held in year t (before the prediction moment)
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 0.000 / 48.28 / 100.0
 
 **`draft_picks_rd1_2`**  
 - Definition: Picks in rounds 1–2 (MLB incl. supplemental 1st, Competitive Balance Round A, PPI; D21).
@@ -452,14 +662,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Leagues: MLB, NHL · Coverage: MLB 94% (2000–2026); NHL 100% (2005–2025)
 - Typical range (min / median / max): 0.000 / 3.86 / 27.84
 
-**`gm_tenure_lpct`**  
-- Definition: Within league-season percentile of `gm_tenure`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
-- Plain English: `gm_tenure` expressed as 0–100 relative to the other teams in the same league and season.
-- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
-- Known: At the prediction moment (MLB Nov 15 of t; NHL Jun 15 of t+1)
-- Leagues: MLB, NHL · Coverage: MLB 94% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 0.000 / 50.00 / 100.0
-
 **`personnel_lead_tenure_years`**  
 - Definition: Years the current GM has held the job at the prediction moment; GM only (D30, D36).
 - Plain English: How long the person running the roster has been in charge.
@@ -518,14 +720,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
 - Typical range (min / median / max): 0.500 / 2.00 / 20.50
 
-**`coach_tenure_lpct`**  
-- Definition: Within league-season percentile of `coach_tenure`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
-- Plain English: `coach_tenure` expressed as 0–100 relative to the other teams in the same league and season.
-- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
-- Known: Last regular-season game of t
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 0.000 / 50.00 / 100.0
-
 **`coach_tenure_years`**  
 - Definition: Consecutive seasons as season-end manager/head coach incl. t; a first season taken over mid-season counts 0.5 (D24).
 - Plain English: How long the current manager/coach has been in charge.
@@ -575,14 +769,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Known: Opening Day of season t
 - Leagues: MLB · Coverage: MLB 100% (2000–2026); NHL 0%
 - Typical range (min / median / max): 0.193 / 0.948 / 2.85
-
-**`spending_lpct`**  
-- Definition: Within league-season percentile of `spending`: (average rank − 1)/(n − 1) × 100 over non-missing values (D59).
-- Plain English: `spending` expressed as 0–100 relative to the other teams in the same league and season.
-- Why it might relate to doom: Use this version when stacking leagues: raw units differ.
-- Known: Opening Day of season t
-- Leagues: MLB · Coverage: MLB 100% (2000–2026); NHL 0%
-- Typical range (min / median / max): 0.000 / 50.00 / 100.0
 
 **`spending_available`**  
 - Definition: 1 = spending observed (MLB); 0 = unavailable (NHL) (D57).
@@ -716,38 +902,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 
 ### Identifiers and standings (not in the crosswalk)
 
-**`league`**  
-- Definition: `MLB` or `NHL`.
-- Plain English: Which league the row belongs to.
-- Why it might relate to doom: Not a predictor; use it to group or stratify.
-- Known: Descriptive / fixed
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): e.g. `MLB`, `NHL`
-
-**`season_start_year`**  
-- Definition: Calendar year the season starts (NHL `2017` = 2017–18).
-- Plain English: The season this row describes.
-- Why it might relate to doom: Not a predictor; defines time order for train/test splits.
-- Known: Descriptive / fixed
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 2,000 / 2,014 / 2,026
-
-**`franchise_id`**  
-- Definition: Lowercase-hyphenated *current* franchise name, constant through moves and renames (D03, D05, D06).
-- Plain English: A stable ID for the club across its history.
-- Why it might relate to doom: Not a predictor; use it to follow a club over time.
-- Known: Descriptive / fixed
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): e.g. `arizona-diamondbacks`, `athletics`
-
-**`team`**  
-- Definition: Franchise's current (2026) name, the same for every year.
-- Plain English: The club's name today.
-- Why it might relate to doom: Not a predictor.
-- Known: Descriptive / fixed
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): e.g. `Arizona Diamondbacks`, `Athletics`
-
 **`team_name_then`**  
 - Definition: Name the source used that season (e.g. `Expos`).
 - Plain English: What the club was called that year.
@@ -764,22 +918,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
 - Typical range (min / median / max): 1 / 111.0 / 158
 
-**`wins`**  
-- Definition: Regular-season wins (source: league standings API).
-- Plain English: Games won.
-- Why it might relate to doom: Better teams now tend to stay better (persistence).
-- Known: End of season t (before the prediction moment)
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 15 / 63.00 / 116
-
-**`losses`**  
-- Definition: Regular-season losses; NHL: regulation losses only.
-- Plain English: Games lost (in hockey, losses in normal time).
-- Why it might relate to doom: Mirror of wins.
-- Known: End of season t (before the prediction moment)
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 7 / 65.00 / 121
-
 **`ties`**  
 - Definition: MLB: tie games. **NHL: overtime/shootout losses** (+ true ties in 2002–04), so that win_pct equals NHL points % (D07).
 - Plain English: In MLB, games that ended level. In the NHL, games lost after regulation, which still earn a point.
@@ -788,30 +926,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
 - Typical range (min / median / max): 0 / 0.000 / 20
 
-**`ot_losses`**  
-- Definition: NHL overtime + shootout losses.
-- Plain English: Hockey games lost after the normal 60 minutes.
-- Why it might relate to doom: Close losses; partly luck.
-- Known: End of season t (before the prediction moment)
-- Leagues: NHL · Coverage: MLB 0%; NHL 100% (2005–2025)
-- Typical range (min / median / max): 0.000 / 9.00 / 20.00
-
-**`games`**  
-- Definition: Games played (MLB W+L+T; NHL W+L+OTL).
-- Plain English: How many games the team played.
-- Why it might relate to doom: Flags short seasons.
-- Known: End of season t (before the prediction moment)
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 48 / 162.0 / 163
-
-**`win_pct`**  
-- Definition: (wins + 0.5 × ties) / games. NHL: equals points % (D07).
-- Plain English: Share of games won, with half credit for ties / overtime losses.
-- Why it might relate to doom: Current quality; the strongest single predictor.
-- Known: End of season t (before the prediction moment)
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 0.253 / 0.531 / 0.823
-
 **`win_pct_raw`**  
 - Definition: wins / games (no credit for ties/OTL).
 - Plain English: Plain share of games won.
@@ -819,14 +933,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Known: End of season t (before the prediction moment)
 - Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
 - Typical range (min / median / max): 0.232 / 0.506 / 0.793
-
-**`win_pct_percentile`**  
-- Definition: Within league-season: (average rank − 1)/(n − 1) × 100 of win_pct; worst 0, best 100 (D10).
-- Plain English: Where the team finished relative to the rest of its league that year.
-- Why it might relate to doom: Current standing; the doom label is built from future values of this.
-- Known: End of season t (before the prediction moment)
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 0.000 / 50.00 / 100.0
 
 **`standings_source`**  
 - Definition: API URL for the standings row.
@@ -837,14 +943,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Typical range (min / median / max): e.g. `https://api.nhle.com/stats/rest/en/team/summary?cayenneExp=seasonId=20212022 and gameTypeId=2`, `https://api.nhle.com/stats/rest/en/team/summary?cayenneExp=seasonId=20222023 and gameTypeId=2`
 
 ### Trajectory and context (not in the crosswalk)
-
-**`win_pct_trailing_3_seasons`**  
-- Definition: Mean win_pct of the franchise's last 3 played seasons incl. t (min 1; D08, D09).
-- Plain English: Average record over the last three seasons.
-- Why it might relate to doom: Smooths one-season noise.
-- Known: End of season t (before the prediction moment)
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 0.323 / 0.525 / 0.715
 
 **`win_pct_change_1yr`**  
 - Definition: win_pct(t) − win_pct(previous played season).
@@ -862,22 +960,6 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
 - Typical range (min / median / max): -0.180 / -0.000 / 0.244
 
-**`seasons_of_history`**  
-- Definition: Number of franchise seasons available up to t (history fetched from 1997 MLB / 2002 NHL).
-- Plain English: How much past data exists for this club.
-- Why it might relate to doom: Low values = less reliable trailing features (expansion teams).
-- Known: End of season t (before the prediction moment)
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): 1 / 15.00 / 30
-
-**`short_season`**  
-- Definition: True for MLB 2020 and NHL 2012–13, 2019–20, 2020–21 (D14).
-- Plain English: Seasons cut short (lockout or pandemic).
-- Why it might relate to doom: Records from short seasons are noisier.
-- Known: Descriptive / fixed
-- Leagues: MLB, NHL · Coverage: MLB 100% (2000–2026); NHL 100% (2005–2025)
-- Typical range (min / median / max): share True = 8.4%
-
 **`expansion_first_3_seasons`**  
 - Definition: True for Vegas 2017–19 and Seattle 2021–23.
 - Plain English: A brand-new team's first three seasons.
@@ -887,25 +969,7 @@ Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining co
 - Typical range (min / median / max): share True = 0.4%
 
 
-## Labels — never use these as features
-
-These columns describe seasons *t+1* to *t+3*. Using any of them, or anything computed from them, as a model input is leakage.
-
-**`y_doom_3yr`**  
-- Definition: 100 − mean(y_pct_t1, y_pct_t2, y_pct_t3); NaN unless all three exist (D11).
-- Plain English: The doom score: higher = worse finishes over the next three seasons.
-- Why it might relate to doom: **The target.**
-- Known: Seasons t+1 to t+3 (the future) — label
-- Leagues: MLB, NHL · Coverage: MLB 89% (2000–2023); NHL 85% (2005–2022)
-- Typical range (min / median / max): 1.15 / 48.85 / 100.0
-
-**`y_doomed_bottom25`**  
-- Definition: y_doom_3yr ≥ 75 (binary).
-- Plain English: Whether the team averaged a bottom-quarter finish over the next three seasons.
-- Why it might relate to doom: **Binary target.**
-- Known: Seasons t+1 to t+3 (the future) — label
-- Leagues: MLB, NHL · Coverage: MLB 89% (2000–2023); NHL 85% (2005–2022)
-- Typical range (min / median / max): share True = 18.1%
+### Extended labels: never use these as features
 
 **`observed_doom_next_3_seasons`**  
 - Definition: Identical to `y_doom_3yr`; name required by the teammate's schema.
@@ -915,32 +979,8 @@ These columns describe seasons *t+1* to *t+3*. Using any of them, or anything co
 - Leagues: MLB, NHL · Coverage: MLB 89% (2000–2023); NHL 85% (2005–2022)
 - Typical range (min / median / max): 1.15 / 48.85 / 100.0
 
-**`y_pct_t1`**  
-- Definition: win_pct_percentile in season t+1.
-- Plain English: Standing next season.
-- Why it might relate to doom: **Label.**
-- Known: Seasons t+1 to t+3 (the future) — label
-- Leagues: MLB, NHL · Coverage: MLB 96% (2000–2025); NHL 95% (2005–2024)
-- Typical range (min / median / max): 0.000 / 50.00 / 100.0
 
-**`y_pct_t2`**  
-- Definition: win_pct_percentile in season t+2.
-- Plain English: Standing two seasons ahead.
-- Why it might relate to doom: **Label.**
-- Known: Seasons t+1 to t+3 (the future) — label
-- Leagues: MLB, NHL · Coverage: MLB 93% (2000–2024); NHL 90% (2005–2023)
-- Typical range (min / median / max): 0.000 / 50.00 / 100.0
-
-**`y_pct_t3`**  
-- Definition: win_pct_percentile in season t+3.
-- Plain English: Standing three seasons ahead.
-- Why it might relate to doom: **Label.**
-- Known: Seasons t+1 to t+3 (the future) — label
-- Leagues: MLB, NHL · Coverage: MLB 89% (2000–2023); NHL 85% (2005–2022)
-- Typical range (min / median / max): 0.000 / 50.00 / 100.0
-
-
-## 4. Gotchas
+## 5. Gotchas
 
 - **NHL `ties` holds overtime losses.** For NHL rows from 2005 on, `ties` equals `ot_losses` in 100.0% of rows. Example: Boston Bruins 2022–23 went 65–12–5 (W–L–OTL), so `ties` = 5 and `win_pct` = 0.823 (points %), while `win_pct_raw` = 0.793.
 - **Short seasons.** MLB 2020: 58–60 games, NHL 2012–13: 48–48 games, NHL 2019–20: 68–71 games, NHL 2020–21: 56–56 games. Use `short_season` to flag or down-weight them; counts such as wins are not comparable to full seasons.
@@ -958,7 +998,7 @@ These columns describe seasons *t+1* to *t+3*. Using any of them, or anything co
 - **Expansion teams.** `seattle-kraken` first season 2021 (seasons_of_history starts at 1); `vegas-golden-knights` first season 2017 (seasons_of_history starts at 1). Their trailing features use fewer seasons; `seasons_of_history` tells you how many.
 - **MLB 2026 GM changes are always 0** (year-only dates fall after the moment; D43). MLB 2026 is unlabelled.
 
-## 5. Which features look predictive (exploratory)
+## 6. Which features look predictive (exploratory)
 
 From `reports/phase4.md` / `phase4_correlations.csv`. These are **exploratory correlations on labelled rows, not model results**. "Partial" is the Spearman correlation with `y_doom_3yr` after removing what `win_pct_percentile` already explains (D55). Negative means a higher value goes with *less* doom. Current standing alone has Spearman -0.45 (MLB) and -0.50 (NHL) with doom.
 

@@ -7,13 +7,15 @@ DATA_DICTIONARY.md and FEATURE_CROSSWALK.md (D-numbers cited inline).
 
 Run from the repo root or anywhere:  PYTHONUTF8=1 python ADAM-DATA/docs/make_doc_stats.py
 It does not change any data or code."""
-import json, os, subprocess
+import json, os, subprocess, sys
 import numpy as np
 import pandas as pd
 
 DOCS = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(DOCS)                      # ADAM-DATA
 P = lambda *a: os.path.join(ROOT, *a)
+sys.path.insert(0, P("src"))
+import build_slim, build_crosswalk                # slim column list (D61), crosswalk concept sources (D58)
 
 df = pd.read_csv(P("data", "processed", "mlb_nhl_team_seasons.csv"))
 spans = pd.read_csv(P("data", "processed", "front_office_spans.csv"))
@@ -350,6 +352,36 @@ def block(c):
             f"- Typical range (min / median / max): {cs['range']}\n")
 
 
+# ---------------- slim model table (D61) ----------------
+slim = pd.read_csv(P("data", "processed", "mlb_nhl_model_slim.csv"), low_memory=False)
+SLIM_COLS = [c for c, _, _ in build_slim.KEPT]
+assert list(slim.columns) == SLIM_COLS and len(slim) == len(df)
+SLIM_GROUP = {c: g for c, g, _ in build_slim.KEPT}
+S["slim_cols"] = SLIM_COLS
+S["slim_n"] = len(SLIM_COLS)
+S["extended_n"] = df.shape[1] - len(SLIM_COLS)
+
+
+def slim_row(c):
+    base = c[:-5] if c.endswith("_lpct") else None
+    if base in build_crosswalk.CONCEPTS:
+        mlb, nhl, d, _ = build_crosswalk.CONCEPTS[base]
+        definition = f"Within league-season percentile (0–100): {d}"
+        built = f"`{base}` ← MLB `{mlb}` / NHL " + (f"`{nhl}`" if nhl else "**unavailable**")
+    else:
+        definition, built = META[c][0], "—"
+    return f"| `{c}` | {SLIM_GROUP[c]} | {definition} | {built} | {COLS[c]['coverage']} |"
+
+
+slim_table = "\n".join(slim_row(c) for c in SLIM_COLS)
+slim_blocks = "\n".join(block(c) for c in SLIM_COLS if SLIM_GROUP[c] != "label")
+slim_label_blocks = "\n".join(block(c) for c in SLIM_COLS if SLIM_GROUP[c] == "label")
+EXT_GROUPS = [(t, [c for c in cs if c not in SLIM_GROUP]) for t, cs in GROUPS]
+EXT_GROUPS = [(t, cs) for t, cs in EXT_GROUPS if cs]
+EXT_LABELS = [c for c in LABELS if c not in SLIM_GROUP]
+assert sum(len(cs) for _, cs in EXT_GROUPS) + len(EXT_LABELS) == S["extended_n"]
+
+
 # ---------------- DATA_COLLECTION.md ----------------
 c = S["checks"]
 ex = S["ex_draft"]
@@ -521,9 +553,9 @@ def ex_table(e):
             f"(stored `y_doom_3yr` = {e['doom']}; `y_doomed_bottom25` = {e['bottom25']}).\n")
 
 feat_sections = ""
-for title, cols in GROUPS:
+for title, cols in EXT_GROUPS:
     feat_sections += f"\n### {title}\n\n" + "\n".join(block(c) for c in cols)
-label_section = "\n".join(block(c) for c in LABELS)
+label_section = "\n".join(block(c) for c in EXT_LABELS)
 reloc_lines = "\n".join(f"  - `{k.split('|')[1]}` ({k.split('|')[0]}): " + " → ".join(v) for k, v in S["renames"].items())
 exp_lines = "; ".join(f"`{k}` first season {v[0]} (seasons_of_history starts at {v[1]})" for k, v in S["expansion"].items())
 corr_rows = ""
@@ -533,14 +565,32 @@ for lg in ("MLB", "NHL"):
 
 DG = f"""# MLB + NHL doom dataset: guide
 
-*File: `data/processed/mlb_nhl_team_seasons.csv` ({fmt(S['rows'])} rows × {S['cols']} columns). All numbers come from `docs/make_doc_stats.py`. D-numbers refer to `DECISIONS.md`.*
+*Files: **`data/processed/mlb_nhl_model_slim.csv`** ({fmt(S['rows'])} rows × {S['slim_n']} columns, the table to model from) and the full `data/processed/mlb_nhl_team_seasons.csv` ({fmt(S['rows'])} rows × {S['cols']} columns, a superset). All numbers come from `docs/make_doc_stats.py`. D-numbers refer to `DECISIONS.md`.*
 
-## 1. Quick start
+## 1. Model table (slim): start here
+
+`mlb_nhl_model_slim.csv` has the same rows as the full table and {S['slim_n']} of its columns: identifiers and the season-t record, **one `_lpct` feature per concept**, two flags, and the labels. Columns were **chosen by concept, not by correlation with the label** (D61). Where a concept has several candidate columns, the one listed in `FEATURE_CROSSWALK.md` is used. `SLIM_SELECTION.md` lists all {S['cols']} full-table columns as kept or dropped, with a reason for each. The other {S['extended_n']} columns are under [Extended columns](#4-extended-columns-full-table-only) below.
+
+`_lpct` = within-league-season percentile, 0 = lowest value that season, 100 = highest (same formula as `win_pct_percentile`, D59). Use these when stacking MLB and NHL: raw units differ. Missing values are left missing: `spending_lpct` is empty for every NHL row (D57), `underlying_quality_lpct` for NHL 2005–07, `gm_tenure_lpct` where the GM is vacant or unknown, `ot_losses` for MLB.
+
+| Column | Group | Definition | Built from | Coverage |
+|---|---|---|---|---|
+{slim_table}
+
+### Slim column details
+
+{slim_blocks}
+### Labels: never use these as features
+
+These columns describe seasons *t+1* to *t+3*. Using any of them, or anything computed from them, as a model input is leakage.
+
+{slim_label_blocks}
+## 2. Quick start
 
 **One row = one team in one season *t*.** Key columns:
 - `league`, `season_start_year`, `franchise_id`: identify the row (NHL `2017` = the 2017–18 season).
 - `win_pct_percentile`: where the team finished in its league that season.
-- The shared concept columns after the first 19 (e.g. `roster_age_weighted`, `spending`) and their `_lpct` versions.
+- The nine concept features, as `_lpct` columns (e.g. `roster_age_weighted_lpct`, `spending_lpct`); see section 1.
 - Labels: `y_doom_3yr` (0–100, higher = more doomed) and `y_doomed_bottom25` (yes/no).
 
 **Reading a percentile.** Within one league and season, teams are ranked by record; the worst gets 0, the best 100, everyone else in between (ties share an average rank). A 75 means the team finished ahead of about three quarters of the league. Because it is relative, percentiles are comparable across leagues and years even though records are not.
@@ -553,7 +603,7 @@ DG = f"""# MLB + NHL doom dataset: guide
 {ex_table(l)}
 Labels exist only for seasons with three played follow-up seasons: MLB through {S['MLB_label_last']}, NHL through {season_label('NHL', S['NHL_label_last'])}.
 
-## 2. Sports primer
+## 3. Sports primer
 
 ### MLB (baseball)
 
@@ -585,18 +635,16 @@ Labels exist only for seasons with three played follow-up seasons: MLB through {
 
 **Corsi, expected goals and PDO.** *Corsi %* is the team's share of all shot attempts (shots, misses, blocked shots) in its games; teams that control the puck tend to win later. *Expected goals %* (xG %) weights each shot by how likely a shot like it is to score (from a model), then takes the team's share. *PDO* is 5-on-5 shooting % plus save %; it averages about 1.000 and extreme values usually do not last, so it is read as a luck gauge.
 
-## 3. Feature reference
+## 4. Extended columns (full table only)
 
-Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining columns. "Coverage" is the share of rows that are non-missing, per league. "Typical range" is min / median / max over all rows.
+The {S['extended_n']} columns below are in `mlb_nhl_team_seasons.csv` but not in the slim table: raw concept aliases (league units), league source columns, alternatives, audit columns and the duplicate label. Grouped by concept in the order of `FEATURE_CROSSWALK.md`, then the remaining columns. "Coverage" is the share of rows that are non-missing, per league. "Typical range" is min / median / max over all rows.
 {feat_sections}
 
-## Labels — never use these as features
-
-These columns describe seasons *t+1* to *t+3*. Using any of them, or anything computed from them, as a model input is leakage.
+### Extended labels: never use these as features
 
 {label_section}
 
-## 4. Gotchas
+## 5. Gotchas
 
 - **NHL `ties` holds overtime losses.** For NHL rows from 2005 on, `ties` equals `ot_losses` in {S['nhl_ties_equal_otl_share']}% of rows. Example: {ext['team']} {ext['season']} went {ext['w']}–{ext['l']}–{ext['otl']} (W–L–OTL), so `ties` = {ext['ties']} and `win_pct` = {ext['win_pct']} (points %), while `win_pct_raw` = {ext['win_pct_raw']}.
 - **Short seasons.** {', '.join(f"{k}: {v[0]}–{v[1]} games" for k, v in S['short'].items())}. Use `short_season` to flag or down-weight them; counts such as wins are not comparable to full seasons.
@@ -609,7 +657,7 @@ These columns describe seasons *t+1* to *t+3*. Using any of them, or anything co
 - **Expansion teams.** {exp_lines}. Their trailing features use fewer seasons; `seasons_of_history` tells you how many.
 - **MLB 2026 GM changes are always 0** (year-only dates fall after the moment; D43). MLB 2026 is unlabelled.
 
-## 5. Which features look predictive (exploratory)
+## 6. Which features look predictive (exploratory)
 
 From `reports/phase4.md` / `phase4_correlations.csv`. These are **exploratory correlations on labelled rows, not model results**. "Partial" is the Spearman correlation with `y_doom_3yr` after removing what `win_pct_percentile` already explains (D55). Negative means a higher value goes with *less* doom. Current standing alone has Spearman {S['corr_wpp']['MLB']:+.2f} (MLB) and {S['corr_wpp']['NHL']:+.2f} (NHL) with doom.
 
