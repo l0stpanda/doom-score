@@ -51,6 +51,8 @@ export function buildHtml(data = payload()) {
 <script>${lib('d3/dist/d3.min.js')}</script>
 <script>${lib('topojson-client/dist/topojson-client.min.js')}</script>
 <script>${read(MAP, 'src', 'heat.js')}</script>
+<script id="dm-heat-src" type="text/plain">${read(MAP, 'src', 'heat.js')}</script>
+<script>${read(MAP, 'src', 'heat_cache.js')}</script>
 <script>window.DOOM_MAP_DATA=${JSON.stringify(data)};</script>
 <script>${read(MAP, 'src', 'map.js')}</script>
 </body></html>`;

@@ -174,6 +174,11 @@ def main():
     cnt = cnt.join(too_new).fillna({"too_new": 0}).astype(int)
 
     E, eb_s2w, eb_tau2 = eb_components(T)
+    # verdict thresholds (Phase-2 review change 3): tertiles of the pooled raw region averages (all seasons, all leagues)
+    RA = T[T.scored].groupby(["season", "region_id"]).z_pred.mean()
+    v_lo, v_hi = float(RA.quantile(1 / 3)), float(RA.quantile(2 / 3))
+    pd.DataFrame({"n_region_seasons": [len(RA)], "tertile_1": [v_lo], "tertile_2": [v_hi], "min": [RA.min()], "max": [RA.max()]}
+                 ).to_csv(os.path.join(REP, "verdict_thresholds.csv"), index=False, float_format="%.3f")
     E.to_csv(os.path.join(REP, "eb_components_by_season.csv"), index=False, float_format="%.3f")
     T.to_csv(os.path.join(DATA, "team_seasons.csv"), index=False, float_format="%.4f", lineterminator="\n")
     stats.to_csv(os.path.join(REP, "standardisation.csv"), index=False, float_format="%.3f")
@@ -191,6 +196,7 @@ def main():
         "leagues": sorted(P.league.unique()), "seasons": [int(s) for s in seasons],
         "league_seasons": league_seasons, "actual_seasons": actual_seasons,
         "default_season": int(max(s for s in seasons if all(s in v for v in league_seasons.values()))),
+        "verdict_lo": round(v_lo, 3), "verdict_hi": round(v_hi, 3),
         "eb_s2_within": round(eb_s2w, 4), "eb_tau2": round(eb_tau2, 4),
         "eb_shrink_by_n": {n: round(eb_tau2 / (eb_tau2 + eb_s2w / n), 3) for n in range(1, 7)},
         "n_team_seasons": int(len(T)), "n_scored": int(T.scored.sum()), "n_too_new": int((~T.scored).sum()),

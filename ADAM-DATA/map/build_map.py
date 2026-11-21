@@ -37,6 +37,7 @@ def main():
     run(["node", "map/build/build_page.mjs"])
     if "--shots" in args:
         run(["node", "map/build/shots_phase2.mjs"])
+        run(["node", "map/build/perf_heat.mjs"])
 
 
 if __name__ == "__main__":

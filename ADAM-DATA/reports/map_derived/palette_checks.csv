@@ -29,6 +29,11 @@ default,d. legend text contrast,normal,light,14.67,>= 4.5,True
 default,d. legend muted contrast,normal,light,6.37,>= 4.5,True
 default,d. legend text contrast,normal,dark,14.77,>= 4.5,True
 default,d. legend muted contrast,normal,dark,7.68,>= 4.5,True
+default,c. dark contrast grey (derived dark grey),normal,dark,1.63 (#A3A8B3 -> #383C46),">= 3.0 (superseded: grey must recede, M34)",False
+default,e. whole ramp min dE2000 vs grey,normal,dark,23.7 at t=0.06,>= 15 at all 101 points,True
+default,e. whole ramp min dE2000 vs grey,deuteranopia,dark,15.3 at t=0.17,>= 15 at all 101 points,True
+default,e. whole ramp min dE2000 vs grey,protanopia,dark,18.8 at t=0.15,>= 15 at all 101 points,True
+default,e. whole ramp min dE2000 vs grey,tritanopia,dark,23.6 at t=0.34,>= 15 at all 101 points,True
 greenred,chosen variant,-,light,oklch: plain,"pass all, smoothest L*",False
 greenred,a. L* profile,normal,light,L* lo 57.8 / mid 84.2 / hi 46.9; max |d2 L*| 1.27,"mid > both ends, no reversals",True
 greenred,b. dE2000 lo-hi,normal,light,71.0,>= 20,True
@@ -59,3 +64,8 @@ greenred,d. legend text contrast,normal,light,14.67,>= 4.5,True
 greenred,d. legend muted contrast,normal,light,6.37,>= 4.5,True
 greenred,d. legend text contrast,normal,dark,14.77,>= 4.5,True
 greenred,d. legend muted contrast,normal,dark,7.68,>= 4.5,True
+greenred,c. dark contrast grey (derived dark grey),normal,dark,1.63 (#A3A8B3 -> #383C46),">= 3.0 (superseded: grey must recede, M34)",False
+greenred,e. whole ramp min dE2000 vs grey,normal,dark,37.4 at t=1.00,>= 15 at all 101 points,True
+greenred,e. whole ramp min dE2000 vs grey,deuteranopia,dark,37.7 at t=0.00,>= 15 at all 101 points,True
+greenred,e. whole ramp min dE2000 vs grey,protanopia,dark,28.3 at t=1.00,>= 15 at all 101 points,True
+greenred,e. whole ramp min dE2000 vs grey,tritanopia,dark,35.8 at t=0.00,>= 15 at all 101 points,True

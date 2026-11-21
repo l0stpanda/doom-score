@@ -196,7 +196,7 @@ def choose(p):
     return best, S
 
 
-def check(name, p):
+def check(name, p, dark_grey=None):
     (m, stops, floor), S = choose(p)
     grey = hex2rgb(p["grey"])
     r, _ = ramp_lch(stops, floor=floor)
@@ -245,7 +245,52 @@ def check(name, p):
     out["lut"] = luts
     out["method"] = {"family": m["family"], "variant": m["variant"], "chroma_floor": floor,
                      "stops_oklch": [[t, [round(float(v), 4) for v in s]] for t, s in stops]}
+    # dark-mode "no data" grey (Phase-2 review change 2): darkest grey of the same hue/chroma that keeps the whole
+    # dark ramp >= 15 dE2000 away in all four visions and >= 3:1 against the dark background
+    if dark_grey is None:
+        dark_grey, cand = derive_dark_grey(luts["dark"], p["grey"])
+        cand.to_csv(os.path.join(REP, "dark_grey_search.csv"), index=False, float_format="%.3f")
+    out["dark"]["grey"] = dark_grey
+    bgd = hex2rgb(MODES["dark"]["bg"])
+    rows.append({"palette": name, "check": "c. dark contrast grey (derived dark grey)", "vision": "normal", "mode": "dark",
+                 "value": f"{contrast(hex2rgb(dark_grey), bgd):.2f} ({p['grey']} -> {dark_grey})",
+                 "target": f">= {TARGET_DARK} (superseded: grey must recede, M34)", "pass": contrast(hex2rgb(dark_grey), bgd) >= TARGET_DARK})
+    rd = lut101(luts["dark"])
+    md = measure(rd, hex2rgb(dark_grey))
+    for vis in CVD:
+        rows.append({"palette": name, "check": "e. whole ramp min dE2000 vs grey", "vision": vis, "mode": "dark",
+                     "value": f"{md[f'min_dE_grey_{vis}']:.1f} at t={md[f'at_t_{vis}']:.2f}",
+                     "target": f">= {TARGET_RAMP_GREY} at all 101 points", "pass": md[f"min_dE_grey_{vis}"] >= TARGET_RAMP_GREY})
     return rows, out, S
+
+
+def lut101(lut_hex):
+    idx = np.round(np.linspace(0, len(lut_hex) - 1, N_CHECK)).astype(int)
+    return np.array([hex2rgb(lut_hex[i]) for i in idx])
+
+
+def derive_dark_grey(lut_dark, light_grey):
+    """Dark-mode no-data grey (Phase-2 review change 2). Candidates keep the light grey's OKLCh hue and chroma and lower
+    L in 0.0025 steps. A candidate must (a) be ΔE2000 >= 15 from all 101 dark-ramp samples in all four visions and
+    (b) recede: L at least 0.15 below the light grey. The lightest such candidate is chosen (most visible land while
+    receding). Contrast vs the dark background is reported: no grey can be dark enough to recede, keep ΔE >= 15 and
+    reach 3:1 (the 0.38-0.70 L band collides with the ramp's mid-dark colours), so the old 3:1 rule is superseded."""
+    r = lut101(lut_dark)
+    L0, C0, h0 = rgb2lch(hex2rgb(light_grey))
+    bg = hex2rgb(MODES["dark"]["bg"])
+    rows = []
+    for L in np.arange(0.28, L0 + 1e-9, 0.0025):
+        g, _ = gamut_map(np.array([L]), np.array([C0]), np.array([h0]))
+        g = g[0]
+        mm = measure(r, g)
+        rows.append({"oklch_L": L, "hex": rgb2hex(g), "contrast_vs_dark_bg": contrast(g, bg),
+                     "min_dE_all_visions": mm["min_dE_grey_all"], **{f"min_dE_{v}": mm[f"min_dE_grey_{v}"] for v in CVD},
+                     "recedes": L <= L0 - 0.15, "passes": mm["min_dE_grey_all"] >= TARGET_RAMP_GREY and L <= L0 - 0.15})
+    C = pd.DataFrame(rows)
+    ok = C[C.passes]
+    best = ok.sort_values("oklch_L").iloc[-1].hex if len(ok) else light_grey
+    C["chosen"] = C.hex == best
+    return best, C
 
 
 def figure(results):
@@ -272,30 +317,37 @@ def figure(results):
                 ax.text(x, -0.42, t, transform=ax.transAxes, fontsize=7.5, color=m["muted"], ha=ha)
     fig.text(0.01, 1 - 0.35 / H, "Doom Map palettes: OKLCh ramps, normal vision and Machado (2009) dichromacy simulations",
              fontsize=12, weight="bold")
-    fig.text(0.01, 1 - 0.62 / H, "Left: light mode.  Right: dark mode (an end or the grey is nudged lighter only if it misses 3:1 "
-             "against the background).", fontsize=9, color="#545B69")
+    fig.text(0.01, 1 - 0.62 / H, "Left: light mode.  Right: dark mode, with its own derived no-data grey.", fontsize=9, color="#545B69")
     return fig, BOT / H
 
 
 def main():
     os.makedirs(REP, exist_ok=True)
     rows, results = [], {}
-    for name, p in PALETTES.items():
-        r, out, _ = check(name, p); rows += r; results[name] = out
+    dark_grey = None
+    for name, p in PALETTES.items():                 # default first: its derived dark grey is shared by the toggle
+        r, out, _ = check(name, p, dark_grey); rows += r; results[name] = out
+        dark_grey = out["dark"]["grey"]
     C = pd.DataFrame(rows)
     C.to_csv(os.path.join(REP, "palette_checks.csv"), index=False)
     fig, bot = figure(results)
 
+    def cellm(pal, chk, vis, mode):
+        r = C[(C.palette == pal) & (C.check == chk) & (C.vision == vis) & (C["mode"] == mode)]
+        return r.value.iloc[0].split(" at")[0] if len(r) else ""
+
     def cell(pal, chk, vis):
         r = C[(C.palette == pal) & (C.check == chk) & (C.vision == vis)]
         return r.value.iloc[0].split(" at")[0] if len(r) else ""
-    lines = ["ΔE2000, normal / deutan / protan / tritan".ljust(30) + "ends".ljust(27) + "middle vs grey".ljust(27) + "whole ramp vs grey (min)".ljust(27) + "ramp"]
+    lines = ["ΔE2000, normal / deutan / protan / tritan".ljust(30) + "ends".ljust(27) + "whole ramp vs grey, light".ljust(27) + "whole ramp vs grey, dark".ljust(27) + "ramp"]
     for pal in PALETTES:
         lines.append(f"{pal:30s}" + " / ".join(cell(pal, 'b. dE2000 lo-hi', v) for v in CVD).ljust(27) +
-                     " / ".join(cell(pal, 'b. dE2000 mid-grey', v) for v in CVD).ljust(27) +
-                     " / ".join(cell(pal, 'e. whole ramp min dE2000 vs grey', v) for v in CVD).ljust(27) +
+                     " / ".join(cellm(pal, 'e. whole ramp min dE2000 vs grey', v, 'light') for v in CVD).ljust(27) +
+                     " / ".join(cellm(pal, 'e. whole ramp min dE2000 vs grey', v, 'dark') for v in CVD).ljust(27) +
                      results[pal]["method"]["family"] + " " + results[pal]["method"]["variant"])
-    dk = C[C.check.str.startswith("c. dark")]
+    dk = C[C.check.str.startswith("c. dark") & ~C.check.str.contains("derived")]
+    lines.append("Dark-mode no-data grey: " + results["default"]["light"]["grey"] + " -> " + results["default"]["dark"]["grey"] +
+                 " (lightest grey of the same hue that recedes, L >= 0.15 below the light grey, and keeps the whole dark ramp >= 15 dE away in all visions)")
     lines.append(f"Targets: ends >= {TARGET_ENDS}; middle vs grey >= {TARGET_MID_GREY}; whole ramp >= {TARGET_RAMP_GREY} at all 101 points; "
                  f"dark-mode contrast >= {TARGET_DARK}:1; legend text >= {TARGET_TEXT}:1.")
     lines.append("Dark contrast (default): " + ", ".join(f"{r.check.split()[-1]} {r.value}" for r in dk[dk.palette == 'default'].itertuples()))

@@ -7,7 +7,7 @@
   const D = window.DOOM_MAP_DATA, X = D.derived, H = window.DoomHeat;
   const LEAGUES = X.leagues.slice().sort((a, b) => (D.leagues[a]?.order ?? 99) - (D.leagues[b]?.order ?? 99));
   const REG = new Map(D.regions.map(r => [r.region_id, r]));
-  const WORD_T = X.z_hi / 3;                                   // M28: thirds of the colour scale
+  const V_LO = X.verdict_lo, V_HI = X.verdict_hi;            // M28 (revised): tertiles of pooled raw region averages
   const state = { season: X.default_season, leagues: new Set(LEAGUES), palette: 'default', theme: 'auto', hover: null, hoverFrom: null };
 
   // ---------- URL hash (season, leagues, palette, theme) ----------
@@ -34,7 +34,7 @@
   const lut = () => pal().lut[themeNow()];
   const colorOf = z => lut()[Math.round(H.position(z, X.z_lo, X.z_hi) * 255)];
   const greyOf = () => pal()[themeNow()].grey;
-  const words = z => z <= -WORD_T ? 'Bright future' : z >= WORD_T ? 'Doomed' : 'Middling';
+  const words = z => z <= V_LO ? 'Bright future' : z >= V_HI ? 'Doomed' : 'Middling';
   const seasonLabel = (lg, s) => D.leagues[lg]?.season_spans_two_years ? `${s}–${String(s + 1).slice(2)}` : String(s);
   const leagueSeasons = lg => X.league_seasons[lg] || [];
 
@@ -161,21 +161,49 @@
       .attr('fill', 'transparent').attr('data-region', d => d.properties.region_id).style('cursor', 'pointer');
   }
 
-  // ---------- heat ----------
-  let heatJob = 0;
+  // ---------- heat (cached, M35) ----------
+  const cache = window.DoomHeatCache({ sigma: X.sigma_mi, smooth: 2.5,
+    workerSource: document.getElementById('dm-heat-src').textContent });
+  const dprNow = () => Math.min(window.devicePixelRatio || 1, 2);
+  const dataKey = (season, leagues) => season + '|' + [...leagues].sort().join(',');
+  const styleKey = () => state.palette + '|' + themeNow();
+  const tables = new Map();
+  const tableFor = k => tables.get(k) || (tables.set(k, H.colorTable(lut(), greyOf())), tables.get(k));
+  const colorOpts = () => ({ w0: X.opacity_w0, w1: X.opacity_w1, zlo: X.z_lo, zhi: X.z_hi, table: tableFor(styleKey()) });
+  const teamsFor = (season, leagues) => D.teams.filter(t => t.season === season && leagues.has(t.league) && t.scored)
+    .map(t => ({ lat: t.lat, lon: t.lon, z: t.z }));
+  function baseView() {
+    const dpr = dprNow(), cw = Math.round(W * dpr), ch = Math.round(Hh * dpr), pc = makeProj(W, Hh, dpr);
+    return cache.view(`base:${cw}x${ch}`, cw, ch, Math.round(3 * dpr), p => pc.invert(p), g => d3.geoPath(pc, g)(regionsFC));
+  }
+  let heatJob = 0, prefetchTimer = 0;
   function paintHeat() {
-    const job = ++heatJob;
-    requestAnimationFrame(() => {
+    const job = ++heatJob, v = baseView(), dk = dataKey(state.season, state.leagues), t0 = performance.now();
+    cache.image(v, dk, teamsFor(state.season, state.leagues), styleKey(), colorOpts(), 0).then(img => {
       if (job !== heatJob) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2), cw = Math.round(W * dpr), ch = Math.round(Hh * dpr);
-      const cv = $('#dm-heat'); cv.width = cw; cv.height = ch; cv.style.width = W + 'px'; cv.style.height = Hh + 'px';
-      const pc = makeProj(W, Hh, dpr);
-      const mask = H.landMask(cw, ch, g => d3.geoPath(pc, g)(regionsFC));
-      const teams = view.scored.map(t => ({ lat: t.lat, lon: t.lon, z: t.z }));
-      H.paint(cv.getContext('2d'), cw, ch, { proj: pc, teams, sigma: X.sigma_mi, w0: X.opacity_w0, w1: X.opacity_w1,
-        zlo: X.z_lo, zhi: X.z_hi, table: H.colorTable(lut(), greyOf()), mask, step: Math.round(3 * dpr) });
-      root.dataset.painted = String(job);
+      const cv = $('#dm-heat'); cv.width = v.width; cv.height = v.height; cv.style.width = W + 'px'; cv.style.height = Hh + 'px';
+      cv.getContext('2d').drawImage(img, 0, 0);
+      root.dataset.painted = String(job); root.dataset.paintMs = String(Math.round(performance.now() - t0));
+      clearTimeout(prefetchTimer); prefetchTimer = setTimeout(prefetch, 50);
     });
+  }
+  /** Background work: fields for every season of the current leagues (nearest first), then images for the
+   *  neighbouring seasons so stepping through seasons is instant. */
+  function prefetch() {
+    const v = baseView(), seasons = availableSeasons().slice().sort((a, b) => Math.abs(a - state.season) - Math.abs(b - state.season));
+    root.dataset.prefetched = '';
+    seasons.forEach((s, i) => cache.field(v, dataKey(s, state.leagues), teamsFor(s, state.leagues), 10 + i));
+    const near = seasons.slice(1, 3), sk = styleKey(), co = colorOpts();
+    const idle = cb => (window.requestIdleCallback || (f => setTimeout(f, 30)))(cb);
+    (function next(k) {
+      if (k >= near.length) {
+        Promise.all(seasons.map(s => cache.field(v, dataKey(s, state.leagues), teamsFor(s, state.leagues), 20)))
+          .then(() => { root.dataset.prefetched = '1'; });
+        return;
+      }
+      cache.field(v, dataKey(near[k], state.leagues), teamsFor(near[k], state.leagues), 5).then(() =>
+        idle(() => cache.image(v, dataKey(near[k], state.leagues), teamsFor(near[k], state.leagues), sk, co, 5).then(() => next(k + 1))));
+    })(0);
   }
 
   // ---------- legend, banner ----------
@@ -199,25 +227,25 @@
     b.style.display = 'block';
   }
 
-  // ---------- ranked list ----------
+  // ---------- ranked list (M29 revised) ----------
   function drawList() {
-    const host = $('#dm-list'), R = view.ranked;
-    const ext = Math.max(1e-6, ...R.map(s => Math.abs(s.shrunk - view.mu)));
-    const sx = v => 46 + (v - view.mu) / ext * 44;
-    const bar = s => `<svg width="92" height="16" aria-hidden="true">
-      <line x1="46" x2="46" y1="1" y2="15" stroke="var(--muted)" stroke-opacity=".5"/>
-      <rect x="${Math.min(sx(s.shrunk), 46)}" y="3" width="${Math.max(1.5, Math.abs(sx(s.shrunk) - 46))}" height="10" rx="2"
-        fill="${colorOf(s.rawZ)}" stroke="var(--ink)" stroke-opacity=".25"/></svg>`;
+    const host = $('#dm-list'), R = view.ranked, BW = 120, C0 = BW / 2;
+    const ext = Math.max(0.25, ...R.map(s => Math.max(Math.abs(s.rawZ), Math.abs(s.shrunk))));
+    const sx = v => C0 + v / ext * (C0 - 5);
+    const bar = s => `<svg width="${BW}" height="16" aria-hidden="true">
+      <line x1="${C0}" x2="${C0}" y1="0" y2="16" stroke="var(--muted)" stroke-opacity=".6"/>
+      <rect x="${Math.min(sx(s.shrunk), C0)}" y="4" width="${Math.max(2, Math.abs(sx(s.shrunk) - C0))}" height="8" rx="1.5" fill="var(--ink)" fill-opacity=".7"/>
+      <circle cx="${sx(s.rawZ)}" cy="8" r="4" fill="${colorOf(s.rawZ)}" stroke="var(--ink)" stroke-width="1.2"/></svg>`;
     host.innerHTML = `<h2>Regions ranked by outlook</h2>
-      <p class="sub">Brightest first. Ranked by a reliability-adjusted average: regions with few teams are pulled toward
-      the overall average, so one good or bad team can't top the list. Bar length = adjusted difference from the overall
-      average; bar color = the region's color on the map; n = teams scored.</p>
-      <div class="axis"><span></span><span></span><span><i>brighter</i><i>doomier</i></span><span>n</span></div>
+      <p class="sub">Brightest first, by a reliability-adjusted average (bar): regions with few teams are pulled toward the
+      overall average. Dot = raw average of the region's teams, in its map color. Center line = league average. n = teams scored.</p>
+      <p class="sub caption"><b>Most differences between regions are within what chance alone would produce.</b></p>
+      <div class="axis"><span></span><span></span><span><i>&larr; brighter</i><i>doomier &rarr;</i></span><span>n</span></div>
       <ol class="dm-rows" id="dm-rows">${R.map(s => `<li tabindex="0" data-region="${s.region.region_id}"
-        aria-label="${esc(`${ord(s.rank)}: ${s.region.display_name}, ${words(s.rawZ)}, ${s.n} teams`)}">
+        aria-label="${esc(`${ord(s.rank)}: ${s.region.display_name}, ${words(s.rawZ)}, ${s.n} team${s.n === 1 ? '' : 's'}`)}">
         <span class="rk">${s.rank}</span><span class="nm">${esc(s.region.display_name)}</span>${bar(s)}<span class="n">${s.n}</span></li>`).join('')}</ol>
       ${view.empty.length ? `<h3>No scored teams this season</h3><ul class="dm-rows empty">${view.empty.map(s =>
-        `<li><span class="rk">–</span><span class="nm">${esc(s.region.display_name)}${s.tooNew.length ? ` (${s.tooNew.length} too new)` : ''}</span></li>`).join('')}</ul>` : ''}`;
+        `<li><span class="rk">&ndash;</span><span class="nm">${esc(s.region.display_name)}${s.tooNew.length ? ` (${s.tooNew.length} too new)` : ''}</span></li>`).join('')}</ul>` : ''}`;
     for (const li of host.querySelectorAll('#dm-rows li')) {
       const id = li.dataset.region;
       li.addEventListener('mouseenter', () => setHover(id, 'list'));
@@ -291,9 +319,9 @@
     return `<div class="t">${esc(r.display_name)}</div><div class="k">${esc(r.core_metros)}</div>
       <div class="verdict"><span class="chipc" style="background:${colorOf(s.rawZ)}"></span>
         <span class="big">${words(s.rawZ)}</span><span>average doom <b>${Math.round(s.rawDoom)}</b> <span class="k">of 100</span></span></div>
-      <span class="rank">${ord(s.rank)} brightest of ${view.ranked.length}</span>
+      <span class="rank">${ord(s.rank)} brightest of ${view.ranked.length}</span>${s.n === 1 ? ' <span class="rank one">based on 1 team</span>' : ''}
       <table>
-        <tr><td>Based on</td><td><b>${s.n} team${s.n === 1 ? '' : 's'}</b> (${esc(lg)}); ${tooNew}${s.n <= 2 ? '. <i>Few teams: treat with care.</i>' : ''}</td></tr>
+        <tr><td>Based on</td><td><b>${s.n === 1 ? '1 team' : s.n + ' teams'}</b> (${esc(lg)}); ${tooNew}${s.n === 2 ? '. <i>Few teams: treat with care.</i>' : ''}</td></tr>
         <tr><td>Best hope</td><td>${team(s.best)}</td></tr>
         ${s.n > 1 ? `<tr><td>Biggest worry</td><td>${team(s.worst)}</td></tr>` : ''}
       </table>
@@ -330,8 +358,8 @@
     writeHash();
   }
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (state.theme === 'auto') update(); });
-  let rt; new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(() => update({ layout: true }), 120); }).observe($('#dm-wrap'));
+  let rt; new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(() => { cache.clearViews(); update({ layout: true }); }, 120); }).observe($('#dm-wrap'));
   snapSeason();
   update({ layout: true });
-  window.DoomMap = { state, update, setHover, regionStats, view: () => view };   // for tests / screenshots
+  window.DoomMap = { state, update, setHover, regionStats, view: () => view, cache };   // for tests / screenshots
 })();

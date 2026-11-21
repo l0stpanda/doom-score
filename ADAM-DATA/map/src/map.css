@@ -58,9 +58,11 @@ header.dm-head p { color: var(--muted); margin: 0; max-width: 980px; }
 .dm-legend .showing b { color: var(--ink); }
 aside.dm-list { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; overflow: auto; min-width: 0; }
 aside.dm-list h2 { font-size: 15px; margin: 0 0 2px; }
-aside.dm-list .sub { color: var(--muted); font-size: 12px; margin: 0 0 8px; }
+aside.dm-list .sub { color: var(--muted); font-size: 12px; margin: 0 0 6px; }
+aside.dm-list .caption { color: var(--ink); }
+.dm-card .rank.one { background: var(--banner); color: var(--banner-ink); }
 .dm-rows { list-style: none; margin: 0; padding: 0; }
-.dm-rows li { display: grid; grid-template-columns: 22px minmax(0, 1fr) 92px 22px; gap: 6px; align-items: center; padding: 3px 4px;
+.dm-rows li { display: grid; grid-template-columns: 22px minmax(0, 1fr) 120px 22px; gap: 6px; align-items: center; padding: 3px 4px;
   border-radius: 6px; cursor: pointer; font-size: 13px; }
 .dm-rows li:hover, .dm-rows li.on, .dm-rows li:focus-visible { background: var(--hover); outline: none; }
 .dm-rows .rk { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
@@ -68,7 +70,7 @@ aside.dm-list .sub { color: var(--muted); font-size: 12px; margin: 0 0 8px; }
 .dm-rows .n { color: var(--muted); font-size: 12px; text-align: right; font-variant-numeric: tabular-nums; }
 .dm-rows svg { display: block; overflow: visible; }
 .dm-rows.empty li { cursor: default; color: var(--muted); grid-template-columns: 22px minmax(0, 1fr); }
-.dm-list .axis { display: grid; grid-template-columns: 22px minmax(0, 1fr) 92px 22px; gap: 6px; font-size: 11px; color: var(--muted); padding: 0 4px; }
+.dm-list .axis { display: grid; grid-template-columns: 22px minmax(0, 1fr) 120px 22px; gap: 6px; font-size: 11px; color: var(--muted); padding: 0 4px; }
 .dm-list .axis span:nth-child(3) { display: flex; justify-content: space-between; }
 .dm-list h3 { font-size: 12px; color: var(--muted); font-weight: 600; margin: 12px 0 4px; }
 .dm-card { position: fixed; z-index: 20; pointer-events: none; background: var(--card); color: var(--ink); border: 1px solid var(--line);

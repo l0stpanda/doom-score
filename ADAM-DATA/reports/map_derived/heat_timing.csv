@@ -1,0 +1,15 @@
+dpr,step,ms
+1,"load to first paint",776
+1,"background prefetch, all seasons (fields in workers)",2560
+1,"season 2025 -> 2024 (cached image)",14
+1,"season 2024 -> 2015 (cached field, colour only)",22
+1,"season 2015 -> 2024 (cached image)",6
+1,"palette switch (cached field, colour only)",26
+1,"workers 3; fields computed 19; mean field 414 ms",
+2,"load to first paint",780
+2,"background prefetch, all seasons (fields in workers)",2506
+2,"season 2025 -> 2024 (cached image)",15
+2,"season 2024 -> 2015 (cached field, colour only)",75
+2,"season 2015 -> 2024 (cached image)",5
+2,"palette switch (cached field, colour only)",76
+2,"workers 3; fields computed 19; mean field 405 ms",

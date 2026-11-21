@@ -1,13 +1,13 @@
-/* Doom Map heat surface (shared by the map component and the Phase-1 test renders).
+/* Doom Map heat surface (shared by the map component, its Web Worker and the Phase-1 test renders).
  *
  * Local outlook at a point = sum(w_i z_i) / sum(w_i), w_i = exp(-d_i^2 / 2 sigma^2), d = great-circle miles.
  * Opacity = smootherstep of (W - w0) / (w1 - w0): 0 at w0, 1 at w1, flat at both ends so the full-opacity contour does
- * not show as an edge (a clamped linear ramp did; decision M26); colour = palette LUT at the scale position of the outlook; the two are
- * mixed in OKLab over the "no teams nearby" grey.
- * Render-time smoothing (decision M26): the field S = sum(w z) and W = sum(w) is evaluated on a coarse grid, both
- * are blurred with a small Gaussian (so the result is still a weighted average), bilinearly upsampled, and an
- * ordered dither removes 8-bit banding. The land mask is filled and stroked in one colour so hairline gaps between
- * regions never show.
+ * not show as an edge (decision M26); colour = palette LUT at the scale position of the outlook; the two are mixed in
+ * OKLab over the "no teams nearby" grey.
+ * Render-time smoothing (M26): S = sum(w z) and W = sum(w) are evaluated on a coarse grid of nodes, both blurred with a
+ * small Gaussian (so the result is still a weighted average), bilinearly upsampled, and an ordered dither removes
+ * 8-bit banding. The land mask is filled and stroked in one colour so hairline gaps between regions never show.
+ * Pipeline (M35): nodeGrid (needs the projection, main thread) -> field (pure maths, runs in a Worker) -> colorize.
  */
 (function (root) {
   const RAD = Math.PI / 180, EARTH_MI = 3958.8;
@@ -50,27 +50,12 @@
     const a = Math.sin((t.phi - phi) / 2) ** 2 + cphi * t.cos * Math.sin((t.lam - lam) / 2) ** 2;
     return 2 * EARTH_MI * Math.asin(Math.min(1, Math.sqrt(a)));
   }
-
   /** Weights of every team at one lon/lat (for hover read-outs). */
   function weightsAt(lonlat, prepped, sigma) {
     const phi = lonlat[1] * RAD, lam = lonlat[0] * RAD, cphi = Math.cos(phi), two = 2 * sigma * sigma;
     return prepped.map(t => { const d = miles(phi, lam, cphi, t); return { team: t.t, d, w: Math.exp(-d * d / two) }; });
   }
 
-  function blur1d(src, dst, n, stride, count, k) {
-    const r = (k.length - 1) / 2;
-    for (let c = 0; c < count; c++) {
-      const base = c * (stride === 1 ? n : 1);
-      for (let i = 0; i < n; i++) {
-        let acc = 0;
-        for (let j = -r; j <= r; j++) {
-          const ii = Math.min(n - 1, Math.max(0, i + j));
-          acc += k[j + r] * src[base + ii * stride];
-        }
-        dst[base + i * stride] = acc;
-      }
-    }
-  }
   function blur(arr, gw, gh, sigmaCells) {
     if (!(sigmaCells > 0)) return arr;
     const r = Math.ceil(sigmaCells * 2.5), k = [];
@@ -78,32 +63,50 @@
     for (let i = -r; i <= r; i++) { const v = Math.exp(-i * i / (2 * sigmaCells * sigmaCells)); k.push(v); s += v; }
     for (let i = 0; i < k.length; i++) k[i] /= s;
     const tmp = new Float32Array(arr.length), out = new Float32Array(arr.length);
-    blur1d(arr, tmp, gw, 1, gh, k);           // rows
-    blur1d(tmp, out, gh, gw, gw, k);          // columns
+    for (let j = 0; j < gh; j++) for (let i = 0; i < gw; i++) {           // rows
+      let acc = 0;
+      for (let q = -r; q <= r; q++) acc += k[q + r] * arr[j * gw + Math.min(gw - 1, Math.max(0, i + q))];
+      tmp[j * gw + i] = acc;
+    }
+    for (let j = 0; j < gh; j++) for (let i = 0; i < gw; i++) {           // columns
+      let acc = 0;
+      for (let q = -r; q <= r; q++) acc += k[q + r] * tmp[Math.min(gh - 1, Math.max(0, j + q)) * gw + i];
+      out[j * gw + i] = acc;
+    }
     return out;
+  }
+
+  /** Grid nodes every `step` canvas px, as lon/lat pairs (NaN where the projection has no inverse). */
+  function nodeGrid(invert, width, height, step) {
+    const gw = Math.ceil(width / step) + 1, gh = Math.ceil(height / step) + 1, nodes = new Float32Array(gw * gh * 2);
+    for (let j = 0; j < gh; j++) for (let i = 0; i < gw; i++) {
+      const ll = invert([i * step, j * step]), k = (j * gw + i) * 2;
+      nodes[k] = ll && isFinite(ll[0]) ? ll[0] : NaN; nodes[k + 1] = ll && isFinite(ll[1]) ? ll[1] : NaN;
+    }
+    return { nodes, gw, gh, step };
+  }
+
+  /** Blurred S and W on the node grid. Pure maths: safe to run in a Worker. teams: [{lat, lon, z}]. */
+  function field(grid, teams, sigma, smooth) {
+    const { nodes, gw, gh } = grid, P = prepTeams(teams), two = 2 * sigma * sigma;
+    const S = new Float32Array(gw * gh), W = new Float32Array(gw * gh);
+    for (let n = 0; n < gw * gh; n++) {
+      const lon = nodes[2 * n], lat = nodes[2 * n + 1];
+      if (lon !== lon) continue;
+      const phi = lat * RAD, lam = lon * RAD, cphi = Math.cos(phi);
+      let w = 0, s = 0;
+      for (const t of P) { const d = miles(phi, lam, cphi, t), x = Math.exp(-d * d / two); w += x; s += x * t.z; }
+      S[n] = s; W[n] = w;
+    }
+    const sm = smooth == null ? 2.5 : smooth;
+    return { S: blur(S, gw, gh, sm), W: blur(W, gw, gh, sm), gw, gh, step: grid.step };
   }
 
   const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(v => (v + 0.5) / 16 - 0.5);
 
-  /**
-   * Paint the surface into ctx (canvas pixel size width x height).
-   * opts: { proj (maps lon/lat -> canvas px), teams [{lat, lon, z}], sigma, w0, w1, zlo, zhi, table (colorTable),
-   *         mask (Uint8ClampedArray alpha per px, or null), step (grid spacing px, default 3), smooth (blur sigma in cells) }
-   */
-  function paint(ctx, width, height, opts) {
-    const step = opts.step || 3, gw = Math.ceil(width / step) + 1, gh = Math.ceil(height / step) + 1;
-    const P = prepTeams(opts.teams), two = 2 * opts.sigma * opts.sigma;
-    let S = new Float32Array(gw * gh), W = new Float32Array(gw * gh);
-    for (let j = 0; j < gh; j++) for (let i = 0; i < gw; i++) {
-      const ll = opts.proj.invert([i * step, j * step]);
-      if (!ll || !isFinite(ll[0])) continue;
-      const phi = ll[1] * RAD, lam = ll[0] * RAD, cphi = Math.cos(phi);
-      let w = 0, s = 0;
-      for (const t of P) { const d = miles(phi, lam, cphi, t), x = Math.exp(-d * d / two); w += x; s += x * t.z; }
-      S[j * gw + i] = s; W[j * gw + i] = w;
-    }
-    const sm = opts.smooth == null ? 2.5 : opts.smooth;
-    S = blur(S, gw, gh, sm); W = blur(W, gw, gh, sm);
+  /** Colour a field into ctx (width x height canvas px). opts: { w0, w1, zlo, zhi, table, mask } */
+  function colorize(ctx, width, height, f, opts) {
+    const { S, W, gw, gh, step } = f;
     const img = ctx.createImageData(width, height), px = img.data, T = opts.table, mask = opts.mask;
     const { w0, w1, zlo, zhi } = opts;
     for (let y = 0; y < height; y++) {
@@ -117,13 +120,19 @@
         const d = BAYER[(y & 3) * 4 + (x & 3)];
         const tPos = position(w > 1e-9 ? s / w : 0, zlo, zhi);
         const ti = Math.min(255, Math.max(0, Math.round(tPos * 255 + d)));
-        const u = Math.min(1, Math.max(0, (w - w0) / (w1 - w0))), al = u * u * u * (u * (6 * u - 15) + 10);   // smootherstep: flat slope and curvature at w0 and w1
+        const u = Math.min(1, Math.max(0, (w - w0) / (w1 - w0))), al = u * u * u * (u * (6 * u - 15) + 10);
         const ai = Math.min(32, Math.max(0, Math.round(al * 32 + d)));
         const o = (ti * 33 + ai) * 3, p = k * 4;
         px[p] = T[o]; px[p + 1] = T[o + 1]; px[p + 2] = T[o + 2]; px[p + 3] = ma;
       }
     }
     ctx.putImageData(img, 0, 0);
+  }
+
+  /** One-shot paint (test renders): nodeGrid -> field -> colorize. opts as colorize plus proj, teams, sigma, step, smooth. */
+  function paint(ctx, width, height, opts) {
+    const grid = nodeGrid(p => opts.proj.invert(p), width, height, opts.step || 3);
+    colorize(ctx, width, height, field(grid, opts.teams, opts.sigma, opts.smooth), opts);
   }
 
   /** Land mask from a d3 path generator bound to an offscreen context. */
@@ -136,5 +145,13 @@
     return m;
   }
 
-  root.DoomHeat = { paint, landMask, colorTable, position, weightsAt, prepTeams, oklab, srgb8, hex };
+  root.DoomHeat = { paint, nodeGrid, field, colorize, landMask, colorTable, position, weightsAt, prepTeams, oklab, srgb8, hex };
+
+  // Worker entry: { id, grid, teams, sigma, smooth } -> { id, S, W, gw, gh, step } (buffers transferred)
+  if (typeof document === 'undefined' && typeof self !== 'undefined' && typeof postMessage === 'function') {
+    self.onmessage = e => {
+      const m = e.data, f = field(m.grid, m.teams, m.sigma, m.smooth);
+      self.postMessage({ id: m.id, ...f }, [f.S.buffer, f.W.buffer]);
+    };
+  }
 })(typeof window !== 'undefined' ? window : globalThis);
