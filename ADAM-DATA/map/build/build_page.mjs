@@ -39,7 +39,18 @@ export function payload() {
     quadrant: t.quadrant, z_actual: num(t.z_actual), actual_doom: num(t.actual_doom), pred_type: t.pred_type,
   }));
   const topo = JSON.parse(read(MAP, 'data', 'regions.topo.json'));
-  return { derived, palette, leagues, regions, teams, topo };
+  // logos: team_meta.csv URLs cached by dashboard/fetch_logos.py (git-ignored) -> data URIs; monogram always present
+  const logos = {};
+  let inlined = 0;
+  for (const m of csv(path.join(MAP, 'data', 'logo_manifest.csv'))) {
+    const f = m.local_file && path.join(ROOT, m.local_file);
+    const ok = m.use_logo === 'True' && f && fs.existsSync(f);
+    logos[`${m.league}|${m.franchise_id}|${m.season_team_name}`] = { mono: m.monogram,
+      uri: ok ? 'data:image/svg+xml;base64,' + fs.readFileSync(f).toString('base64') : null };
+    if (ok) inlined++;
+  }
+  console.log(`logos inlined: ${inlined} of ${Object.keys(logos).length} identities (rest use monograms)`);
+  return { derived, palette, leagues, regions, teams, topo, logos };
 }
 
 export function buildHtml(data = payload()) {

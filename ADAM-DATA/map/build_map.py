@@ -3,7 +3,7 @@
     .venv/Scripts/python map/build_map.py              # data + derived numbers + check renders
     .venv/Scripts/python map/build_map.py --no-renders # skip the Edge screenshots
     .venv/Scripts/python map/build_map.py --fetch-logos # also run dashboard/fetch_logos.py (team_meta.csv URLs)
-    .venv/Scripts/python map/build_map.py --shots       # also take the Phase 2 screenshots of the page
+    .venv/Scripts/python map/build_map.py --shots       # also take the Phase 2 + 3 screenshots, timing and zoom GIFs
 
 Needs: the Python venv (requirements.txt + map/requirements.txt), Node 18+ with `npm install` run in map/,
 and the raw boundary files in data/raw/geo/ (see docs/MAP_DECISIONS.md, M05-M06, for where they come from).
@@ -38,6 +38,9 @@ def main():
     if "--shots" in args:
         run(["node", "map/build/shots_phase2.mjs"])
         run(["node", "map/build/perf_heat.mjs"])
+        frames = os.path.join(HERE, "check", "frames")
+        run(["node", "map/build/shots_phase3.mjs", frames])
+        run([PY, "map/build/make_gif.py", frames])
 
 
 if __name__ == "__main__":

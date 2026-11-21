@@ -92,3 +92,44 @@ aside.dm-list .caption { color: var(--ink); }
 .dm-card .spot b { color: var(--ink); font-weight: 600; }
 .dm-empty { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; color: var(--muted); font-size: 15px; z-index: 4; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- Level 2 (Phase 3) ---------- */
+.dm-mapwrap.active { box-shadow: 0 0 0 2px var(--accent); }
+#dm-heat { transition: opacity .25s ease; }
+.dm-mapwrap.level2 #dm-heat { opacity: .5; }
+.dm-crumb { position: absolute; left: 12px; top: 12px; z-index: 3; display: flex; align-items: center; gap: 6px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 3px 6px 3px 4px; font-size: 13px; box-shadow: var(--shadow); }
+.dm-crumb button { font: inherit; border: 0; background: transparent; color: var(--accent); cursor: pointer; padding: 2px 8px; border-radius: 12px; }
+.dm-crumb button:hover, .dm-crumb button:focus-visible { background: var(--hover); outline: none; }
+.dm-crumb button:disabled { color: var(--ink); cursor: default; background: transparent; font-weight: 600; }
+.dm-crumb .sep { color: var(--muted); }
+.dm-crumb .back { color: var(--ink); border: 1px solid var(--line); }
+.dm-hint { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 5; background: rgba(20, 23, 28, .82); color: #fff;
+  padding: 8px 14px; border-radius: 8px; font-size: 14px; pointer-events: none; opacity: 0; transition: opacity .2s; }
+.dm-hint.on { opacity: 1; }
+.dm-logo { cursor: pointer; }
+.dm-logo .halo { fill: none; stroke: var(--card); stroke-width: 2; }
+.dm-logo .plate { fill: #ffffff; }
+:root[data-theme="dark"] .dm-logo .plate { fill: #eef0f3; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .dm-logo .plate { fill: #eef0f3; } }
+.dm-logo .mono { font: 700 11px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; fill: #1d2329; text-anchor: middle; dominant-baseline: central; }
+.dm-logo:focus, .dm-logo:focus-visible { outline: none; }
+.dm-logo.other > * { opacity: .55; }
+.dm-metro.other { opacity: .6; }
+.dm-logo:focus-visible .halo, .dm-logo.on .halo { stroke: var(--ink); stroke-width: 2.5; }
+.dm-leader { stroke: var(--ink); stroke-opacity: .45; stroke-width: 1; }
+.dm-venue { fill: var(--ink); fill-opacity: .7; }
+.dm-metro { font: 600 12px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; fill: var(--ink); text-anchor: middle;
+  paint-order: stroke; stroke: var(--card); stroke-width: 3.5px; stroke-linejoin: round; pointer-events: none; }
+.dm-world path { vector-effect: non-scaling-stroke; }
+.dm-panel h2 { font-size: 17px; margin: 4px 0 0; }
+.dm-panel .k { color: var(--muted); font-size: 12px; }
+.dm-panel .backlink { font: inherit; font-size: 13px; border: 0; background: none; color: var(--accent); cursor: pointer; padding: 0; }
+.dm-panel .big { display: flex; align-items: baseline; gap: 10px; margin: 10px 0 4px; }
+.dm-panel .big b { font-size: 30px; }
+.dm-panel .chip { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 9px; border-radius: 10px; background: var(--hover); }
+.dm-panel table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 13px; }
+.dm-panel td { padding: 3px 0; border-top: 1px solid var(--line); }
+.dm-panel td:first-child { color: var(--muted); width: 45%; }
+.dm-panel a { color: var(--accent); }
+.dm-card .band { display: inline-block; font-size: 12px; font-weight: 600; padding: 0 8px; border-radius: 10px; background: var(--hover); }
