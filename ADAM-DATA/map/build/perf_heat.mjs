@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 
 const ROOT = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
-const url = 'file:///' + path.join(ROOT, 'dashboard', 'doom_map.html').split(path.sep).join('/');
+const url = 'file:///' + path.join(ROOT, 'dashboard', 'index.html').split(path.sep).join('/');
 const rows = [];
 const b = await chromium.launch({ channel: 'msedge' });
 for (const dpr of [1, 2]) {

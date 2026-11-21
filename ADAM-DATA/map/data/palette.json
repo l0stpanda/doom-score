@@ -1149,12 +1149,16 @@
   "light": {
    "bg": "#F6F7F9",
    "text": "#1D2330",
-   "muted": "#545B69"
+   "muted": "#545B69",
+   "card": "#FFFFFF",
+   "swatch_line": "#737985"
   },
   "dark": {
    "bg": "#14171C",
    "text": "#E6E9EF",
-   "muted": "#A3AAB6"
+   "muted": "#A3AAB6",
+   "card": "#1C2026",
+   "swatch_line": "#8B929E"
   }
  },
  "interpolation": "oklch"

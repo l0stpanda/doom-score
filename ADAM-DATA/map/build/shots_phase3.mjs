@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 
 const ROOT = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
-const PAGE = 'file:///' + path.join(ROOT, 'dashboard', 'doom_map.html').split(path.sep).join('/');
+const PAGE = 'file:///' + path.join(ROOT, 'dashboard', 'index.html').split(path.sep).join('/');
 const FIG = path.join(ROOT, 'reports', 'figures');
 const FRAMES = process.argv[2] || path.join(ROOT, 'map', 'check', 'frames');
 fs.mkdirSync(FRAMES, { recursive: true });

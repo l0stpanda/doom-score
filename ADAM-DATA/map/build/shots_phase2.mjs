@@ -7,7 +7,7 @@ import { chromium } from 'playwright-core';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.dirname(path.dirname(HERE));
-const PAGE = 'file:///' + path.join(ROOT, 'dashboard', 'doom_map.html').split(path.sep).join('/');
+const PAGE = 'file:///' + path.join(ROOT, 'dashboard', 'index.html').split(path.sep).join('/');
 const FIG = path.join(ROOT, 'reports', 'figures');
 const errors = [];
 

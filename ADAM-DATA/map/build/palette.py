@@ -37,8 +37,8 @@ PALETTES = {
     "greenred": {"label": "Green - yellow - red (toggle)",
                  "lo": "#12A04A", "mid": "#F5D000", "hi": "#D7261E", "grey": "#A3A8B3", "search": False},
 }
-MODES = {"light": {"bg": "#F6F7F9", "text": "#1D2330", "muted": "#545B69"},
-         "dark": {"bg": "#14171C", "text": "#E6E9EF", "muted": "#A3AAB6"}}
+MODES = {"light": {"bg": "#F6F7F9", "text": "#1D2330", "muted": "#545B69", "card": "#FFFFFF", "swatch_line": "#737985"},
+         "dark": {"bg": "#14171C", "text": "#E6E9EF", "muted": "#A3AAB6", "card": "#1C2026", "swatch_line": "#8B929E"}}
 CVD = {"normal": None, "deuteranopia": "deuteranomaly", "protanopia": "protanomaly", "tritanopia": "tritanomaly"}
 TARGET_ENDS, TARGET_MID_GREY, TARGET_RAMP_GREY, TARGET_DARK, TARGET_TEXT = 20, 15, 15, 3.0, 4.5
 N_CHECK, N_LUT = 101, 256
@@ -229,7 +229,10 @@ def check(name, p, dark_grey=None):
             rows.append({"palette": name, "check": f"c. dark contrast {k}", "vision": "normal", "mode": "dark",
                          "value": f"{contrast(hex2rgb(old), hex2rgb(bg)):.2f}" + (f" -> {contrast(hex2rgb(new), hex2rgb(bg)):.2f} ({old} -> {new})" if new != old else ""),
                          "target": f">= {TARGET_DARK}", "pass": contrast(hex2rgb(new), hex2rgb(bg)) >= TARGET_DARK})
-    for mode, mm in MODES.items():
+    for mode, mm in MODES.items():           # M34: the no-data swatch is outlined at >= 3:1 against the legend card
+        cr = contrast(hex2rgb(mm["swatch_line"]), hex2rgb(mm["card"]))
+        rows.append({"palette": name, "check": "d. no-data swatch outline vs legend card", "vision": "normal", "mode": mode,
+                     "value": f"{cr:.2f} ({mm['swatch_line']} on {mm['card']})", "target": f">= {TARGET_DARK}", "pass": cr >= TARGET_DARK})
         for t in ("text", "muted"):
             cr = contrast(hex2rgb(mm[t]), hex2rgb(mm["bg"]))
             rows.append({"palette": name, "check": f"d. legend {t} contrast", "vision": "normal", "mode": mode,

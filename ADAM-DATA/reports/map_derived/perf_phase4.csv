@@ -1,0 +1,13 @@
+dpr,metric,value
+1,"load to first paint (ms)",768
+1,"season switch incl. map + scatter + list redraw, median of 4 (ms)",36
+1,"zoom continent -> New York: frame rate (fps)",61
+1,"zoom continent -> New York: worst frame gap / 95th pct (ms)",28 / 25
+1,"zoom New York -> Cascadia (long jump): frame rate (fps)",60
+1,"zoom New York -> Cascadia (long jump): worst frame gap / 95th pct (ms)",17 / 17
+2,"load to first paint (ms)",826
+2,"season switch incl. map + scatter + list redraw, median of 4 (ms)",72
+2,"zoom continent -> New York: frame rate (fps)",59
+2,"zoom continent -> New York: worst frame gap / 95th pct (ms)",28 / 27
+2,"zoom New York -> Cascadia (long jump): frame rate (fps)",62
+2,"zoom New York -> Cascadia (long jump): worst frame gap / 95th pct (ms)",18 / 17

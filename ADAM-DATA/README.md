@@ -33,6 +33,63 @@ The build starts **only from `data/mlb_nhl_model_slim.csv`**: it fits the models
 (reproduced byte for byte), then downloads the logos once and builds the page. Screenshots are in
 `reports/figures/`.
 
+## Doom Map and the dashboard page
+
+`dashboard/index.html` puts three views on one page: the **Doom Map**, a **projected-standing scatter**, and a
+**team panel**. They share the season, leagues, doom mode (predicted or actual) and selected team. The page is
+self-contained and git-ignored (it embeds the logos). Build it after the steps above:
+
+```
+cd map && npm install && cd ..                                   # Node 18+: mapshaper, d3, playwright-core
+.venv/Scripts/pip install -r map/requirements.txt
+.venv/Scripts/python map/build_map.py --fetch-logos               # add --shots for screenshots, checks and GIFs
+```
+
+The build needs the public boundary files in `data/raw/geo/` (US Census 2023 counties; StatCan 2021 census
+divisions). Sources and methods are in `docs/MAP_DECISIONS.md` (M05–M07, 48 decisions in all).
+
+**What the map shows.** For every point, the *local outlook*: a distance-weighted average of the doom of nearby
+teams. Weights fall off with a Gaussian (σ = 100 mi), and each team counts once.
+- **Color:** blue = bright future, gold = league average, crimson = doomed.
+- **Grey:** no teams nearby. Color fades into grey where no team is within a few hundred miles.
+- **Regions:** 23 fan regions (e.g. "Golden Horseshoe" = Toronto, Hamilton, Buffalo), built from counties and
+  census divisions. Each has a card: verdict, average doom, how many teams it rests on, rank, best hope, biggest
+  worry, quadrant counts, and trend.
+- **Teams:** click a region (or zoom in) to see team badges. The ring color is the team's doom, and clicking a
+  badge or a scatter point selects the team in both views and opens its panel.
+
+**How to read it.**
+- **Colors are relative.** They compare each team with its own league that season (z-scores), then put leagues
+  side by side ("Colors compare teams within their league, then across leagues").
+- **Regions with few teams swing to extremes.** The ranked list orders regions by a reliability-adjusted average
+  (bar) and shows the raw average as a dot. Most differences between regions are within what chance alone would
+  produce.
+- **Predicted vs. actual.** Actual shows what really happened over the next three seasons. It exists only for
+  seasons that are three years old (MLB through 2023, NHL through 2022) and is always labeled.
+- **Team uncertainty is large.** Team cards show the model's risk band (chance of a doom ≥ 75 stretch) and the 80%
+  range.
+
+**New teams.** A team that played but has no prediction is *too new to score*. It gets a hollow, dashed neutral
+ring, and it is left out of every average, ranking and the heat surface. Its card says why. In MLB and NHL today
+this is zero teams: Vegas (2017) and Seattle (2021) have predictions from their first season.
+
+**Known limitations.**
+- Only MLB and NHL are scored. Mid-South, Ottawa–Montréal–Atlantic and the Prairies have no MLB team, so they are
+  grey in the MLB-only seasons (2008–12 and 2026).
+- A map season pairs MLB *Y* with NHL *Y*–*Y+1*.
+- Standardizing makes MLB look as certain as NHL, but the MLB model is standings-only and less accurate (rank
+  correlation 0.41 vs 0.61).
+- Region boundaries are fan-identity judgment calls (`map/data_src/region_*.csv`).
+- Hairline gaps (≤ 300 m) between US and Canadian boundary files are hidden at render time.
+- The colorblind-safe ramp has a short olive stretch just below average.
+- Teams with the same standing and similar doom overlap in the scatter. Use search to select them.
+- "Full diagnostics" in the team panel is a placeholder.
+
+**Adding a league.** Data rows only, no code changes: predictions in the `doom_predictions.csv` format, a
+`team_meta.csv` row per franchise, and location stints. Then run `python map/build_map.py --fetch-logos`, which
+re-derives everything that depends on the set of teams (z-scores, color scale, σ and opacity cutoffs, region
+shrinkage, verdict thresholds). Step by step: `docs/ADD_A_LEAGUE.md`.
+
 ## Where things are
 
 | Path | What |
@@ -43,6 +100,9 @@ The build starts **only from `data/mlb_nhl_model_slim.csv`**: it fits the models
 | `reports/RESULTS.md`, `reports/MODEL_CARD.md` | Consolidated results; model card |
 | `data/` | The slim model table (one row per team-season) |
 | `src/`, `dashboard/`, `scripts/` | Models + exports, viz scripts, the build command |
+| `map/` | Doom Map: `data_src/` (hand-made tables: team locations, regions, rules), `build/` (pipeline), `src/` (page code), `data/` (generated) |
+| `docs/MAP_DECISIONS.md`, `docs/ADD_A_LEAGUE.md` | Map decision log (M01–M48); how to add a league |
+| `reports/map_phase*.md`, `reports/map_palette.png` | Map phase reports, palette validation; screenshots and GIFs in `reports/figures/map_*` |
 
 **Rebuilding from raw sources** (league APIs, Wikipedia, MoneyPuck → full 104-column table → slim table), the
 M1/M2/M1b backtests, all phase reports and the full decision log (D01–D108) live in the tag
