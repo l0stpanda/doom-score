@@ -1,9 +1,0 @@
-check,pass,detail
-2023 Giants manager is not Bob Melvin,True,Gabe Kapler
-2022 Phillies coach_changed_during_regular_season = 1,True,"1, end manager Rob Thomson"
-MLB 2020 attendance is NaN (not 0),True,
-one row per key after merges,True,
-no draft data after season t (NHL draft year == season_start_year),True,by construction
-tenure consistency (GM and coach),True,0 flagged rows
-GM changes per league-season within 1..10 (flag check),False,"flagged: MLB 2026=0 | range MLB 0-9, NHL 1-8"
-Giants/Rays read as season-based (D39),True,by construction

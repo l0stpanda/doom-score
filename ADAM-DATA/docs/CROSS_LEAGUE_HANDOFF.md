@@ -1,7 +1,8 @@
 # Cross-league handoff (MLB + NHL → all leagues)
 
 What a groupmate's league output needs to match so all leagues can be compared on one scale. MLB/NHL reference
-files: `dashboard/data/doom_predictions.csv` and `reports/m3.md`. D-numbers: `docs/decisions_full.md`.
+files: `dashboard/data/doom_predictions.csv` and `reports/RESULTS.md` (section 4). D-numbers: `docs/KEY_DECISIONS.md`
+(full log in tag `adam-full-pipeline`).
 
 ## 1. Outcome (must be identical)
 
@@ -19,7 +20,7 @@ bigger percentile step in a smaller league (step = 100/(n − 1)).
 
 ## 2. Standardization
 
-- Features: within-league-season percentiles (`_lpct`, same formula; `src/common.py`), never raw league units
+- Features: within-league-season percentiles (`_lpct`, same formula as `win_pct_percentile`), never raw league units
   (D59).
 - Models: fitted **separately per league** with identical code and settings, then z-scored inside each fold on
   training seasons only (D66, D67).
@@ -60,16 +61,16 @@ Companion files: `doom_drivers_long.csv` (league, season, franchise, pred_type, 
 contribution), `team_profile.csv` (+ `team_profile_columns.csv`), `comparables.csv`, `team_meta.csv` (logo URL,
 source team id).
 
-## 4. Calibration and Brier reporting (match `reports/m3.md`)
+## 4. Calibration and Brier reporting (match `reports/RESULTS.md`, section 4)
 
 Computed on **backtest rows with `interval_available = 1` and a known label**, per league:
 
 - **Calibration table:** rows ranked by `p_doom75` and cut into 10 equal-count deciles. Columns: `league, decile,
   n, p_min, p_max, mean_predicted, observed_rate` (observed = share with actual doom ≥ 75). File:
-  `reports/m3_p_doom75_calibration.csv`.
+  printed by `src/export_dashboard.py`.
 - **Brier:** for `p_doom75`, for `p_doomed`, and for a base-rate-only forecast, with n and the base rate. Current:
   MLB 0.139 / 0.140 / 0.151 (n = 360, base rate 18.6%); NHL 0.144 / 0.143 / 0.167 (n = 188, 21.3%).
-- **Band check:** per league and band, `rows, labelled, share_actual_ge75` (`reports/m3_band_check.csv`).
+- **Band check:** per league and band, `rows, labelled, share_actual_ge75` (also printed by `src/export_dashboard.py`).
 
 ## 5. Open questions
 
@@ -81,6 +82,6 @@ Computed on **backtest rows with `interval_available = 1` and a known label**, p
 3. **Low-decile underprediction** of `p_doom75` (e.g. NHL decile 4: 6% predicted vs 17% observed).
 4. **Loose comparables:** median distance 17 percentile points (D103).
 5. **Logo overlap in the All-leagues view** (62+ logos; MLB sits on one line). More leagues will make it worse
-   (`reports/v1.md`).
+   (`reports/figures/dashboard_all_leagues.png`).
 6. Teammate core-schema check: the NBA/NFL file was never in this repo, so the percentile formula has not been
    cross-checked against it (D15).

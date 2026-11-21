@@ -1,35 +1,49 @@
-# Doom Viz: MLB + NHL (ADAM-DATA)
+# Doom Score: MLB + NHL
 
-Predicts each team's **doom**: 100 minus its average league percentile over the next three seasons
-(0 = top of the league all three years, 100 = bottom all three). One row per team-season. MLB 2000–2026 and
-NHL 2005-06 to 2025-26. Fitted per league with a walk-forward backtest, then shown as an interactive logo scatter.
-This folder is my part; `BEN-DATA/` and `LEO-DATA/` belong to groupmates.
+**Doom** for a team-season = 100 minus the team's average league percentile over the **next three seasons**.
+0 means top of the league all three years; 100 means bottom all three. We predict it at the end of each season
+(MLB 2000–2026, NHL 2005-06 to 2025-26), one model per league, and show it in an interactive logo scatter.
 
-## Layout
+## Headline results (out-of-sample backtest; details in `reports/RESULTS.md`)
+
+| | MLB (test 2008–2023) | NHL (test 2013-14 to 2022-23) |
+|---|---|---|
+| Final model | **Current standings only** (B1) | Elastic net on 13 features |
+| Rank correlation with actual doom (Spearman) | 0.41 | 0.61 (standings only: 0.52) |
+| Mean absolute error (doom points) | 18.5 | 15.9 |
+| 80% interval coverage / half-width | 82% / ±30 | 85% / ±26 |
+
+- In **NHL**, the extra features clearly beat standings alone. Shot share (Corsi), scoring margin, the 3-season
+  record, roster age, star concentration and draft capital all help.
+- In **MLB**, no feature set beat standings beyond noise. That includes six pre-registered MLB features, the
+  best being BaseRuns margin (future work).
+- Doom is a rough ranking, not a precise forecast: intervals are wide.
+
+## Open the dashboard
+
+`dashboard/doom_scatter.html` is self-contained and needs no server. It is git-ignored because it embeds team logos
+(trademarks), so build it once:
+
+```
+python -m venv .venv && .venv/Scripts/pip install -r requirements.txt    # Python 3.13
+.venv/Scripts/python scripts/build_dashboard.py                          # ~3 min
+```
+
+The build starts **only from `data/mlb_nhl_model_slim.csv`**: it fits the models and writes `dashboard/data/`
+(reproduced byte for byte), then downloads the logos once and builds the page. Screenshots are in
+`reports/figures/`.
+
+## Where things are
 
 | Path | What |
 |---|---|
-| `src/` | Raw → full-table pipeline (`fetch_*`, `build_phase1-4`, `build_crosswalk`), feature tables (`build_slim`, `m1b_*`), shared helpers (`common.py`) |
-| `src/model/` | Backtest framework and phases M1, M2, M1b, M3 (`run_m3.py` writes the dashboard exports) |
-| `src/viz/` | Logos, comparables, scatter page |
-| `scripts/build_all.py` | The one build command |
-| `data/processed/` | `mlb_nhl_team_seasons.csv` (frozen full table, 104 cols), `mlb_nhl_model_slim.csv` (model inputs), `mlb_m1b_features.csv` |
-| `data/manual/` | Hand-maintained inputs (CBT thresholds, cap ceilings, templates) |
-| `dashboard/data/` | Exports: `doom_predictions.csv`, drivers, team profile, comparables, team meta |
-| `reports/` | Phase results (`m1`, `m2`, `m1b`, `m3`, `v1`), `model_card.md`, `slim_selection.md` |
-| `docs/` | `PROJECT_LOG.md`, `DATA.md`, `FEATURES.md`, `CROSS_LEAGUE_HANDOFF.md`, `decisions_full.md` (D01–D110) |
-| `archive/` | Superseded docs, prompts and data-build logs (see `archive/README.md`) |
+| `docs/DOOM_SCORE.md` | The project in plain English: definition, data, modelling, results, limitations |
+| `docs/FEATURES.md`, `docs/KEY_DECISIONS.md` | Features with rationale; the ~15 decisions that matter most |
+| `docs/CROSS_LEAGUE_HANDOFF.md` | What other leagues' outputs must match to be comparable |
+| `reports/RESULTS.md`, `reports/MODEL_CARD.md` | Consolidated results; model card |
+| `data/` | The slim model table (one row per team-season) |
+| `src/`, `dashboard/`, `scripts/` | Models + exports, viz scripts, the build command |
 
-## Build and open the viz
-
-```
-python -m venv .venv && .venv/Scripts/pip install -r requirements.txt   # Python 3.13
-.venv/Scripts/python scripts/build_all.py            # features → models → exports → viz (~20 min)
-.venv/Scripts/python scripts/build_all.py --skip-backtests   # reuse committed M1/M2/M1b results (~3 min)
-```
-
-Then open `dashboard/doom_scatter.html` in a browser (self-contained, no server). It and
-`dashboard/assets/logos/` are git-ignored because they contain team logos (trademarks). `--clean` deletes all
-regenerable outputs first. `--from-raw` also rebuilds the full table from the APIs (slow, network).
-
-Start with `docs/CROSS_LEAGUE_HANDOFF.md` for the next phase.
+**Rebuilding from raw sources** (league APIs, Wikipedia, MoneyPuck → full 104-column table → slim table), the
+M1/M2/M1b backtests, all phase reports and the full decision log (D01–D108) live in the tag
+**`adam-full-pipeline`**: `git checkout adam-full-pipeline`.

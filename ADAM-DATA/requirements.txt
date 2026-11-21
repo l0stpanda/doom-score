@@ -1,11 +1,8 @@
-# ADAM-DATA: direct dependencies of src/, src/model/ and docs/ (pinned to the versions used; Python 3.13.1).
-# Install: python -m pip install -r ADAM-DATA/requirements.txt   (D73)
+# Direct dependencies of src/, dashboard/ and scripts/ (pinned to the versions used; Python 3.13.1).
+# Install: python -m pip install -r requirements.txt
+# The full pipeline (raw fetch, M1/M2/M1b backtests) needs more packages: see tag adam-full-pipeline.
 numpy==2.5.5
 pandas==3.1.1
-scipy==1.18.1
 scikit-learn==1.9.1
 requests==2.34.2
-matplotlib==3.11.2
-interpret-core==0.7.8
-lightgbm==4.7.0
 plotly==7.1.0
