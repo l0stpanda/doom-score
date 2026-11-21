@@ -12,6 +12,7 @@ const MAP = path.dirname(HERE), ROOT = path.dirname(MAP);
 const DATA = path.join(MAP, 'data'), CHECK = path.join(MAP, 'check'), FIG = path.join(ROOT, 'reports', 'figures');
 const lib = p => fs.readFileSync(path.join(MAP, 'node_modules', p), 'utf8');
 const D3 = lib('d3/dist/d3.min.js'), TOPO = lib('topojson-client/dist/topojson-client.min.js');
+const HEAT = fs.readFileSync(path.join(MAP, 'src', 'heat.js'), 'utf8');
 
 function csv(file) {
   const [h, ...rows] = fs.readFileSync(file, 'utf8').trim().split('\n');
@@ -42,7 +43,7 @@ function page(title, body, data) {
 h1{font-size:18px;margin:10px 16px 0}.sub{margin:2px 16px;color:#5a6170}#wrap{position:relative}
 canvas{position:absolute;left:0;top:0}#map{position:relative;z-index:1;display:block}</style></head><body>
 <h1>${title}</h1><div class="sub" id="sub"></div><div id="wrap"><canvas id="cv"></canvas><svg id="map"></svg></div>
-<script>${D3}</script><script>${TOPO}</script>
+<script>${D3}</script><script>${TOPO}</script><script>${HEAT}</script>
 <script>const TOPO_DATA=${fs.readFileSync(path.join(DATA, 'regions.topo.json'), 'utf8')};const DATA=${JSON.stringify(data)};</script>
 <script>${FRAME}${body}</script></body></html>`;
 }

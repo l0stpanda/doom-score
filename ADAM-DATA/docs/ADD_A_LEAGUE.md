@@ -30,12 +30,13 @@ add `league, name, monogram, note` to `map/data_src/monogram_overrides.csv`.
 
 One row per stint (a span of seasons at one venue under one name):
 
-`league, franchise_id, first_season, last_season, season_team_name, venue, city, metro, lat, lon, verified, source_url, note`
+`league, franchise_id, first_season, last_season, season_team_name, venue, city, metro, lat, lon, verified, source_url, note, secondary_source_url`
 
 - Blank `first_season` / `last_season` = from the league's first / to its last prediction season.
 - `metro` groups teams for clusters and diagnostics. Reuse an existing name where the metro already exists
   (e.g. `New York`, `Los Angeles`).
-- `verified`: `official-city`, `official-arena` or `unverified`; `source_url` is the official page used.
+- `verified`: `official-city`, `official-arena`, `city-verified` (city from `secondary_source_url`) or `unverified`;
+  `source_url` is the official page used.
 - The build stops with a list if any predicted team-season has no location, or two stints overlap.
 
 Regions don't change: they are geography, and every venue in the study area falls in one.

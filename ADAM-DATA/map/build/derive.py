@@ -130,6 +130,24 @@ def choose_sigma(D):
     return int(D[ok].sigma_mi.max()), ok
 
 
+def eb_components(T):
+    """Empirical-Bayes variance components for region averages of team z (method of moments, all seasons, all leagues).
+    Per season: s2_within = pooled within-region variance; excess = var(region means) - mean(s2_within / n_r).
+    Pooled: s2_within = mean over seasons; tau2 = max(0, mean(excess)) (unclipped mean, so no upward bias).
+    Shrunk region average = mu + B_r (xbar_r - mu), B_r = tau2 / (tau2 + s2_within / n_r), mu = mean of all scored teams."""
+    rows = []
+    for season, g in T[T.scored].groupby("season"):
+        R = g.groupby("region_id").z_pred.agg(["mean", "count"])
+        ss = g.groupby("region_id").z_pred.apply(lambda x: ((x - x.mean()) ** 2).sum()).sum()
+        s2w = ss / (R["count"] - 1).sum()
+        rows.append({"season": season, "regions": len(R), "s2_within": s2w, "var_region_means": R["mean"].var(ddof=1),
+                     "mean_sampling_var": (s2w / R["count"]).mean()})
+    E = pd.DataFrame(rows)
+    E["excess"] = E.var_region_means - E.mean_sampling_var
+    s2w, tau2 = float(E.s2_within.mean()), max(0.0, float(E.excess.mean()))
+    return E, s2w, tau2
+
+
 def main():
     os.makedirs(REP, exist_ok=True)
     P, T = build_team_seasons()
@@ -155,6 +173,8 @@ def main():
     too_new = T[~T.scored].groupby(["region_id", "season"]).size().rename("too_new")
     cnt = cnt.join(too_new).fillna({"too_new": 0}).astype(int)
 
+    E, eb_s2w, eb_tau2 = eb_components(T)
+    E.to_csv(os.path.join(REP, "eb_components_by_season.csv"), index=False, float_format="%.3f")
     T.to_csv(os.path.join(DATA, "team_seasons.csv"), index=False, float_format="%.4f", lineterminator="\n")
     stats.to_csv(os.path.join(REP, "standardisation.csv"), index=False, float_format="%.3f")
     D.to_csv(os.path.join(REP, "sigma_diagnostics.csv"), index=False, float_format="%.3f")
@@ -170,6 +190,9 @@ def main():
         "far_mi": FAR_MI, "visible_w": VISIBLE_W, "far_land_share_mean": round(far_share, 4),
         "leagues": sorted(P.league.unique()), "seasons": [int(s) for s in seasons],
         "league_seasons": league_seasons, "actual_seasons": actual_seasons,
+        "default_season": int(max(s for s in seasons if all(s in v for v in league_seasons.values()))),
+        "eb_s2_within": round(eb_s2w, 4), "eb_tau2": round(eb_tau2, 4),
+        "eb_shrink_by_n": {n: round(eb_tau2 / (eb_tau2 + eb_s2w / n), 3) for n in range(1, 7)},
         "n_team_seasons": int(len(T)), "n_scored": int(T.scored.sum()), "n_too_new": int((~T.scored).sum()),
     }
     with open(os.path.join(DATA, "derived.json"), "w") as f:

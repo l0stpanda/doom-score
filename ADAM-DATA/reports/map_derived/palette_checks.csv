@@ -1,57 +1,61 @@
-palette,check,vision,mode,value,target,pass,adjusted
-default,a. L* profile,normal,light,L* lo 43.3 / mid 77.0 / hi 42.3; max step 0.76,"mid > both ends, no reversals",True,
-default,b. dE2000 lo-hi,normal,light,42.3,>= 20,True,
-default,b. dE2000 mid-grey,normal,light,35.2,>= 15,True,
-default,b. dE2000 lo-grey,normal,light,31.0,report,,
-default,b. dE2000 hi-grey,normal,light,39.7,report,,
-default,e. min dE2000 ramp-grey,normal,light,6.9 at t=0.25,report (>= 10 wanted),False,
-default,b. dE2000 lo-hi,deuteranopia,light,55.8,>= 20,True,
-default,b. dE2000 mid-grey,deuteranopia,light,36.3,>= 15,True,
-default,b. dE2000 lo-grey,deuteranopia,light,32.4,report,,
-default,b. dE2000 hi-grey,deuteranopia,light,34.0,report,,
-default,e. min dE2000 ramp-grey,deuteranopia,light,6.6 at t=0.25,report (>= 10 wanted),False,
-default,b. dE2000 lo-hi,protanopia,light,44.9,>= 20,True,
-default,b. dE2000 mid-grey,protanopia,light,35.0,>= 15,True,
-default,b. dE2000 lo-grey,protanopia,light,28.7,report,,
-default,b. dE2000 hi-grey,protanopia,light,40.8,report,,
-default,e. min dE2000 ramp-grey,protanopia,light,6.5 at t=0.25,report (>= 10 wanted),False,
-default,b. dE2000 lo-hi,tritanopia,light,63.4,>= 20,True,
-default,b. dE2000 mid-grey,tritanopia,light,25.8,>= 15,True,
-default,b. dE2000 lo-grey,tritanopia,light,24.7,report,,
-default,b. dE2000 hi-grey,tritanopia,light,40.6,report,,
-default,e. min dE2000 ramp-grey,tritanopia,light,6.1 at t=0.26,report (>= 10 wanted),False,
-default,c. dark contrast lo,normal,dark,3.14,>= 3.0,True,False
-default,c. dark contrast hi,normal,dark,3.02,>= 3.0,True,False
-default,c. dark contrast grey,normal,dark,7.54,>= 3.0,True,False
-default,d. legend text contrast,normal,light,14.67,>= 4.5,True,
-default,d. legend muted contrast,normal,light,6.37,>= 4.5,True,
-default,d. legend text contrast,normal,dark,14.77,>= 4.5,True,
-default,d. legend muted contrast,normal,dark,7.68,>= 4.5,True,
-greenred,a. L* profile,normal,light,L* lo 57.8 / mid 84.2 / hi 46.9; max step 0.75,"mid > both ends, no reversals",True,
-greenred,b. dE2000 lo-hi,normal,light,71.0,>= 20,True,
-greenred,b. dE2000 mid-grey,normal,light,37.4,>= 15,True,
-greenred,b. dE2000 lo-grey,normal,light,32.7,report,,
-greenred,b. dE2000 hi-grey,normal,light,38.4,report,,
-greenred,e. min dE2000 ramp-grey,normal,light,32.5 at t=0.06,report (>= 10 wanted),True,
-greenred,b. dE2000 lo-hi,deuteranopia,light,8.9,>= 20,False,
-greenred,b. dE2000 mid-grey,deuteranopia,light,38.0,>= 15,True,
-greenred,b. dE2000 lo-grey,deuteranopia,light,27.5,report,,
-greenred,b. dE2000 hi-grey,deuteranopia,light,34.8,report,,
-greenred,e. min dE2000 ramp-grey,deuteranopia,light,27.5 at t=0.00,report (>= 10 wanted),True,
-greenred,b. dE2000 lo-hi,protanopia,light,23.4,>= 20,True,
-greenred,b. dE2000 mid-grey,protanopia,light,36.9,>= 15,True,
-greenred,b. dE2000 lo-grey,protanopia,light,29.7,report,,
-greenred,b. dE2000 hi-grey,protanopia,light,41.3,report,,
-greenred,e. min dE2000 ramp-grey,protanopia,light,29.7 at t=0.00,report (>= 10 wanted),True,
-greenred,b. dE2000 lo-hi,tritanopia,light,64.8,>= 20,True,
-greenred,b. dE2000 mid-grey,tritanopia,light,27.6,>= 15,True,
-greenred,b. dE2000 lo-grey,tritanopia,light,22.3,report,,
-greenred,b. dE2000 hi-grey,tritanopia,light,38.8,report,,
-greenred,e. min dE2000 ramp-grey,tritanopia,light,8.3 at t=0.26,report (>= 10 wanted),False,
-greenred,c. dark contrast lo,normal,dark,5.26,>= 3.0,True,False
-greenred,c. dark contrast hi,normal,dark,3.58,>= 3.0,True,False
-greenred,c. dark contrast grey,normal,dark,7.54,>= 3.0,True,False
-greenred,d. legend text contrast,normal,light,14.67,>= 4.5,True,
-greenred,d. legend muted contrast,normal,light,6.37,>= 4.5,True,
-greenred,d. legend text contrast,normal,dark,14.77,>= 4.5,True,
-greenred,d. legend muted contrast,normal,dark,7.68,>= 4.5,True,
+palette,check,vision,mode,value,target,pass
+default,chosen variant,-,light,oklch+teal+yellowgreen: teal L=0.52 C=0.14 h=175 @0.20; yg L=0.58 C=0.13 h=120 @0.35,"pass all, smoothest L*",True
+default,a. L* profile,normal,light,L* lo 43.3 / mid 77.0 / hi 42.3; max |d2 L*| 2.33,"mid > both ends, no reversals",True
+default,b. dE2000 lo-hi,normal,light,42.3,>= 20,True
+default,b. dE2000 mid-grey,normal,light,35.2,>= 15,True
+default,b. dE2000 lo-grey,normal,light,31.0,report,
+default,b. dE2000 hi-grey,normal,light,39.7,report,
+default,e. whole ramp min dE2000 vs grey,normal,light,27.8 at t=0.07,>= 15 at all 101 points,True
+default,b. dE2000 lo-hi,deuteranopia,light,55.8,>= 20,True
+default,b. dE2000 mid-grey,deuteranopia,light,36.3,>= 15,True
+default,b. dE2000 lo-grey,deuteranopia,light,32.4,report,
+default,b. dE2000 hi-grey,deuteranopia,light,34.0,report,
+default,e. whole ramp min dE2000 vs grey,deuteranopia,light,22.9 at t=0.18,>= 15 at all 101 points,True
+default,b. dE2000 lo-hi,protanopia,light,44.9,>= 20,True
+default,b. dE2000 mid-grey,protanopia,light,35.0,>= 15,True
+default,b. dE2000 lo-grey,protanopia,light,28.7,report,
+default,b. dE2000 hi-grey,protanopia,light,40.8,report,
+default,e. whole ramp min dE2000 vs grey,protanopia,light,19.0 at t=0.15,>= 15 at all 101 points,True
+default,b. dE2000 lo-hi,tritanopia,light,63.4,>= 20,True
+default,b. dE2000 mid-grey,tritanopia,light,25.8,>= 15,True
+default,b. dE2000 lo-grey,tritanopia,light,24.7,report,
+default,b. dE2000 hi-grey,tritanopia,light,40.6,report,
+default,e. whole ramp min dE2000 vs grey,tritanopia,light,15.4 at t=0.37,>= 15 at all 101 points,True
+default,e. min chroma C*ab,normal,light,27.4 at t=0.12,report,
+default,c. dark contrast lo,normal,dark,3.14,>= 3.0,True
+default,c. dark contrast hi,normal,dark,3.02,>= 3.0,True
+default,c. dark contrast grey,normal,dark,7.54,>= 3.0,True
+default,d. legend text contrast,normal,light,14.67,>= 4.5,True
+default,d. legend muted contrast,normal,light,6.37,>= 4.5,True
+default,d. legend text contrast,normal,dark,14.77,>= 4.5,True
+default,d. legend muted contrast,normal,dark,7.68,>= 4.5,True
+greenred,chosen variant,-,light,oklch: plain,"pass all, smoothest L*",False
+greenred,a. L* profile,normal,light,L* lo 57.8 / mid 84.2 / hi 46.9; max |d2 L*| 1.27,"mid > both ends, no reversals",True
+greenred,b. dE2000 lo-hi,normal,light,71.0,>= 20,True
+greenred,b. dE2000 mid-grey,normal,light,37.4,>= 15,True
+greenred,b. dE2000 lo-grey,normal,light,32.7,report,
+greenred,b. dE2000 hi-grey,normal,light,38.4,report,
+greenred,e. whole ramp min dE2000 vs grey,normal,light,32.7 at t=0.00,>= 15 at all 101 points,True
+greenred,b. dE2000 lo-hi,deuteranopia,light,8.9,>= 20,False
+greenred,b. dE2000 mid-grey,deuteranopia,light,38.0,>= 15,True
+greenred,b. dE2000 lo-grey,deuteranopia,light,27.5,report,
+greenred,b. dE2000 hi-grey,deuteranopia,light,34.8,report,
+greenred,e. whole ramp min dE2000 vs grey,deuteranopia,light,27.5 at t=0.00,>= 15 at all 101 points,True
+greenred,b. dE2000 lo-hi,protanopia,light,23.4,>= 20,True
+greenred,b. dE2000 mid-grey,protanopia,light,36.9,>= 15,True
+greenred,b. dE2000 lo-grey,protanopia,light,29.7,report,
+greenred,b. dE2000 hi-grey,protanopia,light,41.3,report,
+greenred,e. whole ramp min dE2000 vs grey,protanopia,light,29.7 at t=0.00,>= 15 at all 101 points,True
+greenred,b. dE2000 lo-hi,tritanopia,light,64.8,>= 20,True
+greenred,b. dE2000 mid-grey,tritanopia,light,27.6,>= 15,True
+greenred,b. dE2000 lo-grey,tritanopia,light,22.3,report,
+greenred,b. dE2000 hi-grey,tritanopia,light,38.8,report,
+greenred,e. whole ramp min dE2000 vs grey,tritanopia,light,9.0 at t=0.27,>= 15 at all 101 points,False
+greenred,e. min chroma C*ab,normal,light,64.1 at t=0.00,report,
+greenred,c. dark contrast lo,normal,dark,5.26,>= 3.0,True
+greenred,c. dark contrast hi,normal,dark,3.58,>= 3.0,True
+greenred,c. dark contrast grey,normal,dark,7.54,>= 3.0,True
+greenred,d. legend text contrast,normal,light,14.67,>= 4.5,True
+greenred,d. legend muted contrast,normal,light,6.37,>= 4.5,True
+greenred,d. legend text contrast,normal,dark,14.77,>= 4.5,True
+greenred,d. legend muted contrast,normal,dark,7.68,>= 4.5,True

@@ -13,12 +13,12 @@ chicagoland,CHI,Chicagoland & Indiana,"Chicago, Indianapolis"
 great-lakes,GLK,Great Lakes,"Detroit, Cleveland"
 ohio-valley,OHV,Ohio Valley,"Cincinnati, Columbus, Pittsburgh"
 golden-horseshoe,GHS,Golden Horseshoe,"Toronto, Hamilton, Buffalo"
-ottawa-montreal,OTM,Ottawa–Montréal,"Ottawa, Montréal"
+ottawa-montreal,OTM,"Montréal, Ottawa & Atlantic Canada","Ottawa, Montréal"
 new-england,NEN,New England,"Boston, Connecticut"
-new-york,NYC,New York,"NYC metro incl. northern NJ and Long Island"
-philadelphia,PHI,Philadelphia,"Philadelphia metro"
+new-york,NYC,New York,NYC metro incl. northern NJ and Long Island
+philadelphia,PHI,Philadelphia,Philadelphia metro
 dmv,DMV,DMV,"Washington DC, Baltimore"
 southeast,SE,Southeast,"Atlanta, Charlotte, Raleigh"
 mid-south,MSO,Mid-South,"Nashville, Memphis, New Orleans"
 cnfl,CFL,Central & North Florida,"Tampa, Orlando, Jacksonville"
-south-florida,SFL,South Florida,"Miami metro"
+south-florida,SFL,South Florida,Miami metro

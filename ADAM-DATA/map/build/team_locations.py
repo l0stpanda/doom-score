@@ -17,7 +17,7 @@ STINTS = os.path.join(MAP, "data_src", "team_location_stints.csv")
 OUT = os.path.join(MAP, "data", "team_locations.csv")
 
 COLS = ["franchise_id", "league", "season", "city", "metro", "lat", "lon", "source_url",
-        "season_team_name", "venue", "verified", "note"]
+        "season_team_name", "venue", "verified", "secondary_source_url", "note"]
 
 
 def slug(s):
@@ -40,6 +40,7 @@ def main():
             rows.append({"franchise_id": st.franchise_id, "league": st.league, "season": y, "city": st.city,
                          "metro": st.metro, "lat": st.lat, "lon": st.lon, "source_url": st.source_url,
                          "season_team_name": st.season_team_name, "venue": st.venue, "verified": st.verified,
+                         "secondary_source_url": st.secondary_source_url if isinstance(st.secondary_source_url, str) else "",
                          "note": st.note if isinstance(st.note, str) else ""})
     L = pd.DataFrame(rows, columns=COLS)
     L["metro_id"] = L.metro.map(slug)
