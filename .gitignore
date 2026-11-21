@@ -6,3 +6,5 @@ ADAM-DATA/dashboard/doom_scatter.html
 # Doom Map: node deps and generated check pages (they inline d3 + data; rebuild with map/build_map.py)
 ADAM-DATA/map/node_modules/
 ADAM-DATA/map/check/
+# Doom Map page (inlines data + later logos); rebuild with ADAM-DATA/map/build_map.py
+ADAM-DATA/dashboard/doom_map.html

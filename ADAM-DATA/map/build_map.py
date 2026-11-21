@@ -3,10 +3,12 @@
     .venv/Scripts/python map/build_map.py              # data + derived numbers + check renders
     .venv/Scripts/python map/build_map.py --no-renders # skip the Edge screenshots
     .venv/Scripts/python map/build_map.py --fetch-logos # also run dashboard/fetch_logos.py (team_meta.csv URLs)
+    .venv/Scripts/python map/build_map.py --shots       # also take the Phase 2 screenshots of the page
 
 Needs: the Python venv (requirements.txt + map/requirements.txt), Node 18+ with `npm install` run in map/,
 and the raw boundary files in data/raw/geo/ (see docs/MAP_DECISIONS.md, M05-M06, for where they come from).
-Steps: team_locations.py -> regions.mjs -> logos.py -> derive.py -> palette.py -> render_checks.mjs
+Steps: team_locations.py -> regions.mjs -> logos.py -> derive.py -> palette.py -> render_checks.mjs -> build_page.mjs
+Output page: dashboard/doom_map.html (self-contained, git-ignored like doom_scatter.html).
 """
 import os, subprocess, sys
 
@@ -32,6 +34,9 @@ def main():
     if "--no-renders" not in args:
         run(["node", "map/build/render_checks.mjs", "regions"])
         run(["node", "map/build/render_checks.mjs", "heatmap"])
+    run(["node", "map/build/build_page.mjs"])
+    if "--shots" in args:
+        run(["node", "map/build/shots_phase2.mjs"])
 
 
 if __name__ == "__main__":
