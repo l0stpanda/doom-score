@@ -1,0 +1,227 @@
+place,lat,lon,region_id,note
+Seattle,47.606,-122.332,cascadia,core
+Portland OR,45.515,-122.679,cascadia,core
+Vancouver,49.283,-123.121,cascadia,core
+Spokane,47.659,-117.426,cascadia,
+Boise,43.615,-116.202,cascadia,
+Missoula,46.872,-113.994,cascadia,
+Kelowna,49.888,-119.496,cascadia,
+Prince George,53.917,-122.750,cascadia,
+Medford OR,42.327,-122.873,cascadia,
+San Francisco,37.775,-122.419,norcal,core
+Oakland,37.804,-122.271,norcal,core
+San Jose,37.338,-121.886,norcal,core
+Sacramento,38.582,-121.494,norcal,core
+Fresno,36.738,-119.787,norcal,
+Reno,39.530,-119.814,norcal,
+Redding,40.587,-122.392,norcal,
+Salinas,36.678,-121.656,norcal,
+San Luis Obispo,35.283,-120.660,norcal,
+Los Angeles,34.052,-118.244,socal,core
+Anaheim,33.836,-117.914,socal,core
+San Diego,32.716,-117.161,socal,core
+Bakersfield,35.373,-119.019,socal,
+Santa Barbara,34.420,-119.698,socal,
+Riverside,33.953,-117.396,socal,
+Palm Springs,33.830,-116.545,socal,
+Bishop,37.364,-118.395,socal,
+Phoenix,33.448,-112.074,desert-sw,core
+Las Vegas,36.170,-115.140,desert-sw,core
+Tucson,32.222,-110.975,desert-sw,
+Flagstaff,35.198,-111.651,desert-sw,
+Albuquerque,35.084,-106.650,desert-sw,
+El Paso,31.762,-106.485,desert-sw,
+Tonopah NV,38.067,-117.230,desert-sw,"Keeps central Nevada with Las Vegas rather than Fresno"
+Denver,39.739,-104.990,mountain-west,core
+Salt Lake City,40.761,-111.891,mountain-west,core
+Billings,45.783,-108.501,mountain-west,
+Idaho Falls,43.492,-112.034,mountain-west,
+Cheyenne,41.140,-104.820,mountain-west,
+Rapid City,44.081,-103.231,mountain-west,
+Scottsbluff,41.867,-103.661,mountain-west,
+Elko,40.832,-115.763,mountain-west,
+Grand Junction,39.064,-108.551,mountain-west,
+Calgary,51.045,-114.072,prairies,core
+Edmonton,53.546,-113.494,prairies,core
+Winnipeg,49.895,-97.138,prairies,core
+Regina,50.445,-104.619,prairies,
+Saskatoon,52.133,-106.670,prairies,
+Kenora,49.767,-94.489,prairies,
+Fort McMurray,56.726,-111.381,prairies,
+Dallas,32.777,-96.797,ntx-ok,core
+Fort Worth,32.755,-97.331,ntx-ok,core
+Oklahoma City,35.468,-97.516,ntx-ok,core
+Tulsa,36.154,-95.993,ntx-ok,
+Lubbock,33.578,-101.855,ntx-ok,
+Amarillo,35.222,-101.831,ntx-ok,
+Midland,31.997,-102.078,ntx-ok,
+Abilene,32.449,-99.733,ntx-ok,
+Waco,31.549,-97.147,ntx-ok,
+Tyler,32.351,-95.301,ntx-ok,
+Fayetteville AR,36.063,-94.157,ntx-ok,
+Clovis NM,34.405,-103.205,ntx-ok,
+Hobbs NM,32.703,-103.136,ntx-ok,
+Houston,29.760,-95.370,south-texas,core
+San Antonio,29.424,-98.494,south-texas,core
+Austin,30.267,-97.743,south-texas,
+Corpus Christi,27.801,-97.396,south-texas,
+McAllen,26.203,-98.230,south-texas,
+Laredo,27.506,-99.507,south-texas,
+Beaumont,30.080,-94.127,south-texas,
+Kansas City,39.100,-94.578,heartland,core
+St. Louis,38.627,-90.199,heartland,core
+Omaha,41.257,-95.935,heartland,
+Lincoln,40.814,-96.703,heartland,
+Wichita,37.687,-97.330,heartland,
+Springfield MO,37.209,-93.292,heartland,
+Des Moines,41.587,-93.625,heartland,
+Springfield IL,39.799,-89.644,heartland,
+Carbondale,37.727,-89.217,heartland,
+North Platte,41.124,-100.765,heartland,
+Dodge City,37.753,-100.017,heartland,
+Minneapolis,44.978,-93.265,upper-midwest,core
+St. Paul,44.954,-93.090,upper-midwest,core
+Milwaukee,43.039,-87.906,upper-midwest,core
+Green Bay,44.513,-88.016,upper-midwest,core
+Madison,43.073,-89.401,upper-midwest,
+Fargo,46.877,-96.790,upper-midwest,
+Sioux Falls,43.545,-96.731,upper-midwest,
+Duluth,46.787,-92.101,upper-midwest,
+Bismarck,46.809,-100.784,upper-midwest,
+Marquette,46.543,-87.395,upper-midwest,
+Mason City,43.154,-93.201,upper-midwest,
+La Crosse,43.801,-91.240,upper-midwest,
+Chicago,41.878,-87.630,chicagoland,core
+Indianapolis,39.768,-86.158,chicagoland,core
+Rockford,42.271,-89.094,chicagoland,
+Peoria,40.694,-89.589,chicagoland,
+Champaign,40.116,-88.243,chicagoland,
+Davenport,41.524,-90.578,chicagoland,
+Cedar Rapids,41.978,-91.666,chicagoland,
+South Bend,41.676,-86.252,chicagoland,
+Fort Wayne,41.079,-85.139,chicagoland,
+Evansville,37.972,-87.571,chicagoland,
+Detroit,42.331,-83.046,great-lakes,core
+Cleveland,41.499,-81.694,great-lakes,core
+Toledo,41.654,-83.537,great-lakes,
+Akron,41.081,-81.519,great-lakes,
+Youngstown,41.100,-80.650,great-lakes,
+Grand Rapids,42.963,-85.668,great-lakes,
+Lansing,42.733,-84.555,great-lakes,
+Traverse City,44.763,-85.621,great-lakes,
+Sault Ste. Marie MI,46.495,-84.345,great-lakes,
+Windsor ON,42.314,-83.036,great-lakes,"Crosses the border: Windsor follows Detroit"
+Cincinnati,39.103,-84.512,ohio-valley,core
+Columbus,39.961,-82.999,ohio-valley,core
+Pittsburgh,40.441,-79.996,ohio-valley,core
+Dayton,39.759,-84.192,ohio-valley,
+Louisville,38.253,-85.759,ohio-valley,
+Lexington,38.041,-84.504,ohio-valley,
+Charleston WV,38.350,-81.633,ohio-valley,
+Morgantown,39.630,-79.956,ohio-valley,
+Altoona,40.519,-78.395,ohio-valley,
+Huntington WV,38.419,-82.445,ohio-valley,
+Toronto,43.653,-79.383,golden-horseshoe,core
+Hamilton,43.256,-79.869,golden-horseshoe,core
+Buffalo,42.886,-78.878,golden-horseshoe,core
+Rochester NY,43.157,-77.609,golden-horseshoe,
+London ON,42.984,-81.246,golden-horseshoe,
+Kitchener,43.452,-80.493,golden-horseshoe,
+Barrie,44.389,-79.690,golden-horseshoe,
+Kingston ON,44.231,-76.486,golden-horseshoe,"Leafs-leaning despite being nearer Ottawa"
+Sudbury,46.492,-80.993,golden-horseshoe,
+North Bay,46.310,-79.461,golden-horseshoe,
+Sault Ste. Marie ON,46.522,-84.346,golden-horseshoe,
+Timmins,48.477,-81.330,golden-horseshoe,
+Thunder Bay,48.382,-89.246,golden-horseshoe,"Mixed Leafs/Jets; kept with Ontario"
+Ottawa,45.421,-75.697,ottawa-montreal,core
+Montréal,45.502,-73.567,ottawa-montreal,core
+Québec City,46.814,-71.208,ottawa-montreal,
+Sherbrooke,45.404,-71.893,ottawa-montreal,
+Cornwall ON,45.021,-74.730,ottawa-montreal,
+Pembroke ON,45.826,-77.110,ottawa-montreal,
+Saguenay,48.428,-71.068,ottawa-montreal,
+Rouyn-Noranda,48.236,-79.023,ottawa-montreal,
+Moncton,46.088,-64.778,ottawa-montreal,
+Halifax,44.649,-63.575,ottawa-montreal,
+St. John's,47.562,-52.713,ottawa-montreal,
+Boston,42.360,-71.059,new-england,core
+Hartford,41.764,-72.685,new-england,core
+Uncasville CT,41.434,-72.110,new-england,core
+Providence,41.824,-71.413,new-england,
+Worcester,42.263,-71.802,new-england,
+Springfield MA,42.101,-72.590,new-england,
+Burlington VT,44.476,-73.212,new-england,
+Portland ME,43.659,-70.257,new-england,
+Manchester NH,42.991,-71.464,new-england,
+Bangor,44.801,-68.778,new-england,
+New York City,40.713,-74.006,new-york,core
+Newark,40.736,-74.172,new-york,core
+Long Island,40.789,-73.135,new-york,core
+Stamford,41.053,-73.539,new-york,
+New Haven,41.308,-72.928,new-york,
+New Brunswick NJ,40.486,-74.452,new-york,
+Toms River,39.954,-74.198,new-york,
+Poughkeepsie,41.700,-73.921,new-york,
+Albany,42.653,-73.756,new-york,
+Utica,43.100,-75.233,new-york,
+Syracuse,43.049,-76.147,new-york,
+Binghamton,42.099,-75.918,new-york,
+Plattsburgh,44.699,-73.453,new-york,
+Philadelphia,39.952,-75.165,philadelphia,core
+Trenton,40.217,-74.743,philadelphia,
+Atlantic City,39.364,-74.423,philadelphia,
+Wilmington DE,39.746,-75.547,philadelphia,
+Dover DE,39.158,-75.524,philadelphia,
+Allentown,40.608,-75.490,philadelphia,
+Harrisburg,40.274,-76.884,philadelphia,
+Scranton,41.409,-75.662,philadelphia,
+Williamsport,41.241,-77.001,philadelphia,
+Washington DC,38.907,-77.037,dmv,core
+Baltimore,39.290,-76.612,dmv,core
+Richmond,37.541,-77.436,dmv,
+Norfolk,36.851,-76.286,dmv,
+Roanoke,37.271,-79.941,dmv,
+Salisbury MD,38.361,-75.599,dmv,
+Hagerstown,39.642,-77.720,dmv,
+Martinsburg WV,39.456,-77.964,dmv,
+Atlanta,33.749,-84.388,southeast,core
+Charlotte,35.227,-80.843,southeast,core
+Raleigh,35.780,-78.639,southeast,core
+Greensboro,36.073,-79.792,southeast,
+Asheville,35.595,-82.551,southeast,
+Wilmington NC,34.226,-77.945,southeast,
+Columbia SC,34.000,-81.035,southeast,
+Charleston SC,32.777,-79.931,southeast,
+Savannah,32.081,-81.091,southeast,
+Birmingham,33.519,-86.810,southeast,
+Montgomery,32.367,-86.300,southeast,
+Chattanooga,35.046,-85.309,southeast,
+Bristol VA,36.596,-82.188,southeast,
+Nashville,36.163,-86.781,mid-south,core
+Memphis,35.150,-90.049,mid-south,core
+New Orleans,29.951,-90.072,mid-south,core
+Baton Rouge,30.451,-91.187,mid-south,
+Shreveport,32.525,-93.750,mid-south,
+Jackson MS,32.299,-90.185,mid-south,
+Gulfport,30.367,-89.093,mid-south,
+Little Rock,34.746,-92.290,mid-south,
+Knoxville,35.961,-83.921,mid-south,
+Huntsville,34.730,-86.586,mid-south,
+Mobile,30.695,-88.040,mid-south,
+Bowling Green KY,36.990,-86.444,mid-south,
+Paducah,37.083,-88.600,mid-south,
+Tampa,27.951,-82.457,cnfl,core
+Orlando,28.538,-81.379,cnfl,core
+Jacksonville,30.332,-81.656,cnfl,core
+Tallahassee,30.438,-84.281,cnfl,
+Pensacola,30.421,-87.217,cnfl,
+Gainesville FL,29.652,-82.325,cnfl,
+Fort Myers,26.640,-81.872,cnfl,
+Naples,26.142,-81.795,cnfl,"Gulf coast follows Tampa"
+Vero Beach,27.639,-80.398,cnfl,
+Miami,25.762,-80.192,south-florida,core
+Fort Lauderdale,26.122,-80.137,south-florida,core
+West Palm Beach,26.715,-80.053,south-florida,
+Port St. Lucie,27.273,-80.353,south-florida,
+Key West,24.556,-81.780,south-florida,

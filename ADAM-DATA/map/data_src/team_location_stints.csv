@@ -1,0 +1,81 @@
+league,franchise_id,first_season,last_season,season_team_name,venue,city,metro,lat,lon,verified,source_url,note
+MLB,arizona-diamondbacks,,,Arizona Diamondbacks,Chase Field,Phoenix AZ,Phoenix,33.4453,-112.0667,official-city,https://www.mlb.com/team,
+MLB,athletics,,2024,Oakland Athletics,Oakland Coliseum,Oakland CA,Bay Area,37.7516,-122.2005,official-city,https://www.mlb.com/athletics/news/a-s-announce-2025-27-stadium-plans,"Final Oakland season 2024 per club statement"
+MLB,athletics,2025,,Athletics,Sutter Health Park,West Sacramento CA,Sacramento,38.5804,-121.5135,official-city,https://www.mlb.com/team,"Temporary home 2025-27; Las Vegas ballpark targeted for 2028"
+MLB,atlanta-braves,,2016,Atlanta Braves,Turner Field,Atlanta GA,Atlanta,33.7348,-84.3897,official-arena,https://www.mlb.com/news/atlanta-braves-announce-2017-schedule-c201337358,
+MLB,atlanta-braves,2017,,Atlanta Braves,Truist Park,Atlanta GA (Cumberland),Atlanta,33.8908,-84.4678,official-city,https://www.mlb.com/team,"Opened April 14 2017 as SunTrust Park"
+MLB,baltimore-orioles,,,Baltimore Orioles,Oriole Park at Camden Yards,Baltimore MD,Baltimore,39.2839,-76.6217,official-city,https://www.mlb.com/team,
+MLB,boston-red-sox,,,Boston Red Sox,Fenway Park,Boston MA,Boston,42.3467,-71.0972,official-city,https://www.mlb.com/team,
+MLB,chicago-cubs,,,Chicago Cubs,Wrigley Field,Chicago IL,Chicago,41.9484,-87.6553,official-city,https://www.mlb.com/team,
+MLB,chicago-white-sox,,,Chicago White Sox,Rate Field,Chicago IL,Chicago,41.8299,-87.6338,official-city,https://www.mlb.com/team,
+MLB,cincinnati-reds,,,Cincinnati Reds,Great American Ball Park,Cincinnati OH,Cincinnati,39.0975,-84.5066,official-city,https://www.mlb.com/team,
+MLB,cleveland-guardians,,2021,Cleveland Indians,Progressive Field,Cleveland OH,Cleveland,41.4962,-81.6852,official-city,https://www.mlb.com/team,"Renamed Guardians for 2022"
+MLB,cleveland-guardians,2022,,Cleveland Guardians,Progressive Field,Cleveland OH,Cleveland,41.4962,-81.6852,official-city,https://www.mlb.com/team,
+MLB,colorado-rockies,,,Colorado Rockies,Coors Field,Denver CO,Denver,39.7559,-104.9942,official-city,https://www.mlb.com/team,
+MLB,detroit-tigers,,,Detroit Tigers,Comerica Park,Detroit MI,Detroit,42.3390,-83.0485,official-city,https://www.mlb.com/team,
+MLB,houston-astros,,,Houston Astros,Daikin Park,Houston TX,Houston,29.7573,-95.3555,official-city,https://www.mlb.com/team,"Formerly Minute Maid Park; same site"
+MLB,kansas-city-royals,,,Kansas City Royals,Kauffman Stadium,Kansas City MO,Kansas City,39.0517,-94.4803,official-city,https://www.mlb.com/team,
+MLB,los-angeles-angels,,2015,Los Angeles Angels of Anaheim,Angel Stadium,Anaheim CA,Los Angeles,33.8003,-117.8827,official-city,https://www.mlb.com/team,
+MLB,los-angeles-angels,2016,,Los Angeles Angels,Angel Stadium,Anaheim CA,Los Angeles,33.8003,-117.8827,official-city,https://www.mlb.com/team,
+MLB,los-angeles-dodgers,,,Los Angeles Dodgers,Dodger Stadium,Los Angeles CA,Los Angeles,34.0739,-118.2400,official-city,https://www.mlb.com/team,
+MLB,miami-marlins,,2011,Florida Marlins,Sun Life Stadium,Miami Gardens FL,Miami,25.9580,-80.2389,official-arena,https://www.mlb.com/marlins/history/timeline-2010s,"Shared with the Dolphins until 2011"
+MLB,miami-marlins,2012,,Miami Marlins,loanDepot park,Miami FL,Miami,25.7781,-80.2196,official-city,https://www.mlb.com/team,"Opened April 4 2012 as Marlins Park; renamed Miami Marlins the same year"
+MLB,milwaukee-brewers,,,Milwaukee Brewers,American Family Field,Milwaukee WI,Milwaukee,43.0280,-87.9712,official-city,https://www.mlb.com/team,
+MLB,minnesota-twins,,2009,Minnesota Twins,Metrodome,Minneapolis MN,Twin Cities,44.9737,-93.2581,official-arena,https://www.mlb.com/team,"Target Field (same city) from 2010"
+MLB,minnesota-twins,2010,,Minnesota Twins,Target Field,Minneapolis MN,Twin Cities,44.9817,-93.2776,official-city,https://www.mlb.com/team,
+MLB,new-york-mets,,,New York Mets,Citi Field,Queens NY,New York,40.7571,-73.8458,official-city,https://www.mlb.com/team,"Shea Stadium (adjacent) through 2008"
+MLB,new-york-yankees,,,New York Yankees,Yankee Stadium,Bronx NY,New York,40.8296,-73.9262,official-city,https://www.mlb.com/team,
+MLB,philadelphia-phillies,,,Philadelphia Phillies,Citizens Bank Park,Philadelphia PA,Philadelphia,39.9061,-75.1665,official-city,https://www.mlb.com/team,
+MLB,pittsburgh-pirates,,,Pittsburgh Pirates,PNC Park,Pittsburgh PA,Pittsburgh,40.4469,-80.0057,official-city,https://www.mlb.com/team,
+MLB,san-diego-padres,,,San Diego Padres,Petco Park,San Diego CA,San Diego,32.7076,-117.1570,official-city,https://www.mlb.com/team,
+MLB,san-francisco-giants,,,San Francisco Giants,Oracle Park,San Francisco CA,Bay Area,37.7786,-122.3893,official-city,https://www.mlb.com/team,
+MLB,seattle-mariners,,,Seattle Mariners,T-Mobile Park,Seattle WA,Seattle,47.5914,-122.3325,official-city,https://www.mlb.com/team,
+MLB,st-louis-cardinals,,,St. Louis Cardinals,Busch Stadium,St. Louis MO,St. Louis,38.6226,-90.1928,official-city,https://www.mlb.com/team,
+MLB,tampa-bay-rays,,2024,Tampa Bay Rays,Tropicana Field,St. Petersburg FL,Tampa Bay,27.7683,-82.6534,official-city,https://www.mlb.com/team,
+MLB,tampa-bay-rays,2025,2025,Tampa Bay Rays,George M. Steinbrenner Field,Tampa FL,Tampa Bay,27.9803,-82.5067,official-city,https://www.mlb.com/press-release/press-release-tampa-bay-rays-to-play-2025-season-at-george-m-steinbrenner-field-in-tampa,"Tropicana Field roof destroyed by Hurricane Milton"
+MLB,tampa-bay-rays,2026,,Tampa Bay Rays,Tropicana Field,St. Petersburg FL,Tampa Bay,27.7683,-82.6534,official-city,https://www.mlb.com/team,"Returned after repairs"
+MLB,texas-rangers,,,Texas Rangers,Globe Life Field,Arlington TX,Dallas–Fort Worth,32.7473,-97.0847,official-city,https://www.mlb.com/team,"Globe Life Park (adjacent) through 2019"
+MLB,toronto-blue-jays,,2019,Toronto Blue Jays,Rogers Centre,Toronto ON,Toronto,43.6414,-79.3894,official-city,https://www.mlb.com/team,
+MLB,toronto-blue-jays,2020,2020,Toronto Blue Jays,Sahlen Field,Buffalo NY,Buffalo,42.8800,-78.8737,official-city,https://www.mlb.com/news/blue-jays-move-home-games-to-buffalo,"Canadian government denied approval; all 2020 home games in Buffalo"
+MLB,toronto-blue-jays,2021,,Toronto Blue Jays,Rogers Centre,Toronto ON,Toronto,43.6414,-79.3894,official-city,https://www.mlb.com/news/blue-jays-return-to-sahlen-field-for-2021,"2021 split: 21 Dunedin, 23 Buffalo, rest in Toronto from July 30 (plurality rule)"
+MLB,washington-nationals,,,Washington Nationals,Nationals Park,Washington DC,Washington DC,38.8730,-77.0074,official-city,https://www.mlb.com/team,
+NHL,anaheim-ducks,,,Anaheim Ducks,Honda Center,Anaheim CA,Los Angeles,33.8078,-117.8765,official-arena,https://www.nhl.com/ducks/,
+NHL,boston-bruins,,,Boston Bruins,TD Garden,Boston MA,Boston,42.3662,-71.0621,official-arena,https://www.nhl.com/bruins/,
+NHL,buffalo-sabres,,,Buffalo Sabres,KeyBank Center,Buffalo NY,Buffalo,42.8750,-78.8764,official-arena,https://www.nhl.com/sabres/,
+NHL,calgary-flames,,,Calgary Flames,Scotiabank Saddledome,Calgary AB,Calgary,51.0374,-114.0519,official-arena,https://www.nhl.com/flames/,
+NHL,carolina-hurricanes,,,Carolina Hurricanes,Lenovo Center,Raleigh NC,Raleigh,35.8033,-78.7219,unverified,https://www.nhl.com/info/teams,"Team page returned an error; arena city not confirmed on an official page"
+NHL,chicago-blackhawks,,,Chicago Blackhawks,United Center,Chicago IL,Chicago,41.8807,-87.6742,official-arena,https://www.nhl.com/blackhawks/,
+NHL,colorado-avalanche,,,Colorado Avalanche,Ball Arena,Denver CO,Denver,39.7487,-105.0077,official-arena,https://www.nhl.com/avalanche/,
+NHL,columbus-blue-jackets,,,Columbus Blue Jackets,Nationwide Arena,Columbus OH,Columbus,39.9693,-83.0061,official-arena,https://www.nhl.com/bluejackets/arena,
+NHL,dallas-stars,,,Dallas Stars,American Airlines Center,Dallas TX,Dallas–Fort Worth,32.7905,-96.8103,official-arena,https://www.nhl.com/stars/,
+NHL,detroit-red-wings,,2016,Detroit Red Wings,Joe Louis Arena,Detroit MI,Detroit,42.3253,-83.0514,official-arena,https://www.nhl.com/redwings/arena,
+NHL,detroit-red-wings,2017,,Detroit Red Wings,Little Caesars Arena,Detroit MI,Detroit,42.3411,-83.0553,official-city,https://www.nhl.com/redwings/arena,
+NHL,edmonton-oilers,,,Edmonton Oilers,Rogers Place,Edmonton AB,Edmonton,53.5469,-113.4979,official-city,https://www.rogersplace.com/,"Rexall Place (same city) through 2015-16"
+NHL,florida-panthers,,,Florida Panthers,Amerant Bank Arena,Sunrise FL,Miami,26.1584,-80.3256,official-arena,https://www.nhl.com/panthers/,
+NHL,los-angeles-kings,,,Los Angeles Kings,Crypto.com Arena,Los Angeles CA,Los Angeles,34.0430,-118.2673,unverified,https://www.nhl.com/kings/,"Arena not named on the page read"
+NHL,minnesota-wild,,,Minnesota Wild,Grand Casino Arena,St. Paul MN,Twin Cities,44.9448,-93.1010,official-arena,https://www.nhl.com/wild/,"Formerly Xcel Energy Center"
+NHL,montreal-canadiens,,,Montréal Canadiens,Bell Centre,Montréal QC,Montréal,45.4961,-73.5693,official-arena,https://www.nhl.com/canadiens/,
+NHL,nashville-predators,,,Nashville Predators,Bridgestone Arena,Nashville TN,Nashville,36.1592,-86.7785,official-arena,https://www.nhl.com/predators/arena,
+NHL,new-jersey-devils,,,New Jersey Devils,Prudential Center,Newark NJ,New York,40.7334,-74.1711,official-arena,https://www.nhl.com/devils/arena,
+NHL,new-york-islanders,,2014,New York Islanders,Nassau Coliseum,Uniondale NY,New York,40.7229,-73.5904,official-arena,https://www.nhl.com/islanders/news/islanders-beginning-new-journey-at-ubs-arena-328138024,"Nassau Coliseum 1972-2015"
+NHL,new-york-islanders,2015,2019,New York Islanders,Barclays Center,Brooklyn NY,New York,40.6826,-73.9754,official-arena,https://www.nhl.com/islanders/news/islanders-beginning-new-journey-at-ubs-arena-328138024,"Full time 2015-18; 2018-19 and 2019-20 split with Nassau Coliseum (same metro)"
+NHL,new-york-islanders,2020,2020,New York Islanders,Nassau Coliseum,Uniondale NY,New York,40.7229,-73.5904,official-arena,https://www.nhl.com/news/new-york-islanders-to-play-playoff-games-this-season-all-next-season-n-315693992,
+NHL,new-york-islanders,2021,,New York Islanders,UBS Arena,Elmont NY,New York,40.7117,-73.7259,official-city,https://www.nhl.com/islanders/arena,"Opened Nov 20 2021"
+NHL,new-york-rangers,,,New York Rangers,Madison Square Garden,New York NY,New York,40.7505,-73.9934,official-arena,https://www.nhl.com/rangers/arena,
+NHL,ottawa-senators,,,Ottawa Senators,Canadian Tire Centre,Ottawa ON (Kanata),Ottawa,45.2969,-75.9271,official-arena,https://www.nhl.com/senators/arena,
+NHL,philadelphia-flyers,,,Philadelphia Flyers,Xfinity Mobile Arena,Philadelphia PA,Philadelphia,39.9012,-75.1720,official-arena,https://www.nhl.com/flyers/arena,
+NHL,pittsburgh-penguins,,,Pittsburgh Penguins,PPG Paints Arena,Pittsburgh PA,Pittsburgh,40.4395,-79.9890,official-arena,https://www.nhl.com/penguins/,
+NHL,san-jose-sharks,,,San Jose Sharks,SAP Center,San Jose CA,Bay Area,37.3328,-121.9012,official-arena,https://www.nhl.com/sharks/,
+NHL,seattle-kraken,2021,,Seattle Kraken,Climate Pledge Arena,Seattle WA,Seattle,47.6221,-122.3540,official-arena,https://www.nhl.com/kraken/,"First season 2021-22 (first prediction row)"
+NHL,st-louis-blues,,,St. Louis Blues,Enterprise Center,St. Louis MO,St. Louis,38.6268,-90.2026,official-city,https://www.enterprisecenter.com/,
+NHL,tampa-bay-lightning,,,Tampa Bay Lightning,Benchmark International Arena,Tampa FL,Tampa Bay,27.9427,-82.4518,official-arena,https://www.nhl.com/lightning/arena,
+NHL,toronto-maple-leafs,,,Toronto Maple Leafs,Scotiabank Arena,Toronto ON,Toronto,43.6435,-79.3791,official-city,https://www.scotiabankarena.com/,
+NHL,utah-mammoth,,2013,Phoenix Coyotes,Jobing.com Arena,Glendale AZ,Phoenix,33.5320,-112.2611,unverified,https://www.nhl.com/coyotes/news/2022-23-season-review-mullett-magic-in-full-effect-343623730,"Renamed Arizona Coyotes for 2014-15"
+NHL,utah-mammoth,2014,2021,Arizona Coyotes,Gila River Arena,Glendale AZ,Phoenix,33.5320,-112.2611,unverified,https://www.nhl.com/coyotes/news/2022-23-season-review-mullett-magic-in-full-effect-343623730,"Glendale before the move to Tempe"
+NHL,utah-mammoth,2022,2023,Arizona Coyotes,Mullett Arena,Tempe AZ,Phoenix,33.4240,-111.9327,official-arena,https://www.nhl.com/coyotes/news/2022-23-season-review-mullett-magic-in-full-effect-343623730,"Temporary home 2022-23 and 2023-24"
+NHL,utah-mammoth,2024,2024,Utah Hockey Club,Delta Center,Salt Lake City UT,Salt Lake City,40.7683,-111.9011,official-city,https://www.nhl.com/news/utah-hockey-club-joins-nhl-unveils-uniforms-logos,"New franchise approved April 18 2024, received all Coyotes hockey assets"
+NHL,utah-mammoth,2025,,Utah Mammoth,Delta Center,Salt Lake City UT,Salt Lake City,40.7683,-111.9011,official-arena,https://www.nhl.com/utah/,
+NHL,vancouver-canucks,,,Vancouver Canucks,Rogers Arena,Vancouver BC,Vancouver,49.2778,-123.1088,official-arena,https://www.nhl.com/canucks/,
+NHL,vegas-golden-knights,2017,,Vegas Golden Knights,T-Mobile Arena,Paradise NV,Las Vegas,36.1028,-115.1784,official-arena,https://www.nhl.com/goldenknights/arena,"First season 2017-18 (first prediction row)"
+NHL,washington-capitals,,,Washington Capitals,Capital One Arena,Washington DC,Washington DC,38.8981,-77.0209,official-city,https://www.nhl.com/capitals/arena,
+NHL,winnipeg-jets,,,Winnipeg Jets,Canada Life Centre,Winnipeg MB,Winnipeg,49.8928,-97.1436,official-arena,https://www.nhl.com/jets/,"Relocated from Atlanta 2011-12, before the first NHL prediction season (2013-14)"

@@ -1,0 +1,60 @@
+juris,allowed_regions,note
+WA,cascadia,
+OR,cascadia,
+ID,cascadia|mountain-west,"Panhandle and Boise look to Seattle; eastern Idaho to Salt Lake City"
+MT,cascadia|mountain-west,"Western Montana Seattle-leaning; Billings and east Denver-leaning"
+CA,norcal|socal,"Split near the Fresno/Bakersfield line"
+NV,norcal|desert-sw|mountain-west,"Reno with NorCal; Las Vegas with the desert; Elko with Salt Lake City"
+AZ,desert-sw,
+NM,desert-sw|ntx-ok,"Eastern plains (Clovis, Hobbs) look to Texas"
+UT,mountain-west,
+CO,mountain-west,
+WY,mountain-west,
+ND,upper-midwest,
+SD,upper-midwest|mountain-west,"Black Hills look to Denver"
+NE,heartland|mountain-west,"Panhandle looks to Denver"
+KS,heartland,"Whole state treated as Chiefs/Royals country"
+OK,ntx-ok,
+TX,ntx-ok|south-texas|desert-sw,"Austin with South Texas; El Paso with the desert"
+MN,upper-midwest,
+IA,upper-midwest|heartland|chicagoland,"Genuinely split: north to the Twin Cities, south to KC/STL, east to Chicago"
+MO,heartland,
+AR,mid-south|ntx-ok,"Northwest Arkansas looks to Tulsa/Dallas"
+LA,mid-south,
+WI,upper-midwest,
+IL,chicagoland|heartland,"Southern Illinois and Springfield are Cardinals country"
+MI,great-lakes|upper-midwest,"Western Upper Peninsula is Packers country"
+IN,chicagoland|ohio-valley,"Southeast corner looks to Cincinnati"
+OH,great-lakes|ohio-valley,"North to Cleveland/Detroit, south to Cincinnati/Columbus"
+KY,ohio-valley|mid-south,"West Kentucky looks to Nashville/Memphis"
+TN,mid-south|southeast,"Chattanooga looks to Atlanta"
+MS,mid-south,
+AL,southeast|mid-south,"Mobile and Huntsville toward the Mid-South; Birmingham toward Atlanta"
+GA,southeast,
+SC,southeast,
+NC,southeast,
+FL,cnfl|south-florida,"Gulf coast with Tampa; Treasure Coast with Miami"
+WV,ohio-valley|dmv,"Eastern Panhandle looks to DC"
+VA,dmv|southeast,"Southwest tip (Bristol) looks to the Carolinas/Atlanta"
+MD,dmv,
+DC,dmv,
+DE,philadelphia,
+PA,philadelphia|ohio-valley,"Classic Pittsburgh/Philadelphia split near Altoona"
+NJ,new-york|philadelphia,"South Jersey is Philadelphia"
+NY,new-york|golden-horseshoe,"Buffalo and Rochester with Toronto; Syracuse east with NYC"
+CT,new-york|new-england,"Fairfield/New Haven toward NYC; Hartford and east toward Boston"
+MA,new-england,
+RI,new-england,
+VT,new-england,
+NH,new-england,
+ME,new-england,
+BC,cascadia,
+AB,prairies,
+SK,prairies,
+MB,prairies,
+ON,golden-horseshoe|ottawa-montreal|prairies|great-lakes,"Windsor crosses to Detroit; Kenora/Rainy River to Winnipeg; eastern Ontario to Ottawa"
+QC,ottawa-montreal,
+NB,ottawa-montreal,"Atlantic Canada has no team region; nearest is Ottawa–Montréal"
+NS,ottawa-montreal,
+PE,ottawa-montreal,
+NL,ottawa-montreal,

@@ -1,0 +1,47 @@
+{
+ "palettes": {
+  "default": {
+   "label": "Blue - gold - crimson (default, colorblind-safe)",
+   "light": {
+    "lo": "#1F5FD6",
+    "mid": "#F2B400",
+    "hi": "#C21F32",
+    "grey": "#A3A8B3"
+   },
+   "dark": {
+    "lo": "#1F5FD6",
+    "mid": "#F2B400",
+    "hi": "#C21F32",
+    "grey": "#A3A8B3"
+   }
+  },
+  "greenred": {
+   "label": "Green - yellow - red (toggle)",
+   "light": {
+    "lo": "#12A04A",
+    "mid": "#F5D000",
+    "hi": "#D7261E",
+    "grey": "#A3A8B3"
+   },
+   "dark": {
+    "lo": "#12A04A",
+    "mid": "#F5D000",
+    "hi": "#D7261E",
+    "grey": "#A3A8B3"
+   }
+  }
+ },
+ "modes": {
+  "light": {
+   "bg": "#F6F7F9",
+   "text": "#1D2330",
+   "muted": "#545B69"
+  },
+  "dark": {
+   "bg": "#14171C",
+   "text": "#E6E9EF",
+   "muted": "#A3AAB6"
+  }
+ },
+ "interpolation": "oklab"
+}

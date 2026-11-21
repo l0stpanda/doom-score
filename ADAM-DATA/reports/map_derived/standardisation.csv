@@ -1,0 +1,5 @@
+league,values,n,mean,sd,mean_within_season_sd,min,max
+MLB,raw doom_pred,570,50.000,11.619,11.552,25.732,74.268
+MLB,z (within league-season),570,-0.000,1.000,1.000,-1.681,1.681
+NHL,raw doom_pred,404,50.148,12.613,12.505,18.830,84.889
+NHL,z (within league-season),404,-0.000,1.000,1.000,-2.236,2.312
