@@ -16,7 +16,8 @@ cd ADAM-DATA
 data, and a pre-commit check refuses to commit them; run `--off` before committing anything.
 
 About the demo data (`map/make_demo_scores.py`, M60):
-- **Real:** NBA and NFL standings for 2017–2024 (win %, standing percentile, record), from the teammate file.
+- **Real:** NBA and NFL standings for 2017–2024 (win %, standing percentile, record), from the teammate file,
+  snapshotted in `map/inputs/demo_standings_nba_nfl.csv`.
 - **Fake:** everything else: doom, ranges, bands, projected paths, drivers, actuals.
 - **Seasons:** NBA and NFL cover 2017–2024; MLB covers 2008–2026; NHL covers 2013–2025.
 - **Actual outcomes:** NBA and NFL 2017–2021, MLB through 2023, NHL through 2022.

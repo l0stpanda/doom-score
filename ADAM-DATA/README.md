@@ -10,7 +10,7 @@ of each team's standing now against its projected standing, and a panel per team
 - **Leagues:** MLB and NHL have real scores. NBA and NFL have a team registry and can be tried with clearly labelled
   **fake** demo scores until real ones arrive.
 
-**Live demo:** (link to come)
+Run `python map/demo.py` to try it locally.
 
 ## Run it locally
 
@@ -27,8 +27,7 @@ Open `dashboard/index.html` in a browser (no server needed).
 
 **Try four leagues (demo):** `.venv/Scripts/python map/demo.py` adds fake NBA/NFL scores, rebuilds and opens the page;
 `.venv/Scripts/python map/demo.py --off` removes them and checks every file is back as it was. Things to try, with what
-should happen at each step: `docs/DEMO_GUIDE.md`. Demo data is labelled on the page and can't be committed. The demo
-reads real NBA/NFL standings from the teammate branch: if `origin/leo` is missing, run `git fetch origin leo`.
+should happen at each step: `docs/DEMO_GUIDE.md`. Demo data is labelled on the page and can't be committed.
 
 ## Add a league's scores
 

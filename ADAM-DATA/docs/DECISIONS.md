@@ -40,11 +40,11 @@ M = map), so an ID cited in the code or docs that isn't here is in the full logs
 | M45 | One dashboard page: map, projected-standing scatter and team panel share season, leagues, mode and team, mirrored in the URL | Select a team once and see it everywhere; links restore the view |
 | M54 | `map/add_scores.py` validates, matches team names (ids, names, abbreviations, by season), stops on unmatched names or uncovered seasons, then rebuilds | A wrong silent match would put a team in the wrong city |
 | M58 | "This season shows: … (no …)" banner when a selected league has no scores; default season = latest with the most leagues | One rule for any mix of leagues and seasons |
-| M59–M61 | Demo mode: fake NBA/NFL scores on real standings, labelled everywhere (banner, Demo tags), never read by a normal build and blocked from commits | Lets people try four leagues now without fake numbers passing as results |
+| M59–M61, M63 | Demo mode: fake NBA/NFL scores on real standings, labelled everywhere (banner, Demo tags), never read by a normal build and blocked from commits; the standings are a committed snapshot (`map/inputs/demo_standings_nba_nfl.csv`, header names branch leo, file and commit `d89ee84`) | Lets people try four leagues now without fake numbers passing as results; the demo runs from any clone, with no dependency on the teammate's branch |
 | M49 | The build uses the committed region shapes; raw boundary files are only needed to change regions | Runs on any machine with no large downloads |
 
 ## Full logs
 
 - Model decisions D01–D108, with alternatives: `git show adam-full-pipeline:ADAM-DATA/DECISIONS.md`
-- Map decisions M01–M62, with alternatives and checks: `git show adam-map-full:ADAM-DATA/docs/MAP_DECISIONS.md`
+- Map decisions M01–M62, with alternatives and checks (M63, the standings snapshot, is only here): `git show adam-map-full:ADAM-DATA/docs/MAP_DECISIONS.md`
 - Phase reports and screenshots: tags `adam-full-pipeline` (model) and `adam-map-full` (map), under `ADAM-DATA/reports/`.

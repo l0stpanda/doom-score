@@ -84,7 +84,7 @@ Computed on **backtest rows with `interval_available = 1` and a known label**, p
 5. **Logo overlap in the All-leagues view** of the older Plotly scatter (`dashboard/doom_scatter.html`; 62+ logos,
    MLB sits on one line). More leagues will make it worse; the Doom Map's scatter uses small shapes instead.
 6. Teammate core-schema check: the NBA/NFL file is on the teammate's branch (`origin/leo`). Its franchise ids are
-   used by the map registry and its standings by the demo scores, but its percentile formula has not been
+   used by the map registry and its standings by the demo scores (snapshot in `map/inputs/demo_standings_nba_nfl.csv`), but its percentile formula has not been
    cross-checked against D10 (D15).
 
 ## 6. Send me your scores (Doom Map)

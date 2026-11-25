@@ -5,34 +5,29 @@
 Writes map/inputs/scores/DEMO_nba_scores.csv and DEMO_nfl_scores.csv (git-ignored; read only by a demo build,
 `map/build_map.py --demo`, which map/demo.py runs). Every optional column is filled so every part of the page is
 exercised. NOTHING here is a model output:
-- real: win_pct, win_pct_percentile and record, from the teammate's NBA/NFL standings
-  (origin/leo:LEO-DATA/doom_nba_nfl_team_seasons_enriched.csv, read with `git show`, no checkout), seasons 2017-2024;
+- real: win_pct, win_pct_percentile and record, from the teammate's NBA/NFL standings, seasons 2017-2024, via the
+  committed snapshot map/inputs/demo_standings_nba_nfl.csv (its header names the source branch, file and commit; M63);
 - fake: doom_pred = 50 + 0.55 * ((100 - standing) - 50) + noise (sd 9), clipped to 0-100; an 80% range of +-25;
   p_doom75 from that range and the matching band (D99: Low < 10%, Moderate 10-30%, High 30-50%, Very high >= 50%);
   a 3-season path proj_pct_t1..t3 that averages to 100 - doom_pred; invented driver text; and, where three later
   seasons exist in the file (2017-2021), actual_doom = doom_pred + noise (sd 15).
 Fixed seed, so the files are the same on every run.
 """
-import io, math, os, subprocess, sys
+import math, os
 import numpy as np
 import pandas as pd
 
 HERE = os.path.dirname(os.path.abspath(__file__))          # map/
 ROOT = os.path.dirname(HERE)                                # ADAM-DATA
-REPO = os.path.dirname(ROOT)
 OUT = os.path.join(HERE, "inputs", "scores")
-SRC = "origin/leo:LEO-DATA/doom_nba_nfl_team_seasons_enriched.csv"
+SRC = os.path.join(HERE, "inputs", "demo_standings_nba_nfl.csv")   # snapshot of the teammate's standings (M63)
 SEED = 20261124
 UP = ["Older roster", "Few recent draft picks", "Tight cap space", "Front-office turnover", "Injury-shortened season"]
 DOWN = ["Young core", "Extra draft capital", "Cap room to add talent", "Stable front office", "Improving second half"]
 
 
 def standings():
-    try:
-        txt = subprocess.run(["git", "show", SRC], cwd=REPO, check=True, capture_output=True, text=True, encoding="utf-8").stdout
-    except subprocess.CalledProcessError as e:
-        sys.exit(f"could not read {SRC} ({e.stderr.strip()}); run `git fetch origin` first")
-    return pd.read_csv(io.StringIO(txt))
+    return pd.read_csv(SRC, comment="#")
 
 
 def band(p):
@@ -72,11 +67,10 @@ def main():
         up, down = drivers(rng, r, doom)
         actual = (float(np.clip(doom + rng.normal(0, 15), 0, 100))
                   if r.season_start_year + 3 <= last[r.league] else None)
-        rec = f"{int(r.wins)}-{int(r.losses)}" + (f"-{int(r.ties)}" if pd.notna(r.ties) and int(r.ties) > 0 else "")
         rows.append({
             "league": r.league, "season_start_year": int(r.season_start_year), "franchise_id": r.franchise_id,
             "doom_pred": round(doom, 1), "doom_lo80": round(max(0, doom - 25), 1), "doom_hi80": round(min(100, doom + 25), 1),
-            "win_pct": round(float(r.win_pct), 4), "win_pct_percentile": round(float(r.win_pct_percentile), 2), "record": rec,
+            "win_pct": round(float(r.win_pct), 4), "win_pct_percentile": round(float(r.win_pct_percentile), 2), "record": r.record,
             "band": band(p75), "p_doom75": round(p75, 3),
             **{f"driver_up_{i + 1}": up[i] for i in range(3)}, **{f"driver_down_{i + 1}": down[i] for i in range(3)},
             "driver_note": "DEMO: fake score and invented drivers for trying out the map; not a model output.",
