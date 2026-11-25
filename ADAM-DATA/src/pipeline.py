@@ -1,5 +1,5 @@
 """Model core: load the slim table, per-league features, leakage-safe preprocessing and the model definitions used
-for the dashboard (MLB = B1, NHL = elastic net; key decisions in docs/KEY_DECISIONS.md).
+for the dashboard (MLB = B1, NHL = elastic net; key decisions in docs/DECISIONS.md).
 
 Leakage rules:
   1. Season T is predicted by a model trained only on seasons <= T - GAP (GAP = 3; asserted by the callers).

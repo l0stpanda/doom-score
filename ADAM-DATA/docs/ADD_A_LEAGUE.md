@@ -15,7 +15,7 @@ printing old and new values; `--freeze-params` keeps today's values instead. To 
 `backtested`, `model_note`) in `map/inputs/leagues.csv`, or the page keeps labelling them as demo data.
 
 What the rebuild re-derives from the set of teams (review the outputs; see M18-M20, M27, M28, M34 in
-`docs/MAP_DECISIONS.md`):
+`docs/DECISIONS.md`):
 - the z-scores (within league-season);
 - the colour-scale ends;
 - σ and the opacity cutoffs (same rule; check `reports/map_derived/sigma_diagnostics.csv`, because a denser set of
@@ -61,3 +61,16 @@ automatic monogram is wrong, add `league, name, monogram, note` to `map/data_src
 
 `league, alias, franchise_id, kind, note` for abbreviations and common names. Season names, current names, nicknames
 and franchise ids are added automatically (`map/data/team_aliases.csv`).
+
+## Changing the regions
+
+Only needed after changing `map/data_src/region_*.csv` or `regions.csv`. Run
+`.venv/Scripts/python map/build_map.py --rebuild-regions`. This needs the raw boundary files in `data/raw/geo/`
+(git-ignored), and stops with a list of any that are missing:
+- **US counties** (Census cartographic boundary 2023, 1:5M): `.venv/Scripts/python scripts/fetch_geo.py` writes
+  `data/raw/geo/us_county/cb_2023_us_county_5m.*`.
+- **Canadian census divisions** (StatCan 2021, cartographic): a **manual** download. StatCan's zip returns HTTP 403
+  to scripts, so they were taken from StatCan's ArcGIS REST service at 0.005° generalisation (293 divisions; the file
+  names suggest three pages of 100 features at offsets 0, 100, 200), saved as GeoJSON `data/raw/geo/cd_0.geojson`, `cd_100.geojson` and
+  `cd_200.geojson`, with at least the fields `CDUID`, `CDNAME` and `PRUID`. **The original query URL was not
+  recorded**, so a re-download may not match the committed shapes exactly: check `git diff map/data/` afterwards.

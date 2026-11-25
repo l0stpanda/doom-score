@@ -1,7 +1,7 @@
 # Features
 
 All features are measured at the end of season t, before the prediction moment (MLB Nov 15; NHL Jun 15 of t+1).
-D-numbers: `docs/KEY_DECISIONS.md`.
+D-numbers: `docs/DECISIONS.md`.
 
 **MLB uses current standing only.** Its model (B1) is a linear regression on `win_pct_percentile`. The other
 features exist for MLB but did not beat standings beyond noise in any test (D76, D86), so they appear only as

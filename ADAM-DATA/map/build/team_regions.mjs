@@ -5,7 +5,7 @@
 // This is step 4 of regions.mjs, run on the committed region shapes, so the default build (and adding a league)
 // works without data/raw/geo/. regions.mjs still writes the same file when the regions are rebuilt (--rebuild-regions).
 // A venue outside every region polygon (on a simplified shoreline) goes to the region with the nearest boundary
-// vertex, marked how=nearest-region. See docs/MAP_DECISIONS.md, M49.
+// vertex, marked how=nearest-region. See docs/DECISIONS.md, M49.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';

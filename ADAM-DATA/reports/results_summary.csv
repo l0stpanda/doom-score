@@ -1,0 +1,4 @@
+league,test_seasons,n_seasons,n_team_seasons,model,role,spearman,mae,auc,top5,cov80,halfwidth80,n_interval,brier,n_brier
+MLB,2008-2023,16,480,B1: current standings only,final,0.414,18.475,0.730,2.000,0.822,29.930,360,0.139,360
+NHL,2013-2022,10,308,Elastic net (13 features),final,0.607,15.906,0.779,2.300,0.851,26.126,188,0.144,188
+NHL,2013-2022,10,308,B1: current standings only,baseline,0.519,17.107,0.746,2.100,,,,,

@@ -8,7 +8,7 @@ Only needed for `map/build_map.py --rebuild-regions`; the default build uses the
 
 The Canadian census divisions (data/raw/geo/cd_0.geojson, cd_100.geojson, cd_200.geojson; M07) are NOT downloaded
 here: StatCan's zip returns HTTP 403 to scripts, and the ArcGIS REST query used originally was not recorded.
-See the README section "Rebuilding the regions" for the manual steps.
+See docs/ADD_A_LEAGUE.md, "Changing the regions", for the manual steps.
 """
 import io, os, sys, zipfile
 

@@ -1,7 +1,7 @@
 /* Doom dashboard: Doom Map (Level 1 continent, Level 2 region with team badges), projected-standing scatter and one
  * shared team panel, on one shared state (view, region, season, leagues, mode, team), all mirrored in the URL.
  * Reads window.DOOM_MAP_DATA (map/build/build_page.mjs). Leagues, seasons, regions and teams come from the data;
- * nothing here names a league. Heat surface: heat.js + heat_cache.js. Decisions: docs/MAP_DECISIONS.md.
+ * nothing here names a league. Heat surface: heat.js + heat_cache.js. Decisions: docs/DECISIONS.md.
  */
 (function () {
   'use strict';

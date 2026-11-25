@@ -1,7 +1,7 @@
 # Cross-league handoff (MLB + NHL → all leagues)
 
 What a groupmate's league output needs to match so all leagues can be compared on one scale. MLB/NHL reference
-files: `dashboard/data/doom_predictions.csv` and `reports/RESULTS.md` (section 4). D-numbers: `docs/KEY_DECISIONS.md`
+files: `dashboard/data/doom_predictions.csv` and `reports/RESULTS.md` (section 4). D-numbers: `docs/DECISIONS.md`
 (full log in tag `adam-full-pipeline`).
 
 ## 1. Outcome (must be identical)
@@ -81,10 +81,11 @@ Computed on **backtest rows with `interval_available = 1` and a known label**, p
    Switch to three bands?
 3. **Low-decile underprediction** of `p_doom75` (e.g. NHL decile 4: 6% predicted vs 17% observed).
 4. **Loose comparables:** median distance 17 percentile points (D103).
-5. **Logo overlap in the All-leagues view** (62+ logos; MLB sits on one line). More leagues will make it worse
-   (`reports/figures/dashboard_all_leagues.png`).
-6. Teammate core-schema check: the NBA/NFL file was never in this repo, so the percentile formula has not been
-   cross-checked against it (D15).
+5. **Logo overlap in the All-leagues view** of the older Plotly scatter (`dashboard/doom_scatter.html`; 62+ logos,
+   MLB sits on one line). More leagues will make it worse; the Doom Map's scatter uses small shapes instead.
+6. Teammate core-schema check: the NBA/NFL file is on the teammate's branch (`origin/leo`). Its franchise ids are
+   used by the map registry and its standings by the demo scores, but its percentile formula has not been
+   cross-checked against D10 (D15).
 
 ## 6. Send me your scores (Doom Map)
 

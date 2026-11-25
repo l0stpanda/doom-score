@@ -1,6 +1,6 @@
 # Model card: Doom Score (MLB + NHL)
 
-*Key decisions (D-numbers): `docs/KEY_DECISIONS.md`; full log and phase reports in tag `adam-full-pipeline`. Consolidated results: `reports/RESULTS.md`. Exports are rebuilt by `scripts/build_dashboard.py`.*
+*Key decisions (D-numbers): `docs/DECISIONS.md`; full log and phase reports in tag `adam-full-pipeline`. Consolidated results: `reports/RESULTS.md`. Exports are rebuilt by `scripts/build_dashboard.py`.*
 
 ## What it predicts
 

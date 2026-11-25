@@ -1,7 +1,7 @@
 """Dashboard exports (dashboard/data/) from the slim table: fits the chosen models per league walk-forward
 (backtest seasons) and on all earlier labelled seasons (live seasons), then writes predictions, intervals,
 p_doom75 bands, 3-year paths, drivers, team profile and team meta. MLB = B1 (standing only), NHL = elastic net.
-Key decisions: docs/KEY_DECISIONS.md.
+Key decisions: docs/DECISIONS.md.
 
 Run: python src/export_dashboard.py   (or scripts/build_dashboard.py)"""
 import os, sys, time, warnings
