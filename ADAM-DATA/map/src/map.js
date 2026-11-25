@@ -83,6 +83,18 @@
   const scatterLeagues = () => shownLeagues().filter(l => has(l, 'standing'));
   const scatterOk = () => scatterLeagues().length > 0;
 
+  // ---------- demo data labels (M59) ----------
+  const DEMO = X.demo_leagues || [];
+  const isDemo = lg => DEMO.includes(lg);
+  const listWords = a => a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : a.join('');
+  const demoTag = lg => isDemo(lg) ? ' <span class="dm-demo-tag" title="Fake demo scores, not a model output">Demo</span>' : '';
+  function demoNote(teams) {
+    const d = teams.filter(t => isDemo(t.league));
+    if (!d.length) return '';
+    const lg = [...new Set(d.map(t => t.league))];
+    return `<div class="dm-demo-note">Includes ${d.length} demo team${d.length === 1 ? '' : 's'} (${esc(lg.join(', '))}): fake scores</div>`;
+  }
+
   // ---------- data views ----------
   const inView = (season, leagues) => D.teams.filter(t => t.season === season && leagues.has(t.league));
   function regionStats(season, leagues) {
@@ -129,6 +141,7 @@
   // ---------- DOM ----------
   const root = $('#doom-map');
   root.innerHTML = `
+  <div class="dm-demo-banner" id="dm-demo" role="status"${DEMO.length ? '' : ' hidden'}>DEMO DATA: ${esc(listWords(DEMO))} scores are fake</div>
   <header class="dm-head"><h1>Doom Dashboard</h1>
     <p>How doomed is your part of the country, and your team? Doom predicts how bad a franchise will be over its next three
     seasons, from 0 (top of the league) to 100 (bottom). The map blends nearby ${LEAGUES.length > 1 ? LEAGUES.slice(0, -1).join(', ') + ' and ' + LEAGUES[LEAGUES.length - 1] : LEAGUES.join('')} teams; the scatter
@@ -344,9 +357,12 @@
   function drawBanner() {
     const sel = [...state.leagues], present = sel.filter(l => leagueSeasons(l).includes(state.season)), missing = sel.filter(l => !present.includes(l));
     const msgs = [];
-    if (present.length && missing.length) {
-      const why = missing.map(l => { const s = leagueSeasons(l); return `${l} predictions cover ${s[0]}–${s[s.length - 1]}`; }).join('; ');
-      msgs.push(`${esc(present.join(' + '))} only this season <span style="font-weight:400">(${esc(why)})</span>`);
+    $('#dm-banner').title = '';
+    if (missing.length) {                     // M58: any selected league with no scores this season
+      const why = missing.map(l => { const s = leagueSeasons(l); return `${l} scores cover ${s[0]}–${s[s.length - 1]}`; }).join('; ');
+      const b = document.getElementById('dm-banner');
+      if (b) b.title = why;
+      msgs.push(`This season shows: ${esc(present.join(', ') || 'no league')} <span style="font-weight:400">(no ${esc(missing.join(', '))})</span>`);
     }
     if (isActual()) {
       const act = actualLeaguesNow(), noAct = present.filter(l => !act.includes(l));
@@ -432,6 +448,11 @@
     if (has(t.league, 'projection') && t.proj) rows.push(`<tr><td>Projected finish</td><td>${t.proj.map(v => v == null ? '–' : ord(Math.round(v))).join(', ')} <span class="k">percentile, next 3 seasons</span></td></tr>`);
     return rows.length ? `<table>${rows.join('')}</table>` : '';
   }
+  function modelNote(lg) {
+    const m = D.leagues[lg];
+    if (!m || !m.model_note) return '';
+    return `<p class="k dm-model-note">About the ${esc(lg)} score${m.backtested ? '' : ' (not backtested)'}: ${esc(m.model_note)}</p>`;
+  }
   function drawTeamPanel() {
     const t = selTeam(), host = $('#dm-list');
     host.classList.add('dm-panel'); host.setAttribute('aria-label', 'Team details');
@@ -446,7 +467,7 @@
       ${dv.down.length ? `<div class="k">Away from doom</div><ul class="drv">${dv.down.map(d => `<li>${esc(d)}</li>`).join('')}</ul>` : ''}
       ${dv.note ? `<p class="k">${esc(dv.note)}</p>` : ''}` : (dv && dv.note ? `<h3>What moves this prediction</h3><p class="k">${esc(dv.note)}</p>` : '');
     host.innerHTML = `<button class="backlink" id="dm-panel-back">&larr; All regions list</button>
-      <h2>${esc(t.season_team_name)}</h2>
+      <h2>${esc(t.season_team_name)}${demoTag(t.league)}</h2>
       <div class="k">${esc(t.league)} ${esc(seasonLabel(t.league, t.season))} · ${esc(t.city)} · ${esc(r ? r.display_name : '')}</div>
       ${t.scored ? `<div class="big"><b>${Math.round(t.doom)}</b><span>predicted doom of 100</span></div>
         ${chipHtml(t)}
@@ -455,6 +476,7 @@
         ${panelTable(t)}
         <div class="k">Doom by season (line = predicted${has(t.league, 'actual') ? ', dots = actual' : ''})</div>${trendSvg(t, 290, 92, true)}
         ${drivers}` : `<p>Too new to score: no prediction for this season, so this team is left out of every average.</p>`}
+      ${modelNote(t.league)}
       <div class="dm-panel-actions">
         <button type="button" id="dm-show-map">Show on map</button>
         <button type="button" disabled aria-disabled="true" title="Coming soon">Full diagnostics (coming soon)</button>
@@ -534,7 +556,7 @@
     const r = s.region, lg = Object.entries(s.byLeague || {}).map(([l, c]) => `${c} ${l}`).join(', ');
     const tooNew = s.tooNew.length ? `${s.tooNew.length} too new to score (not in the average)` : 'none too new to score';
     const pend = s.pending.length ? `; ${s.pending.length} without an actual outcome yet` : '';
-    if (!s.n) return `<div class="t">${esc(r.display_name)}</div><div class="k">${esc(r.core_metros)}</div>
+    if (!s.n) return `<div class="t">${esc(r.display_name)}</div><div class="k">${esc(r.core_metros)}</div>${demoNote([...s.tooNew, ...s.pending])}
       <div class="verdict"><span class="chipc" style="background:${greyOf()}"></span><span>No ${esc([...state.leagues].join('/'))} teams with ${modeWord()} doom this season</span></div>
       <div class="k">${tooNew}${pend}. Not ranked.</div>${spotHtml(pt)}`;
     const ch = regionChange(r.region_id);
@@ -543,7 +565,7 @@
       : ch.delta > 0 ? `<b style="color:${colorOf(1.4)}">▲</b> more doomed than in ${ch.prev}`
       : `<b style="color:${colorOf(-1.4)}">▼</b> brighter than in ${ch.prev}`;
     const team = t => `${esc(t.season_team_name)} <span class="k">${t.league} · doom ${Math.round(doomOf(t))}</span>`;
-    return `<div class="t">${esc(r.display_name)}</div><div class="k">${esc(r.core_metros)}</div>
+    return `<div class="t">${esc(r.display_name)}</div><div class="k">${esc(r.core_metros)}</div>${demoNote([...s.teams, ...s.tooNew, ...s.pending])}
       <div class="verdict"><span class="chipc" style="background:${colorOf(s.rawZ)}"></span>
         <span class="big">${words(s.rawZ)}</span><span>average ${modeWord()} doom <b>${Math.round(s.rawDoom)}</b> <span class="k">of 100</span></span></div>
       <span class="rank">${ord(s.rank)} brightest of ${view.ranked.length}</span>${s.n === 1 ? ' <span class="rank one">based on 1 team</span>' : ''}
@@ -564,10 +586,10 @@
   }
   function teamCardHtml(t) {
     const r = REG.get(t.region_id);
-    if (!t.scored) return `<div class="t">${esc(t.season_team_name)}</div><div class="k">${esc(t.league)} ${esc(seasonLabel(t.league, t.season))} · ${esc(t.city)}</div>
+    if (!t.scored) return `<div class="t">${esc(t.season_team_name)}${demoTag(t.league)}</div><div class="k">${esc(t.league)} ${esc(seasonLabel(t.league, t.season))} · ${esc(t.city)}</div>
       <p style="margin:6px 0 0">Too new to score: no prediction this season; not in any average.</p>`;
     const act = t.actual_doom != null ? `<tr><td>Actual doom</td><td><b>${Math.round(t.actual_doom)}</b> (what happened)</td></tr>` : '';
-    return `<div class="t">${esc(t.season_team_name)}</div>
+    return `<div class="t">${esc(t.season_team_name)}${demoTag(t.league)}</div>
       <div class="k">${esc(t.league)} ${esc(seasonLabel(t.league, t.season))} · ${esc(t.city)} · ${esc(r ? r.display_name : '')}</div>
       <div class="verdict"><span class="chipc" style="background:${colorOf(t.z)}"></span>
         <span class="big">${Math.round(t.doom)}</span><span>predicted doom of 100${has(t.league, 'band') ? ` · <span class="band">${bandText(t.band)}</span>` : ''}</span></div>
@@ -668,6 +690,9 @@
     const target = regionTransform(id), t0 = performance.now();
     state.focus = id; state.level = 2;
     $('#dm-wrap').classList.add('level2'); drawFocusLayers(); drawCrumb(); drawScatterFocus(); hideLogos(); markListFocus();
+    // M62: on a phone the list sits below the map; bring the map into view so the zoom is not off-screen
+    const wr = $('#dm-wrap').getBoundingClientRect();
+    if (wr.bottom < 80 || wr.top > innerHeight - 80) $('#dm-wrap').scrollIntoView({ block: 'start', behavior: REDUCED.matches ? 'auto' : 'smooth' });
     requestSharp(0, target);
     animating = true; root.dataset.zoomMs = '';
     const run = () => {
@@ -700,7 +725,10 @@
     else if (state.level === 2) zoomOut();
     else activate(false);
   });
+  // M62: only the badges of the zoomed-in region take keyboard focus (the rest are off-screen)
+  const setBadgeTabs = () => gLogos.selectAll('g.dm-logo').attr('tabindex', d => state.level === 2 && d.t.region_id === state.focus ? 0 : -1);
   function drawCrumb() {
+    setBadgeTabs();
     const c = $('#dm-crumb');
     if (state.level === 1) { c.innerHTML = `<button disabled>All regions</button>`; return; }
     c.innerHTML = `<button class="back" id="dm-back" aria-label="Zoom out to all regions">&larr; Back</button>
@@ -731,8 +759,8 @@
   function buildLogos() {
     logoNodes = view.all.map(t => ({ t, key: t.franchise_id + '|' + t.league }));
     const g = gLogos.selectAll('g.dm-logo').data(logoNodes, d => d.key).join(enter => {
-      const e = enter.append('g').attr('class', 'dm-logo').attr('tabindex', 0).attr('role', 'button'); badge(e, LOGO_R); return e; });
-    g.attr('aria-label', d => `${d.t.season_team_name}: ${d.t.scored ? `predicted doom ${Math.round(d.t.doom)}, ${bandText(d.t.band)}` : 'too new to score'}. Press Enter for details.`);
+      const e = enter.append('g').attr('class', 'dm-logo').attr('tabindex', -1).attr('role', 'button'); badge(e, LOGO_R); return e; });
+    g.attr('aria-label', d => `${d.t.season_team_name}${isDemo(d.t.league) ? ' (demo data)' : ''}: ${d.t.scored ? `predicted doom ${Math.round(d.t.doom)}, ${bandText(d.t.band)}` : 'too new to score'}. Press Enter for details.`);
     fillBadge(g);
     g.on('pointerenter', (ev, d) => { if (ev.pointerType === 'touch' || pinned) return; const c = $('#dm-card'); c.innerHTML = teamCardHtml(d.t); placeCard(c, ev); hoverTeam(d.t); })
       .on('pointermove', ev => { if (ev.pointerType !== 'touch' && !pinned) placeCard($('#dm-card'), ev); })
@@ -742,6 +770,7 @@
       .on('click', (ev, d) => { ev.stopPropagation(); if (touchy() && pinned !== 'team:' + d.t.franchise_id) { pinTeamCard(d.t, ev); return; } unpin(); select(d.t); })
       .on('keydown', (ev, d) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); select(d.t); } });
     gLogos.style('display', state.level === 2 ? null : 'none');
+    setBadgeTabs();
   }
   function layoutLogos() {
     const STEP = 2 * LOGO_R + RING_W + 3;

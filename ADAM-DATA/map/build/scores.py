@@ -1,7 +1,9 @@
 """The one input the Doom Map takes from the model side: per-team doom scores (docs/SCORES_FORMAT.md, M50).
 
 Every *.csv in map/inputs/scores/ is read; nothing else in the map reads predictions. A file holds one or more
-leagues; a (league, season_start_year, franchise_id) may appear only once across all files.
+leagues; a (league, season_start_year, franchise_id) may appear only once across all files. Leagues must be listed in
+map/inputs/leagues.csv (MLB, NHL, NBA, NFL for now, M57). Files named DEMO_* hold fake demo scores
+(map/make_demo_scores.py) and are read only in a demo build (DOOM_DEMO=1, set by `build_map.py --demo`, M60).
 Required columns: league, season_start_year, franchise_id, doom_pred (0-100). Everything else is optional, per league:
 a column that is missing, or empty for every row of a league, counts as "not provided" for that league, and the
 page hides what depends on it (M51).
@@ -13,6 +15,10 @@ import pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__))
 MAP = os.path.dirname(HERE)
 SCORES_DIR = os.path.join(MAP, "inputs", "scores")
+LEAGUES_FILE = os.path.join(MAP, "inputs", "leagues.csv")
+DEMO_PREFIX = "DEMO_"
+EXAMPLE_PREFIX = "example_"
+CONVENTIONS = {"single-year": False, "two-year": True}       # -> season spans two years
 
 REQUIRED = ["league", "season_start_year", "franchise_id", "doom_pred"]
 # column -> (kind, lo, hi); kind: num | text | band. Ranges are inclusive; None = open.
@@ -41,6 +47,27 @@ class ScoresError(Exception):
     pass
 
 
+def league_meta():
+    """map/inputs/leagues.csv: league, display_name, season_convention, data_status (real/demo), backtested (Y/N),
+    model_note. Indexed by league."""
+    M = pd.read_csv(LEAGUES_FILE, dtype=str, keep_default_na=False)
+    need = ["league", "display_name", "season_convention", "data_status", "backtested", "model_note"]
+    miss = [c for c in need if c not in M.columns]
+    errs = [f"missing column(s) {miss}"] if miss else []
+    if not miss:
+        for c, ok in [("season_convention", set(CONVENTIONS)), ("data_status", {"real", "demo"}), ("backtested", {"Y", "N"})]:
+            bad = M[~M[c].isin(ok)]
+            if len(bad):
+                errs.append(f"{c} must be one of {sorted(ok)} (leagues {', '.join(bad.league)})")
+    if errs:
+        raise ScoresError("map/inputs/leagues.csv: " + "; ".join(errs))
+    return M.set_index("league")
+
+
+def is_demo_file(path):
+    return os.path.basename(path).startswith(DEMO_PREFIX)
+
+
 def validate(df, name="scores"):
     """Check columns, types and ranges. Returns (clean frame, warnings). Raises ScoresError listing every problem."""
     errs, warns = [], []
@@ -67,6 +94,14 @@ def validate(df, name="scores"):
         if bad.any():
             errs.append(f"{c} is empty on line(s) {rows(bad)}")
     df["league"] = df["league"].str.upper()
+    known = set(league_meta().index)
+    bad = df.league.notna() & ~df.league.isin(known)
+    if bad.any():
+        errs.append(f"league(s) {', '.join(sorted(df.league[bad].dropna().unique()))} not in map/inputs/leagues.csv "
+                    f"(the map covers {', '.join(sorted(known))}) (line(s) {rows(bad)})")
+    ex = df.franchise_id.notna() & df.franchise_id.str.lower().str.startswith(EXAMPLE_PREFIX)
+    if ex.any():
+        errs.append(f"template example rows (franchise_id starting with '{EXAMPLE_PREFIX}') must be removed (line(s) {rows(ex)})")
     yr = pd.to_numeric(df.season_start_year, errors="coerce")
     bad = yr.isna() | (yr != yr.round()) | (yr < 1900) | (yr > 2100)
     if bad.any():
@@ -117,9 +152,17 @@ def read_file(path):
     return pd.read_csv(path, dtype=str, keep_default_na=False, na_values=[""], encoding="utf-8-sig")
 
 
-def load_scores(folder=SCORES_DIR, quiet=False):
-    """All score files in the folder -> (one frame with every COLUMN, {league: [features provided]}, {file: leagues})."""
+def load_scores(folder=SCORES_DIR, quiet=False, demo=None):
+    """All score files in the folder -> (one frame with every COLUMN + _file + _demo, {league: [features provided]},
+    {file: leagues}). DEMO_* files are skipped unless demo (default: env DOOM_DEMO=1). A row is demo when it comes
+    from a DEMO_* file or its league's data_status is 'demo' in map/inputs/leagues.csv."""
+    if demo is None:
+        demo = os.environ.get("DOOM_DEMO") == "1"
     files = sorted(glob.glob(os.path.join(folder, "*.csv")))
+    skipped = [os.path.basename(f) for f in files if is_demo_file(f) and not demo]
+    files = [f for f in files if demo or not is_demo_file(f)]
+    if skipped and not quiet:
+        print(f"note: ignoring demo score file(s) {', '.join(skipped)} (not a demo build)")
     if not files:
         raise ScoresError(f"no score files in {os.path.relpath(folder)} (add one with map/add_scores.py)")
     frames, by_file = [], {}
@@ -129,6 +172,7 @@ def load_scores(folder=SCORES_DIR, quiet=False):
             for w in warns:
                 print("WARNING", w)
         df["_file"] = os.path.basename(f)
+        df["_demo"] = is_demo_file(f)
         by_file[os.path.basename(f)] = sorted(df.league.unique())
         frames.append(df)
     S = pd.concat(frames, ignore_index=True)
@@ -140,7 +184,9 @@ def load_scores(folder=SCORES_DIR, quiet=False):
     for c in OPTIONAL:
         if c not in S.columns:
             S[c] = pd.NA
-    S = S[COLUMNS + ["_file"]]
+    status = league_meta().data_status
+    S["_demo"] = S._demo | S.league.map(status).eq("demo")
+    S = S[COLUMNS + ["_file", "_demo"]]
     S["season_start_year"] = S.season_start_year.astype(int)
     for c, (kind, _, _) in OPTIONAL.items():
         S[c] = pd.to_numeric(S[c]) if kind == "num" else S[c].astype("object").where(S[c].notna(), None)

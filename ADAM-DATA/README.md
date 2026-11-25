@@ -51,7 +51,7 @@ venues, regions and logos come from the map's team registry (`map/data/team_regi
 
 The build needs no raw boundary files: it uses the committed region shapes in `map/data/` and only re-assigns
 team venues to regions (M49). Add `--no-renders` to skip the Edge check screenshots. Sources and methods are in
-`docs/MAP_DECISIONS.md` (M06–M07 for the boundaries, 56 decisions in all).
+`docs/MAP_DECISIONS.md` (M06–M07 for the boundaries, 62 decisions in all).
 
 **Rebuilding the regions** (only after changing `map/data_src/region_*.csv` or `regions.csv`):
 `.venv/Scripts/python map/build_map.py --rebuild-regions`. This needs the raw boundary files in `data/raw/geo/`
@@ -106,8 +106,15 @@ team names (ids, names, former names, abbreviations), reports season coverage, c
 and rebuilds. Only `league, season_start_year, franchise_id, doom_pred` are required; any optional column a league
 leaves out is hidden for that league. The rebuild re-derives everything that depends on the set of teams (z-scores,
 color scale, σ and opacity cutoffs, region shrinkage, verdict thresholds) and prints old vs new values;
-`--freeze-params` keeps σ and the color range. NBA and NFL already have a registry (2000–2026); another league needs
-registry rows first. Step by step: `docs/ADD_A_LEAGUE.md`; for groupmates: `docs/CROSS_LEAGUE_HANDOFF.md` §6.
+`--freeze-params` keeps σ and the color range. The map covers MLB, NHL, NBA and NFL (`map/inputs/leagues.csv`); NBA
+and NFL have a registry (2000–2026) but no real scores yet. Step by step: `docs/ADD_A_LEAGUE.md`; for groupmates: `docs/CROSS_LEAGUE_HANDOFF.md` §6.
+
+**Demo mode** (fake NBA and NFL scores, to try the page before real ones arrive): `python map/demo.py` generates
+them, builds and opens the page; `python map/demo.py --off` removes them and checks every file is back as it was.
+The page labels demo data everywhere (banner, "Demo" tags). Things to try, with what should happen at each step:
+`docs/DEMO_GUIDE.md`. Demo files are git-ignored, and a pre-commit check (`map/check_no_demo.py`) refuses commits
+that contain demo data.
+
 
 ## Where things are
 
@@ -120,7 +127,7 @@ registry rows first. Step by step: `docs/ADD_A_LEAGUE.md`; for groupmates: `docs
 | `data/` | The slim model table (one row per team-season) |
 | `src/`, `dashboard/`, `scripts/` | Models + exports, viz scripts, the build command |
 | `map/` | Doom Map: `inputs/scores/` (the only model input), `data_src/` (hand-made tables: team locations, logos, aliases, regions, rules), `build/` (pipeline), `src/` (page code), `data/` (generated, incl. the team registry) |
-| `docs/MAP_DECISIONS.md`, `docs/ADD_A_LEAGUE.md`, `docs/SCORES_FORMAT.md` | Map decision log (M01–M56); how to add a league; the scores format |
+| `docs/MAP_DECISIONS.md`, `docs/ADD_A_LEAGUE.md`, `docs/SCORES_FORMAT.md`, `docs/DEMO_GUIDE.md` | Map decision log (M01–M62); how to add a league; the scores format; demo walkthrough |
 | `reports/map_phase*.md`, `reports/map_palette.png` | Map phase reports, palette validation; screenshots and GIFs in `reports/figures/map_*` |
 
 **Rebuilding from raw sources** (league APIs, Wikipedia, MoneyPuck → full 104-column table → slim table), the

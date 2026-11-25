@@ -29,8 +29,11 @@ const num = v => (v === '' || v == null ? null : Math.round(+v * 1e4) / 1e4);
 export function payload() {
   const derived = JSON.parse(read(MAP, 'data', 'derived.json'));
   const palette = JSON.parse(read(MAP, 'data', 'palette.json'));
-  const leagues = Object.fromEntries(csv(path.join(MAP, 'data_src', 'leagues.csv')).map(r =>
-    [r.league, { display_name: r.display_name, season_spans_two_years: r.season_spans_two_years === '1', order: +r.order }]));
+  // league metadata: map/inputs/leagues.csv (name, season convention, real/demo, backtested, model note; M57) + display order
+  const order = Object.fromEntries(csv(path.join(MAP, 'data_src', 'leagues.csv')).map(r => [r.league, +r.order]));
+  const leagues = Object.fromEntries(csv(path.join(MAP, 'inputs', 'leagues.csv')).map(r =>
+    [r.league, { display_name: r.display_name, season_spans_two_years: r.season_convention === 'two-year', order: order[r.league] ?? 99,
+      data_status: r.data_status, backtested: r.backtested === 'Y', model_note: r.model_note }]));
   const regions = csv(path.join(MAP, 'data_src', 'regions.csv'));
   const teams = csv(path.join(MAP, 'data', 'team_seasons.csv')).map(t => ({
     league: t.league, season: +t.season, franchise_id: t.franchise_id, team: t.team || t.season_team_name,

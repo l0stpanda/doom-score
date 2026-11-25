@@ -1,4 +1,4 @@
 league,season_start_year,franchise_id,doom_pred,doom_lo80,doom_hi80,win_pct,win_pct_percentile,record,band,p_doom75,driver_up_1,driver_up_2,driver_up_3,driver_down_1,driver_down_2,driver_down_3,driver_note,proj_pct_t1,proj_pct_t2,proj_pct_t3,actual_doom
-NBA,2024,boston-celtics,22.4,8.0,41.5,0.744,93.1,61-21,Low,0.02,,,,Strong current standing (-18.2),Point differential (-4.1),,,82.0,77.5,73.3,
-NBA,2024,Washington Wizards,81.7,62.0,95.0,0.220,0.0,18-64,Very high,0.61,Weak current standing (+21.5),Young roster (+2.0),,,,,,14.0,19.8,25.1,
-NBA,2024,OKC,30.2,,,,,,,,,,,,,,,,,,
+NBA,2024,example_boston-celtics,22.4,8.0,41.5,0.744,93.1,61-21,Low,0.02,,,,Strong current standing (-18.2),Point differential (-4.1),,,82.0,77.5,73.3,
+NBA,2024,example_washington-wizards,81.7,62.0,95.0,0.220,0.0,18-64,Very high,0.61,Weak current standing (+21.5),Young roster (+2.0),,,,,,14.0,19.8,25.1,
+NBA,2024,example_oklahoma-city-thunder,30.2,,,,,,,,,,,,,,,,,,

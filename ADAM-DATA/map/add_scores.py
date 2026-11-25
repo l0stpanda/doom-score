@@ -3,9 +3,12 @@
     .venv/Scripts/python map/add_scores.py path/to/nba_scores.csv                 # validate, resolve, copy, rebuild
     .venv/Scripts/python map/add_scores.py path/to/nba_scores.csv --freeze-params # keep sigma and the colour range
     .venv/Scripts/python map/add_scores.py path/to/nba_scores.csv --check         # validate and resolve only
+    .venv/Scripts/python map/add_scores.py path/to/DEMO_nba_scores.csv --demo     # fake demo scores (M60)
 
 Steps:
- 1. Validate columns, types and ranges (map/build/scores.py). Any problem stops here with line numbers.
+ 1. Validate columns, types and ranges (map/build/scores.py). Any problem stops here with line numbers. Seasons
+    outside the league's team registry stop here too, naming the league and seasons (M58). DEMO_* files (fake scores)
+    are refused unless --demo, and --demo takes only DEMO_* files.
  2. Resolve every franchise_id through the team registry and aliases: an id, a season's team name, a current or
     former name, a nickname, or an abbreviation ("OAK", "Sonics", "Oakland Raiders", "philadelphia-sixers").
     Names are matched within the league and, where a name moved between franchises (e.g. "Hornets"), the season.
@@ -24,7 +27,7 @@ import pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__))          # map/
 ROOT = os.path.dirname(HERE)                                # ADAM-DATA
 sys.path.insert(0, os.path.join(HERE, "build"))
-from scores import SCORES_DIR, ScoresError, load_scores, read_file, validate   # noqa: E402
+from scores import DEMO_PREFIX, SCORES_DIR, ScoresError, league_meta, load_scores, read_file, validate   # noqa: E402
 from team_locations import alias_key                                          # noqa: E402
 
 DATA = os.path.join(HERE, "data")
@@ -64,13 +67,18 @@ def resolver():
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     flags = {a for a in sys.argv[1:] if a.startswith("--")}
-    known = {"--freeze-params", "--check", "--replace", "--renders"}
+    known = {"--freeze-params", "--check", "--replace", "--renders", "--demo"}
     if len(args) != 1 or flags - known:
         sys.exit(__doc__ + f"\nusage: python map/add_scores.py <file> [{' '.join(sorted(known))}]")
     src = args[0]
     name = os.path.basename(src)
     if not name.lower().endswith(".csv"):
         sys.exit("the scores file must be a .csv")
+    demo = "--demo" in flags
+    if name.startswith(DEMO_PREFIX) and not demo:
+        sys.exit(f"{name} is a demo file (fake scores). Add it with --demo, or use map/demo.py; demo files are never committed.")
+    if demo and not name.startswith(DEMO_PREFIX):
+        sys.exit(f"--demo takes only {DEMO_PREFIX}* files (git-ignored fake scores); {name} would be treated as real data")
 
     # 1. validate
     try:
@@ -81,6 +89,21 @@ def main():
         print("WARNING", w)
     print(f"{name}: {len(df)} rows, leagues {', '.join(sorted(df.league.unique()))}; "
           f"optional columns: {', '.join(c for c in df.columns if c not in ('league', 'season_start_year', 'franchise_id', 'doom_pred')) or 'none'}")
+
+    # registry coverage: every season must be inside the league's registry range (map/data_src/leagues.csv)
+    rng = pd.read_csv(os.path.join(HERE, "data_src", "leagues.csv")).set_index("league")
+    out_of = []
+    for lg, g in df.groupby("league"):
+        if lg not in rng.index:
+            out_of.append(f"{lg}: no team registry at all (map/data_src/leagues.csv)")
+            continue
+        lo, hi = int(rng.loc[lg, "registry_first"]), int(rng.loc[lg, "registry_last"])
+        bad = sorted(int(y) for y in g.season_start_year.unique() if not lo <= int(y) <= hi)
+        if bad:
+            out_of.append(f"{lg}: season(s) {', '.join(map(str, bad))} are outside the {lg} team registry ({lo}-{hi})")
+    if out_of:
+        sys.exit("Seasons the team registry doesn't cover; nothing was copied. Drop those rows, or extend the registry "
+                 "(docs/ADD_A_LEAGUE.md):\n  " + "\n  ".join(out_of))
 
     # 2. resolve teams
     reg, in_reg, resolve = resolver()
@@ -144,7 +167,7 @@ def main():
     if os.path.exists(dest) and "--replace" not in flags:
         sys.exit(f"{os.path.relpath(dest, ROOT)} exists; pass --replace to overwrite it")
     try:
-        others, _, _ = load_scores(quiet=True)
+        others, _, _ = load_scores(quiet=True, demo=demo)
         others = others[others._file != name]
     except ScoresError:
         others = pd.DataFrame(columns=["league", "season_start_year", "franchise_id", "_file"])
@@ -155,6 +178,11 @@ def main():
     os.makedirs(SCORES_DIR, exist_ok=True)
     df.to_csv(dest, index=False, lineterminator="\n")
     print(f"\ncopied to {os.path.relpath(dest, ROOT)}")
+    status = league_meta().data_status
+    for lg in sorted(df.league.unique()):
+        if not demo and status.get(lg) == "demo":
+            print(f"NOTE: map/inputs/leagues.csv still lists {lg} as data_status=demo, so the map labels it as demo data. "
+                  f"Set it to real (and backtested, model_note) once these are real scores.")
 
     # 5. parameters + rebuild
     dpath = os.path.join(DATA, "derived.json")
@@ -170,7 +198,8 @@ def main():
         print(f"removed {os.path.relpath(FROZEN, ROOT)}: parameters will be re-derived")
     leagues = sorted(df.league.unique())
     run([sys.executable, "map/build/fetch_logos.py", *leagues])
-    run([sys.executable, "map/build_map.py"] + ([] if "--renders" in flags else ["--no-renders"]))
+    run([sys.executable, "map/build_map.py"] + ([] if "--renders" in flags and not demo else ["--no-renders"])
+        + (["--demo"] if demo else []))
     new = json.load(open(dpath))
     print("\nparameter            old        new" + ("   (frozen)" if new.get("params_frozen") else "   (re-derived)"))
     for k in PARAMS + INFO:

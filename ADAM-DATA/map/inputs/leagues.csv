@@ -1,0 +1,5 @@
+league,display_name,season_convention,data_status,backtested,model_note
+MLB,Major League Baseball,single-year,real,Y,"Current standings only (B1). Out-of-sample backtest 2008-2023: Spearman 0.41, mean absolute error 18.5."
+NHL,National Hockey League,two-year,real,Y,"Elastic net on 13 features. Out-of-sample backtest 2013-14 to 2022-23: Spearman 0.61, mean absolute error 15.9."
+NBA,National Basketball Association,two-year,demo,N,"Demo only: fake scores from map/make_demo_scores.py on real 2017-2024 standings, until real scores arrive."
+NFL,National Football League,single-year,demo,N,"Demo only: fake scores from map/make_demo_scores.py on real 2017-2024 standings, until real scores arrive."

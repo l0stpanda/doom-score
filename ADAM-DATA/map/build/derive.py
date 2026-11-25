@@ -54,7 +54,8 @@ def build_team_seasons():
     L = pd.read_csv(os.path.join(DATA, "team_locations.csv"))
     TR = pd.read_csv(os.path.join(DATA, "team_regions.csv"))
     names = pd.read_csv(os.path.join(DATA, "team_registry.csv"), usecols=["league", "franchise_id", "team"]).drop_duplicates()
-    P = P.drop(columns="_file").rename(columns={"season_start_year": "season"})
+    files["_demo_leagues"] = sorted(P[P._demo].league.unique())      # fake demo scores loaded (M59, M60)
+    P = P.drop(columns=["_file", "_demo"]).rename(columns={"season_start_year": "season"})
     # z within league-season (population SD), for predicted doom and, where labels exist, actual doom
     P["z_pred"] = P.groupby(["league", "season"]).doom_pred.transform(zscore)
     lab = P.actual_doom.notna()
@@ -198,10 +199,8 @@ def main():
 
     league_seasons = {lg: sorted(map(int, g.season.unique())) for lg, g in P.groupby("league")}
     actual_seasons = {lg: sorted(map(int, g[g.actual_doom.notna()].season.unique())) for lg, g in P.groupby("league")}
-    common = [s for s in seasons if all(s in v for v in league_seasons.values())]
-    # default season: latest season every league scores; if none is shared, the latest season with the most leagues
-    default_season = int(max(common) if common else
-                         max(seasons, key=lambda s: (sum(s in v for v in league_seasons.values()), s)))
+    # default season: the latest season with scores for the most leagues (ties go to the later season, M58)
+    default_season = int(max(seasons, key=lambda s: (sum(s in v for v in league_seasons.values()), s)))
     computed = {"sigma_mi": sigma, "opacity_w0": round(W0, 4), "opacity_w1": round(W1, 4),
                 "z_lo": round(z_lo, 3), "z_hi": round(z_hi, 3)}
     frozen = None
@@ -217,7 +216,8 @@ def main():
         "far_mi": FAR_MI, "visible_w": VISIBLE_W, "far_land_share_mean": round(far_share, 4),
         "leagues": sorted(P.league.unique()), "seasons": [int(s) for s in seasons],
         "league_seasons": league_seasons, "actual_seasons": actual_seasons,
-        "default_season": default_season, "league_features": provided, "score_files": files,
+        "default_season": default_season, "league_features": provided,
+        "demo_leagues": files.pop("_demo_leagues"), "score_files": files,
         "params_frozen": frozen is not None, "params_computed": computed,
         "verdict_lo": round(v_lo, 3), "verdict_hi": round(v_hi, 3),
         "eb_s2_within": round(eb_s2w, 4), "eb_tau2": round(eb_tau2, 4),

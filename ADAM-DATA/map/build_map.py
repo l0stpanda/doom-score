@@ -5,6 +5,7 @@
     .venv/Scripts/python map/build_map.py --fetch-logos     # also run map/build/fetch_logos.py (team_logos.csv URLs)
     .venv/Scripts/python map/build_map.py --shots           # also run the Phase 4 browser checks, screenshots, timing and GIF
     .venv/Scripts/python map/build_map.py --rebuild-regions # rebuild the regions from the raw boundary files (M49)
+    .venv/Scripts/python map/build_map.py --demo --no-renders  # include the fake DEMO_* scores (map/demo.py does this)
 (map/build/shots_phase2.mjs and shots_phase3.mjs are kept for reference; they would overwrite the approved Phase 2/3
 screenshots with the current page, so they are not run by default.)
 
@@ -28,7 +29,7 @@ GEO_FILES = [  # read by map/build/regions.mjs (the .shp needs its .shx/.dbf/.pr
     "us_county/cb_2023_us_county_5m.dbf", "us_county/cb_2023_us_county_5m.prj",
     "cd_0.geojson", "cd_100.geojson", "cd_200.geojson",
 ]
-KNOWN = {"--no-renders", "--fetch-logos", "--shots", "--rebuild-regions"}
+KNOWN = {"--no-renders", "--fetch-logos", "--shots", "--rebuild-regions", "--demo"}
 
 
 def run(cmd):
@@ -52,6 +53,13 @@ def main():
         sys.exit(f"unknown option(s): {' '.join(sorted(unknown))}; known: {' '.join(sorted(KNOWN))}")
     if "--rebuild-regions" in args:
         check_geo()
+    # --demo: also read the fake DEMO_* score files (map/make_demo_scores.py; M60). Without it they are ignored, so a
+    # normal build never puts demo data into the committed outputs. Demo builds skip the committed check renders.
+    os.environ["DOOM_DEMO"] = "1" if "--demo" in args else "0"
+    if "--demo" in args and not {"--no-renders", "--shots"} & args:
+        print("--demo: skipping the check renders (they are committed figures)")
+    if "--demo" in args:
+        args = (args - {"--shots"}) | {"--no-renders"}
     run([PY, "map/build/scores.py"])                  # validate map/inputs/scores/ first (clear errors, M50)
     if "--fetch-logos" in args:
         run([PY, "map/build/fetch_logos.py"])

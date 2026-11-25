@@ -1,6 +1,7 @@
 # Adding a league to the Doom Map
 
-For a league that already has a team registry (**MLB, NHL, NBA, NFL**), adding it takes **one scores file**:
+The map covers the four men's leagues (**MLB, NHL, NBA, NFL**; WNBA and PWHL are out of scope for now, M57). Each
+already has a team registry, so adding its scores takes **one scores file**:
 
 ```
 .venv/Scripts/python map/add_scores.py path/to/nba_scores.csv
@@ -10,7 +11,8 @@ The format and the script are described in `docs/SCORES_FORMAT.md`; the template
 Paths are relative to `ADAM-DATA/`. The script validates the file, resolves team names, reports season coverage,
 copies it to `map/inputs/scores/` and rebuilds. It also re-derives σ, the opacity cutoffs and the colour-scale ends,
 printing old and new values; `--freeze-params` keeps today's values instead. To remove a league, delete its file from
-`map/inputs/scores/` and run `python map/build_map.py`.
+`map/inputs/scores/` and run `python map/build_map.py`. For NBA and NFL, also set `data_status=real` (and
+`backtested`, `model_note`) in `map/inputs/leagues.csv`, or the page keeps labelling them as demo data.
 
 What the rebuild re-derives from the set of teams (review the outputs; see M18-M20, M27, M28, M34 in
 `docs/MAP_DECISIONS.md`):
@@ -24,10 +26,12 @@ What the rebuild re-derives from the set of teams (review the outputs; see M18-M
 
 Data rows only, no code changes. Add these, then use `add_scores.py` as above.
 
-### 1. League: `map/data_src/leagues.csv`
+### 1. League: `map/inputs/leagues.csv` and `map/data_src/leagues.csv`
 
-`league, display_name, season_spans_two_years, order, registry_first, registry_last`. The registry range is the span
-of seasons the location table covers; a stint with a blank first or last season runs to that end.
+`map/inputs/leagues.csv`: `league, display_name, season_convention (single-year / two-year), data_status (real /
+demo), backtested (Y/N), model_note`. `map/data_src/leagues.csv`: `league, order, registry_first, registry_last`. The
+registry range is the span of seasons the location table covers; a stint with a blank first or last season runs to
+that end.
 
 ### 2. Locations: `map/data_src/team_location_stints.csv`
 

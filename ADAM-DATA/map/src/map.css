@@ -180,3 +180,12 @@ path.pt.hot { stroke-width: 2.2; }
 @media (max-width: 960px) { aside.dm-list { position: static; max-height: none; } .dm-searchbox input { width: 100%; } .dm-searchbox { flex: 1 1 100%; } }
 .dm-left > .dm-mapcol { align-self: stretch; width: 100%; }
 @media (max-width: 960px) { .dm-main { grid-template-columns: minmax(0, 1fr); } }
+
+/* demo data labels (M59): fake NBA/NFL scores must never look real */
+.dm-demo-banner { position: sticky; top: 0; z-index: 50; background: #ffe08a; color: #3b2a00; font-weight: 700; text-align: center;
+  padding: 7px 12px; border-bottom: 2px solid #b8860b; letter-spacing: .02em; }
+.dm-demo-banner[hidden] { display: none; }
+.dm-demo-tag { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 4px; background: #ffe08a; color: #3b2a00;
+  border: 1px solid #b8860b; font-size: 11px; font-weight: 700; line-height: 16px; vertical-align: middle; text-transform: uppercase; letter-spacing: .04em; }
+.dm-demo-note { margin: 4px 0; padding: 2px 6px; border-left: 3px solid #b8860b; background: rgba(255, 224, 138, .35); font-size: 12px; }
+.dm-model-note { margin-top: 10px; }

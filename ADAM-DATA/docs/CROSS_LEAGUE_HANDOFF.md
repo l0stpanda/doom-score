@@ -89,7 +89,7 @@ Computed on **backtest rows with `interval_available = 1` and a known label**, p
 ## 6. Send me your scores (Doom Map)
 
 The map needs only one file from you: **one CSV of doom scores for your league**, in the format of
-`docs/SCORES_FORMAT.md`. Start from `map/inputs/scores_template.csv`.
+`docs/SCORES_FORMAT.md`. Start from `map/inputs/scores_template.csv` (replace its three `example_` rows).
 
 - **Required:** `league`, `season_start_year`, `franchise_id`, `doom_pred` (0–100, defined as in §1). Those four
   columns are enough for the map.

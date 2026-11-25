@@ -7,8 +7,12 @@ by season, cities, venues, regions, logos) comes from the map's team registry. P
   The map reads every `*.csv` there and nothing else from the model side (M50).
 - Add or replace a league with `python map/add_scores.py <file>` (below). Remove one by deleting its file and running
   `python map/build_map.py`.
-- Start from `map/inputs/scores_template.csv` (header plus 3 example rows).
-- Files named `FAKE_*` in that folder are git-ignored, for tests.
+- Start from `map/inputs/scores_template.csv` (header plus 3 example rows). The example rows' `franchise_id`s start
+  with `example_`, which validation rejects: replace them with your rows.
+- Leagues must be listed in `map/inputs/leagues.csv` (MLB, NHL, NBA, NFL for now; M57), which also says whether a
+  league's scores are real or demo, and whether they were backtested.
+- Files named `FAKE_*` in that folder are git-ignored, for tests. Files named `DEMO_*` are fake demo scores
+  (`map/demo.py`, `docs/DEMO_GUIDE.md`): git-ignored, read only by a demo build, and labelled DEMO on the page.
 
 ## Columns
 
@@ -18,8 +22,8 @@ One row per team-season. A team-season may appear only once across all files.
 
 | Column | Type | Meaning |
 |---|---|---|
-| `league` | text | League code, e.g. `NBA`. Must have a team registry (MLB, NHL, NBA and NFL do). |
-| `season_start_year` | whole year | Calendar year the season starts (NBA 2024-25 → `2024`). |
+| `league` | text | League code, e.g. `NBA`. Must be in `map/inputs/leagues.csv` and have a team registry (MLB, NHL, NBA and NFL do). |
+| `season_start_year` | whole year | Calendar year the season starts (NBA 2024-25 → `2024`). Must be inside the league's registry (NBA/NFL 2000–2026). |
 | `franchise_id` | text | The franchise. Canonical ids are lowercase with hyphens (`raiders`, `philadelphia-sixers`), but `add_scores.py` also accepts names, former names, nicknames and abbreviations (see "Team names"). |
 | `doom_pred` | number 0–100 | Predicted doom: 100 minus the team's mean league percentile over its next three seasons (`docs/CROSS_LEAGUE_HANDOFF.md` §1). |
 
@@ -70,13 +74,17 @@ with no location that season (e.g. the Texans before 2002) also stops the run.
 .venv/Scripts/python map/add_scores.py path/to/nba_scores.csv --replace       # overwrite a file of the same name
 ```
 
-The script validates columns, types and ranges (line numbers on every error), resolves team names, reports season
-coverage against the registry, and copies the file with canonical ids into `map/inputs/scores/`. It then rebuilds the
+The script validates columns, types and ranges (line numbers on every error), stops on seasons outside the league's
+registry (naming the league and seasons), resolves team names, reports season coverage against the registry, and copies the file with canonical ids into `map/inputs/scores/`. It then rebuilds the
 map. A team in the registry with no score that season shows as "too new to score".
 
 Adding a league changes the set of teams, so the map re-derives σ (the blending distance), the opacity cutoffs and
 the colour-scale ends, and prints old and new values. `--freeze-params` keeps today's values instead, by writing
 `map/data_src/frozen_params.json`. Delete that file, or run `add_scores.py` without the flag, to re-derive (M54).
+
+When real scores replace a demo league, set its row in `map/inputs/leagues.csv` to `data_status=real` (with
+`backtested` and `model_note`); until then the map labels it as demo (M59). `add_scores.py` refuses `DEMO_*` files
+unless given `--demo`.
 
 ## Exporting MLB and NHL
 

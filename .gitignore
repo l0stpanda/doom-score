@@ -11,3 +11,6 @@ ADAM-DATA/dashboard/index.html
 ADAM-DATA/dashboard/doom_map.html
 # Test score files for the Doom Map (fake data; never committed). See ADAM-DATA/docs/SCORES_FORMAT.md
 ADAM-DATA/map/inputs/scores/FAKE_*
+# Doom Map demo mode: fake NBA/NFL scores and the pre-demo checksum snapshot (map/demo.py); never committed
+ADAM-DATA/map/inputs/scores/DEMO_*
+ADAM-DATA/map/inputs/.demo_snapshot.json
