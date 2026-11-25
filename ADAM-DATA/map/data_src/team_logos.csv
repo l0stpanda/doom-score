@@ -1,0 +1,125 @@
+league,franchise_id,team,logo_url
+MLB,arizona-diamondbacks,Arizona Diamondbacks,https://www.mlbstatic.com/team-logos/109.svg
+MLB,athletics,Athletics,https://www.mlbstatic.com/team-logos/133.svg
+MLB,atlanta-braves,Atlanta Braves,https://www.mlbstatic.com/team-logos/144.svg
+MLB,baltimore-orioles,Baltimore Orioles,https://www.mlbstatic.com/team-logos/110.svg
+MLB,boston-red-sox,Boston Red Sox,https://www.mlbstatic.com/team-logos/111.svg
+MLB,chicago-cubs,Chicago Cubs,https://www.mlbstatic.com/team-logos/112.svg
+MLB,chicago-white-sox,Chicago White Sox,https://www.mlbstatic.com/team-logos/145.svg
+MLB,cincinnati-reds,Cincinnati Reds,https://www.mlbstatic.com/team-logos/113.svg
+MLB,cleveland-guardians,Cleveland Guardians,https://www.mlbstatic.com/team-logos/114.svg
+MLB,colorado-rockies,Colorado Rockies,https://www.mlbstatic.com/team-logos/115.svg
+MLB,detroit-tigers,Detroit Tigers,https://www.mlbstatic.com/team-logos/116.svg
+MLB,houston-astros,Houston Astros,https://www.mlbstatic.com/team-logos/117.svg
+MLB,kansas-city-royals,Kansas City Royals,https://www.mlbstatic.com/team-logos/118.svg
+MLB,los-angeles-angels,Los Angeles Angels,https://www.mlbstatic.com/team-logos/108.svg
+MLB,los-angeles-dodgers,Los Angeles Dodgers,https://www.mlbstatic.com/team-logos/119.svg
+MLB,miami-marlins,Miami Marlins,https://www.mlbstatic.com/team-logos/146.svg
+MLB,milwaukee-brewers,Milwaukee Brewers,https://www.mlbstatic.com/team-logos/158.svg
+MLB,minnesota-twins,Minnesota Twins,https://www.mlbstatic.com/team-logos/142.svg
+MLB,new-york-mets,New York Mets,https://www.mlbstatic.com/team-logos/121.svg
+MLB,new-york-yankees,New York Yankees,https://www.mlbstatic.com/team-logos/147.svg
+MLB,philadelphia-phillies,Philadelphia Phillies,https://www.mlbstatic.com/team-logos/143.svg
+MLB,pittsburgh-pirates,Pittsburgh Pirates,https://www.mlbstatic.com/team-logos/134.svg
+MLB,san-diego-padres,San Diego Padres,https://www.mlbstatic.com/team-logos/135.svg
+MLB,san-francisco-giants,San Francisco Giants,https://www.mlbstatic.com/team-logos/137.svg
+MLB,seattle-mariners,Seattle Mariners,https://www.mlbstatic.com/team-logos/136.svg
+MLB,st-louis-cardinals,St. Louis Cardinals,https://www.mlbstatic.com/team-logos/138.svg
+MLB,tampa-bay-rays,Tampa Bay Rays,https://www.mlbstatic.com/team-logos/139.svg
+MLB,texas-rangers,Texas Rangers,https://www.mlbstatic.com/team-logos/140.svg
+MLB,toronto-blue-jays,Toronto Blue Jays,https://www.mlbstatic.com/team-logos/141.svg
+MLB,washington-nationals,Washington Nationals,https://www.mlbstatic.com/team-logos/120.svg
+NBA,atlanta-hawks,Atlanta Hawks,https://cdn.nba.com/logos/nba/1610612737/primary/L/logo.svg
+NBA,boston-celtics,Boston Celtics,https://cdn.nba.com/logos/nba/1610612738/primary/L/logo.svg
+NBA,brooklyn-nets,Brooklyn Nets,https://cdn.nba.com/logos/nba/1610612751/primary/L/logo.svg
+NBA,charlotte-hornets,Charlotte Hornets,https://cdn.nba.com/logos/nba/1610612766/primary/L/logo.svg
+NBA,chicago-bulls,Chicago Bulls,https://cdn.nba.com/logos/nba/1610612741/primary/L/logo.svg
+NBA,cleveland-cavaliers,Cleveland Cavaliers,https://cdn.nba.com/logos/nba/1610612739/primary/L/logo.svg
+NBA,dallas-mavericks,Dallas Mavericks,https://cdn.nba.com/logos/nba/1610612742/primary/L/logo.svg
+NBA,denver-nuggets,Denver Nuggets,https://cdn.nba.com/logos/nba/1610612743/primary/L/logo.svg
+NBA,detroit-pistons,Detroit Pistons,https://cdn.nba.com/logos/nba/1610612765/primary/L/logo.svg
+NBA,golden-state-warriors,Golden State Warriors,https://cdn.nba.com/logos/nba/1610612744/primary/L/logo.svg
+NBA,houston-rockets,Houston Rockets,https://cdn.nba.com/logos/nba/1610612745/primary/L/logo.svg
+NBA,indiana-pacers,Indiana Pacers,https://cdn.nba.com/logos/nba/1610612754/primary/L/logo.svg
+NBA,los-angeles-clippers,LA Clippers,https://cdn.nba.com/logos/nba/1610612746/primary/L/logo.svg
+NBA,los-angeles-lakers,Los Angeles Lakers,https://cdn.nba.com/logos/nba/1610612747/primary/L/logo.svg
+NBA,memphis-grizzlies,Memphis Grizzlies,https://cdn.nba.com/logos/nba/1610612763/primary/L/logo.svg
+NBA,miami-heat,Miami Heat,https://cdn.nba.com/logos/nba/1610612748/primary/L/logo.svg
+NBA,milwaukee-bucks,Milwaukee Bucks,https://cdn.nba.com/logos/nba/1610612749/primary/L/logo.svg
+NBA,minnesota-timberwolves,Minnesota Timberwolves,https://cdn.nba.com/logos/nba/1610612750/primary/L/logo.svg
+NBA,new-orleans-pelicans,New Orleans Pelicans,https://cdn.nba.com/logos/nba/1610612740/primary/L/logo.svg
+NBA,new-york-knicks,New York Knicks,https://cdn.nba.com/logos/nba/1610612752/primary/L/logo.svg
+NBA,oklahoma-city-thunder,Oklahoma City Thunder,https://cdn.nba.com/logos/nba/1610612760/primary/L/logo.svg
+NBA,orlando-magic,Orlando Magic,https://cdn.nba.com/logos/nba/1610612753/primary/L/logo.svg
+NBA,philadelphia-sixers,Philadelphia 76ers,https://cdn.nba.com/logos/nba/1610612755/primary/L/logo.svg
+NBA,phoenix-suns,Phoenix Suns,https://cdn.nba.com/logos/nba/1610612756/primary/L/logo.svg
+NBA,portland-trail-blazers,Portland Trail Blazers,https://cdn.nba.com/logos/nba/1610612757/primary/L/logo.svg
+NBA,sacramento-kings,Sacramento Kings,https://cdn.nba.com/logos/nba/1610612758/primary/L/logo.svg
+NBA,san-antonio-spurs,San Antonio Spurs,https://cdn.nba.com/logos/nba/1610612759/primary/L/logo.svg
+NBA,toronto-raptors,Toronto Raptors,https://cdn.nba.com/logos/nba/1610612761/primary/L/logo.svg
+NBA,utah-jazz,Utah Jazz,https://cdn.nba.com/logos/nba/1610612762/primary/L/logo.svg
+NBA,washington-wizards,Washington Wizards,https://cdn.nba.com/logos/nba/1610612764/primary/L/logo.svg
+NFL,arizona-cardinals,Arizona Cardinals,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/ARI
+NFL,atlanta-falcons,Atlanta Falcons,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/ATL
+NFL,baltimore-ravens,Baltimore Ravens,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/BAL
+NFL,buffalo-bills,Buffalo Bills,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/BUF
+NFL,carolina-panthers,Carolina Panthers,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/CAR
+NFL,chicago-bears,Chicago Bears,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/CHI
+NFL,cincinnati-bengals,Cincinnati Bengals,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/CIN
+NFL,cleveland-browns,Cleveland Browns,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/CLE
+NFL,dallas-cowboys,Dallas Cowboys,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/DAL
+NFL,denver-broncos,Denver Broncos,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/DEN
+NFL,detroit-lions,Detroit Lions,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/DET
+NFL,green-bay-packers,Green Bay Packers,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/GB
+NFL,houston-texans,Houston Texans,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/HOU
+NFL,indianapolis-colts,Indianapolis Colts,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/IND
+NFL,jacksonville-jaguars,Jacksonville Jaguars,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/JAX
+NFL,kansas-city-chiefs,Kansas City Chiefs,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/KC
+NFL,los-angeles-chargers,Los Angeles Chargers,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/LAC
+NFL,los-angeles-rams,Los Angeles Rams,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/LA
+NFL,miami-dolphins,Miami Dolphins,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/MIA
+NFL,minnesota-vikings,Minnesota Vikings,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/MIN
+NFL,new-england-patriots,New England Patriots,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/NE
+NFL,new-orleans-saints,New Orleans Saints,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/NO
+NFL,new-york-giants,New York Giants,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/NYG
+NFL,new-york-jets,New York Jets,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/NYJ
+NFL,philadelphia-eagles,Philadelphia Eagles,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/PHI
+NFL,pittsburgh-steelers,Pittsburgh Steelers,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/PIT
+NFL,raiders,Las Vegas Raiders,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/LV
+NFL,san-francisco-49ers,San Francisco 49ers,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/SF
+NFL,seattle-seahawks,Seattle Seahawks,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/SEA
+NFL,tampa-bay-buccaneers,Tampa Bay Buccaneers,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/TB
+NFL,tennessee-titans,Tennessee Titans,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/TEN
+NFL,washington-commanders,Washington Commanders,https://static.www.nfl.com/t_q-best/league/api/clubs/logos/WAS
+NHL,anaheim-ducks,Anaheim Ducks,https://assets.nhle.com/logos/nhl/svg/ANA_light.svg
+NHL,boston-bruins,Boston Bruins,https://assets.nhle.com/logos/nhl/svg/BOS_light.svg
+NHL,buffalo-sabres,Buffalo Sabres,https://assets.nhle.com/logos/nhl/svg/BUF_light.svg
+NHL,calgary-flames,Calgary Flames,https://assets.nhle.com/logos/nhl/svg/CGY_light.svg
+NHL,carolina-hurricanes,Carolina Hurricanes,https://assets.nhle.com/logos/nhl/svg/CAR_light.svg
+NHL,chicago-blackhawks,Chicago Blackhawks,https://assets.nhle.com/logos/nhl/svg/CHI_light.svg
+NHL,colorado-avalanche,Colorado Avalanche,https://assets.nhle.com/logos/nhl/svg/COL_light.svg
+NHL,columbus-blue-jackets,Columbus Blue Jackets,https://assets.nhle.com/logos/nhl/svg/CBJ_light.svg
+NHL,dallas-stars,Dallas Stars,https://assets.nhle.com/logos/nhl/svg/DAL_light.svg
+NHL,detroit-red-wings,Detroit Red Wings,https://assets.nhle.com/logos/nhl/svg/DET_light.svg
+NHL,edmonton-oilers,Edmonton Oilers,https://assets.nhle.com/logos/nhl/svg/EDM_light.svg
+NHL,florida-panthers,Florida Panthers,https://assets.nhle.com/logos/nhl/svg/FLA_light.svg
+NHL,los-angeles-kings,Los Angeles Kings,https://assets.nhle.com/logos/nhl/svg/LAK_light.svg
+NHL,minnesota-wild,Minnesota Wild,https://assets.nhle.com/logos/nhl/svg/MIN_light.svg
+NHL,montreal-canadiens,Montréal Canadiens,https://assets.nhle.com/logos/nhl/svg/MTL_light.svg
+NHL,nashville-predators,Nashville Predators,https://assets.nhle.com/logos/nhl/svg/NSH_light.svg
+NHL,new-jersey-devils,New Jersey Devils,https://assets.nhle.com/logos/nhl/svg/NJD_light.svg
+NHL,new-york-islanders,New York Islanders,https://assets.nhle.com/logos/nhl/svg/NYI_light.svg
+NHL,new-york-rangers,New York Rangers,https://assets.nhle.com/logos/nhl/svg/NYR_light.svg
+NHL,ottawa-senators,Ottawa Senators,https://assets.nhle.com/logos/nhl/svg/OTT_light.svg
+NHL,philadelphia-flyers,Philadelphia Flyers,https://assets.nhle.com/logos/nhl/svg/PHI_light.svg
+NHL,pittsburgh-penguins,Pittsburgh Penguins,https://assets.nhle.com/logos/nhl/svg/PIT_light.svg
+NHL,san-jose-sharks,San Jose Sharks,https://assets.nhle.com/logos/nhl/svg/SJS_light.svg
+NHL,seattle-kraken,Seattle Kraken,https://assets.nhle.com/logos/nhl/svg/SEA_light.svg
+NHL,st-louis-blues,St. Louis Blues,https://assets.nhle.com/logos/nhl/svg/STL_light.svg
+NHL,tampa-bay-lightning,Tampa Bay Lightning,https://assets.nhle.com/logos/nhl/svg/TBL_light.svg
+NHL,toronto-maple-leafs,Toronto Maple Leafs,https://assets.nhle.com/logos/nhl/svg/TOR_light.svg
+NHL,utah-mammoth,Utah Mammoth,https://assets.nhle.com/logos/nhl/svg/UTA_light.svg
+NHL,vancouver-canucks,Vancouver Canucks,https://assets.nhle.com/logos/nhl/svg/VAN_light.svg
+NHL,vegas-golden-knights,Vegas Golden Knights,https://assets.nhle.com/logos/nhl/svg/VGK_light.svg
+NHL,washington-capitals,Washington Capitals,https://assets.nhle.com/logos/nhl/svg/WSH_secondary_light.svg
+NHL,winnipeg-jets,Winnipeg Jets,https://assets.nhle.com/logos/nhl/svg/WPG_light.svg

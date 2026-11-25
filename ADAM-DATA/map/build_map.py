@@ -2,7 +2,7 @@
 
     .venv/Scripts/python map/build_map.py                   # data + derived numbers + check renders
     .venv/Scripts/python map/build_map.py --no-renders      # skip the Edge screenshots
-    .venv/Scripts/python map/build_map.py --fetch-logos     # also run dashboard/fetch_logos.py (team_meta.csv URLs)
+    .venv/Scripts/python map/build_map.py --fetch-logos     # also run map/build/fetch_logos.py (team_logos.csv URLs)
     .venv/Scripts/python map/build_map.py --shots           # also run the Phase 4 browser checks, screenshots, timing and GIF
     .venv/Scripts/python map/build_map.py --rebuild-regions # rebuild the regions from the raw boundary files (M49)
 (map/build/shots_phase2.mjs and shots_phase3.mjs are kept for reference; they would overwrite the approved Phase 2/3
@@ -12,8 +12,9 @@ Needs: the Python venv (requirements.txt + map/requirements.txt) and Node 18+ wi
 By default the build uses the committed region shapes (map/data/regions.topo.json, unit_regions.csv, land_grid.csv)
 and only re-assigns team venues to regions (team_regions.mjs), so it needs no raw boundary files. --rebuild-regions
 runs regions.mjs instead, which needs the files in data/raw/geo/ (scripts/fetch_geo.py and the README; M06-M07, M49).
-Steps: team_locations.py -> team_regions.mjs (or regions.mjs) -> logos.py -> derive.py -> palette.py
-       -> render_checks.mjs -> build_page.mjs
+The only model input is map/inputs/scores/*.csv (docs/SCORES_FORMAT.md; add a league with map/add_scores.py, M50).
+Steps: scores.py (check) -> team_locations.py (registry, aliases, shown team-seasons) -> team_regions.mjs (or
+       regions.mjs, then team_regions.mjs) -> logos.py -> derive.py -> palette.py -> render_checks.mjs -> build_page.mjs
 Output page: dashboard/index.html (map + scatter + team panel; self-contained, git-ignored like doom_scatter.html).
 """
 import os, subprocess, sys
@@ -51,13 +52,13 @@ def main():
         sys.exit(f"unknown option(s): {' '.join(sorted(unknown))}; known: {' '.join(sorted(KNOWN))}")
     if "--rebuild-regions" in args:
         check_geo()
+    run([PY, "map/build/scores.py"])                  # validate map/inputs/scores/ first (clear errors, M50)
     if "--fetch-logos" in args:
-        run([PY, "dashboard/fetch_logos.py"])
+        run([PY, "map/build/fetch_logos.py"])
     run([PY, "map/build/team_locations.py"])
     if "--rebuild-regions" in args:
-        run(["node", "map/build/regions.mjs"])        # region shapes, unit/team assignments and land grid
-    else:
-        run(["node", "map/build/team_regions.mjs"])   # team venues -> committed region shapes
+        run(["node", "map/build/regions.mjs"])        # region shapes, unit assignments and land grid
+    run(["node", "map/build/team_regions.mjs"])       # team venues (registry + shown) -> region shapes
     run([PY, "map/build/logos.py"])
     run([PY, "map/build/derive.py"])
     run([PY, "map/build/palette.py"])

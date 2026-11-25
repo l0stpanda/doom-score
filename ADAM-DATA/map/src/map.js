@@ -74,6 +74,15 @@
     return x && y ? 'Contender' : x ? 'Cliff ahead' : y ? 'Rising' : 'Stuck'; };
   const modeWord = () => isActual() ? 'actual' : 'predicted';
 
+  // ---------- optional score columns, per league (M51) ----------
+  // X.league_features[lg] lists what that league's scores provide (map/build/scores.py FEATURES); anything that needs a
+  // missing column is hidden for that league. Colour, averages, ranks and the region/team cards need only doom_pred.
+  const FEAT = X.league_features || {};
+  const has = (lg, f) => (FEAT[lg] || []).includes(f);
+  const shownLeagues = () => [...state.leagues].filter(l => leagueSeasons(l).includes(state.season));
+  const scatterLeagues = () => shownLeagues().filter(l => has(l, 'standing'));
+  const scatterOk = () => scatterLeagues().length > 0;
+
   // ---------- data views ----------
   const inView = (season, leagues) => D.teams.filter(t => t.season === season && leagues.has(t.league));
   function regionStats(season, leagues) {
@@ -90,7 +99,8 @@
       s.shrunk = mu + B * (s.rawZ - mu);
       s.best = s.teams.reduce((a, b) => (zOf(b) < zOf(a) ? b : a)); s.worst = s.teams.reduce((a, b) => (zOf(b) > zOf(a) ? b : a));
       s.quads = { 'Contender': 0, 'Cliff ahead': 0, 'Rising': 0, 'Stuck': 0 };
-      for (const t of s.teams) { const q = quadOf(t); if (q) s.quads[q]++; }
+      s.quadN = 0;
+      for (const t of s.teams) { const q = quadOf(t); if (q) { s.quads[q]++; s.quadN++; } }
       s.byLeague = {}; for (const t of s.teams) s.byLeague[t.league] = (s.byLeague[t.league] || 0) + 1;
     }
     const ranked = [...out.values()].filter(s => s.n).sort((a, b) => a.shrunk - b.shrunk || a.region.display_name.localeCompare(b.region.display_name));
@@ -121,7 +131,7 @@
   root.innerHTML = `
   <header class="dm-head"><h1>Doom Dashboard</h1>
     <p>How doomed is your part of the country, and your team? Doom predicts how bad a franchise will be over its next three
-    seasons, from 0 (top of the league) to 100 (bottom). The map blends nearby ${LEAGUES.join(' and ')} teams; the scatter
+    seasons, from 0 (top of the league) to 100 (bottom). The map blends nearby ${LEAGUES.length > 1 ? LEAGUES.slice(0, -1).join(', ') + ' and ' + LEAGUES[LEAGUES.length - 1] : LEAGUES.join('')} teams; the scatter
     puts this season's standing against the projected one. Select a team in either view to see it in both.</p></header>
   <div class="dm-controls" role="toolbar" aria-label="Dashboard controls">
     <span class="dm-searchbox"><label class="sr-only" for="dm-search">Search teams, cities and regions</label>
@@ -172,7 +182,8 @@
   };
   function drawControls() {
     segButtons($('#dm-view'), [['both', 'Map + scatter'], ['map', 'Map'], ['scatter', 'Scatter']].map(([key, label]) => ({ key, label })),
-      k => state.view === k, k => { state.view = k; applyView(); update({ layout: true }); });
+      k => state.view === k, k => { state.view = k; applyView(); update({ layout: true }); }, k => k !== 'map' && !scatterOk());
+    $('#dm-mode').parentElement.style.display = [...state.leagues].some(l => has(l, 'actual')) ? '' : 'none';
     segButtons($('#dm-leagues'), LEAGUES.map(l => ({ key: l, label: l })), k => state.leagues.has(k), k => {
       state.leagues.has(k) ? state.leagues.delete(k) : state.leagues.add(k); snapSeason(); update();
     });
@@ -203,8 +214,9 @@
   $('#dm-prev').addEventListener('click', () => { const av = availableSeasons(), i = av.indexOf(state.season); if (i > 0) { state.season = av[i - 1]; update(); } });
   $('#dm-next').addEventListener('click', () => { const av = availableSeasons(), i = av.indexOf(state.season); if (i < av.length - 1) { state.season = av[i + 1]; update(); } });
   function applyView() {
-    $('#dm-mapcol').style.display = state.view === 'scatter' ? 'none' : '';
-    $('#dm-scatter').style.display = state.view === 'map' ? 'none' : '';
+    const sOk = scatterOk();                    // the scatter needs this season's standing (optional column, M51)
+    $('#dm-mapcol').style.display = state.view === 'scatter' && sOk ? 'none' : '';
+    $('#dm-scatter').style.display = state.view === 'map' || !sOk ? 'none' : '';
   }
 
   // ---------- map geometry and layers ----------
@@ -397,6 +409,29 @@
       ${axes ? act.map(d => `<circle cx="${x(d.season)}" cy="${y(d.actual_doom)}" r="2.2" fill="var(--ink)"/>`).join('') : ''}
       ${cur && cur.doom != null ? `<circle cx="${x(cur.season)}" cy="${y(cur.doom)}" r="3.6" fill="${colorOf(cur.z)}" stroke="var(--ink)"/>` : ''}</svg>`;
   }
+  function seasonText(t) {               // e.g. "50.6% wins (82-80), 48th percentile": the parts the league provides
+    const a = [];
+    if (has(t.league, 'win_pct') && t.win_pct != null) a.push((t.win_pct * 100).toFixed(1) + '% wins');
+    if (has(t.league, 'record') && t.record) a.push(a.length ? `(${esc(t.record)})` : esc(t.record));
+    let out = a.join(' ');
+    if (has(t.league, 'standing') && t.wpp != null) out += (out ? ', ' : '') + ord(Math.round(t.wpp)) + ' percentile';
+    return out;
+  }
+  const hasSeason = t => ['win_pct', 'record', 'standing'].some(f => has(t.league, f));
+  function chipHtml(t) {
+    const p = has(t.league, 'p_doom75') && t.p75 != null ? Math.round(t.p75 * 100) : null;
+    const box = `class="chip" style="box-shadow:inset 4px 0 0 ${colorOf(t.z)}"`;
+    if (has(t.league, 'band')) return `<span ${box}>${bandText(t.band)} of a doomed stretch${p != null ? ` (${p}% chance of doom ≥ 75)` : ''}</span>`;
+    return p != null ? `<span ${box}>${p}% chance of a doom ≥ 75 stretch</span>` : '';
+  }
+  function panelTable(t) {
+    const rows = [];
+    if (has(t.league, 'range80')) rows.push(`<tr><td>Likely range (80%)</td><td>${t.lo80 != null ? `${Math.round(t.lo80)}–${Math.round(t.hi80)}` : 'not available'}</td></tr>`);
+    if (hasSeason(t)) rows.push(`<tr><td>This season</td><td>${seasonText(t) || '–'}</td></tr>`);
+    if (has(t.league, 'standing')) rows.push(`<tr><td>Quadrant (${modeWord()})</td><td>${esc(quadOf(t) || '–')}</td></tr>`);
+    if (has(t.league, 'projection') && t.proj) rows.push(`<tr><td>Projected finish</td><td>${t.proj.map(v => v == null ? '–' : ord(Math.round(v))).join(', ')} <span class="k">percentile, next 3 seasons</span></td></tr>`);
+    return rows.length ? `<table>${rows.join('')}</table>` : '';
+  }
   function drawTeamPanel() {
     const t = selTeam(), host = $('#dm-list');
     host.classList.add('dm-panel'); host.setAttribute('aria-label', 'Team details');
@@ -414,15 +449,11 @@
       <h2>${esc(t.season_team_name)}</h2>
       <div class="k">${esc(t.league)} ${esc(seasonLabel(t.league, t.season))} · ${esc(t.city)} · ${esc(r ? r.display_name : '')}</div>
       ${t.scored ? `<div class="big"><b>${Math.round(t.doom)}</b><span>predicted doom of 100</span></div>
-        <span class="chip" style="box-shadow:inset 4px 0 0 ${colorOf(t.z)}">${bandText(t.band)} of a doomed stretch</span>
-        ${t.actual_doom != null ? `<div class="act">Actual doom: <b>${Math.round(t.actual_doom)}</b> <span class="k">(what happened over the next three seasons)</span></div>`
+        ${chipHtml(t)}
+        ${!has(t.league, 'actual') ? '' : t.actual_doom != null ? `<div class="act">Actual doom: <b>${Math.round(t.actual_doom)}</b> <span class="k">(what happened over the next three seasons)</span></div>`
           : `<div class="act k">Actual outcome not known yet.</div>`}
-        <table>
-          <tr><td>Likely range (80%)</td><td>${t.lo80 != null ? `${Math.round(t.lo80)}–${Math.round(t.hi80)}` : 'not available'}</td></tr>
-          <tr><td>This season</td><td>${t.win_pct != null ? (t.win_pct * 100).toFixed(1) + '% wins' : '–'} (${t.wpp != null ? ord(Math.round(t.wpp)) + ' percentile' : '–'})</td></tr>
-          <tr><td>Quadrant (${modeWord()})</td><td>${esc(quadOf(t) || '–')}</td></tr>
-        </table>
-        <div class="k">Doom by season (line = predicted, dots = actual)</div>${trendSvg(t, 290, 92, true)}
+        ${panelTable(t)}
+        <div class="k">Doom by season (line = predicted${has(t.league, 'actual') ? ', dots = actual' : ''})</div>${trendSvg(t, 290, 92, true)}
         ${drivers}` : `<p>Too new to score: no prediction for this season, so this team is left out of every average.</p>`}
       <div class="dm-panel-actions">
         <button type="button" id="dm-show-map">Show on map</button>
@@ -512,7 +543,6 @@
       : ch.delta > 0 ? `<b style="color:${colorOf(1.4)}">▲</b> more doomed than in ${ch.prev}`
       : `<b style="color:${colorOf(-1.4)}">▼</b> brighter than in ${ch.prev}`;
     const team = t => `${esc(t.season_team_name)} <span class="k">${t.league} · doom ${Math.round(doomOf(t))}</span>`;
-    const q = s.quads;
     return `<div class="t">${esc(r.display_name)}</div><div class="k">${esc(r.core_metros)}</div>
       <div class="verdict"><span class="chipc" style="background:${colorOf(s.rawZ)}"></span>
         <span class="big">${words(s.rawZ)}</span><span>average ${modeWord()} doom <b>${Math.round(s.rawDoom)}</b> <span class="k">of 100</span></span></div>
@@ -522,9 +552,15 @@
         <tr><td>Best hope</td><td>${team(s.best)}</td></tr>
         ${s.n > 1 ? `<tr><td>Biggest worry</td><td>${team(s.worst)}</td></tr>` : ''}
       </table>
-      <div class="quad">${['Contender', 'Cliff ahead', 'Rising', 'Stuck'].map(k => `<div><b>${q[k]}</b>${k}</div>`).join('')}</div>
+      ${quadHtml(s)}
       <div class="trend">${spark(r.region_id)}<span>${chTxt}</span></div>${spotHtml(pt)}
       ${touchy() ? '' : '<div class="k" style="margin-top:6px">Click to zoom in.</div>'}`;
+  }
+  function quadHtml(s) {                // quadrant counts need the standing: only teams whose league provides it
+    if (!s.quadN) return '';
+    const q = s.quads, out = [...new Set(s.teams.filter(t => !has(t.league, 'standing')).map(t => t.league))];
+    return `<div class="quad">${['Contender', 'Cliff ahead', 'Rising', 'Stuck'].map(k => `<div><b>${q[k]}</b>${k}</div>`).join('')}</div>` +
+      (s.quadN < s.n ? `<div class="k">Quadrants count ${s.quadN} of ${s.n} teams${out.length ? ` (${esc(out.join(', '))} scores have no standing)` : ''}</div>` : '');
   }
   function teamCardHtml(t) {
     const r = REG.get(t.region_id);
@@ -534,12 +570,12 @@
     return `<div class="t">${esc(t.season_team_name)}</div>
       <div class="k">${esc(t.league)} ${esc(seasonLabel(t.league, t.season))} · ${esc(t.city)} · ${esc(r ? r.display_name : '')}</div>
       <div class="verdict"><span class="chipc" style="background:${colorOf(t.z)}"></span>
-        <span class="big">${Math.round(t.doom)}</span><span>predicted doom of 100 · <span class="band">${bandText(t.band)}</span></span></div>
-      <table>
+        <span class="big">${Math.round(t.doom)}</span><span>predicted doom of 100${has(t.league, 'band') ? ` · <span class="band">${bandText(t.band)}</span>` : ''}</span></div>
+      ${act || hasSeason(t) || has(t.league, 'standing') ? `<table>
         ${act}
-        <tr><td>This season</td><td>${t.win_pct != null ? (t.win_pct * 100).toFixed(1) + '% wins' : '–'}</td></tr>
-        <tr><td>Quadrant</td><td>${esc(quadOf(t) || '–')} <span class="k">(${modeWord()})</span></td></tr>
-      </table>
+        ${hasSeason(t) ? `<tr><td>This season</td><td>${seasonText(t) || '–'}</td></tr>` : ''}
+        ${has(t.league, 'standing') ? `<tr><td>Quadrant</td><td>${esc(quadOf(t) || '–')} <span class="k">(${modeWord()})</span></td></tr>` : ''}
+      </table>` : ''}
       <div class="trend">${trendSvg(t, 128, 30, false)}<span class="k">doom over seasons</span></div>
       ${touchy() ? '' : '<div class="k" style="margin-top:6px">Click for details.</div>'}`;
   }
@@ -790,10 +826,11 @@
   function drawScatter() {
     if (state.view === 'map') return;
     const x = sxs(), y = sys(), act = isActual();
-    $('#dm-sc-title').innerHTML = `This season vs. the next three <span class="k">(${act ? 'actual' : 'projected'} standing; ${esc([...state.leagues].filter(l => leagueSeasons(l).includes(state.season)).map(l => l + ' ' + seasonLabel(l, state.season)).join(' · '))})</span>`;
-    $('#dm-sc-key').innerHTML = LEAGUES.filter(l => state.leagues.has(l)).map(l =>
+    const scL = scatterLeagues(), noSt = shownLeagues().filter(l => !has(l, 'standing'));
+    $('#dm-sc-title').innerHTML = `This season vs. the next three <span class="k">(${act ? 'actual' : 'projected'} standing; ${esc(scL.map(l => l + ' ' + seasonLabel(l, state.season)).join(' · '))})</span>`;
+    $('#dm-sc-key').innerHTML = LEAGUES.filter(l => scL.includes(l)).map(l =>
       `<span><svg width="14" height="14" aria-hidden="true"><path transform="translate(7,7)" d="${d3.symbol(SYM.get(l), 70)()}" fill="var(--muted)"/></svg>${esc(l)}</span>`).join('') +
-      `<span class="k">Color = ${modeWord()} doom</span>`;
+      `<span class="k">Color = ${modeWord()} doom</span>` + (noSt.length ? `<span class="k">Not shown: ${esc(noSt.join(', '))} (no standing in the scores)</span>` : '');
     sc.svg.attr('aria-label', `Scatter of ${view.all.length} teams: this season's standing against the ${act ? 'actual' : 'projected'} standing over the next three seasons`);
     const g = sc.gGrid; g.selectAll('*').remove();
     g.append('rect').attr('x', x(50)).attr('y', y(100)).attr('width', x(100) - x(50)).attr('height', y(50) - y(100)).attr('class', 'quadbg');
@@ -887,6 +924,7 @@
     view = regionStats(state.season, state.leagues);
     prepped = H.prepTeams(view.scored.map(t => ({ ...t, z: zOf(t) })));
     $('#dm-empty').style.display = state.leagues.size ? 'none' : 'flex';
+    applyView();
     if (opts.layout) layout();
     gWorld.attr('transform', T.toString());
     drawControls(); drawLegend(); drawBanner(); drawSide(); drawCrumb(); drawFocusLayers(); buildLogos(); positionOverlay(); drawScatter(); paintHeat();

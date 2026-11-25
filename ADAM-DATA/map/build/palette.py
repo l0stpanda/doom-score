@@ -186,7 +186,7 @@ def choose(p):
         rows.append((m, stops, floor))
     S = pd.DataFrame([m for m, _, _ in rows])
     if p["search"]:
-        S.to_csv(os.path.join(REP, "palette_search.csv"), index=False, float_format="%.3f")
+        S.to_csv(os.path.join(REP, "palette_search.csv"), index=False, float_format="%.3f", lineterminator="\n")
     if rows[0][0]["passes"]:
         best = rows[0]
     elif any(m["passes"] for m, _, _ in rows):
@@ -252,7 +252,7 @@ def check(name, p, dark_grey=None):
     # dark ramp >= 15 dE2000 away in all four visions and >= 3:1 against the dark background
     if dark_grey is None:
         dark_grey, cand = derive_dark_grey(luts["dark"], p["grey"])
-        cand.to_csv(os.path.join(REP, "dark_grey_search.csv"), index=False, float_format="%.3f")
+        cand.to_csv(os.path.join(REP, "dark_grey_search.csv"), index=False, float_format="%.3f", lineterminator="\n")
     out["dark"]["grey"] = dark_grey
     bgd = hex2rgb(MODES["dark"]["bg"])
     rows.append({"palette": name, "check": "c. dark contrast grey (derived dark grey)", "vision": "normal", "mode": "dark",
@@ -332,7 +332,7 @@ def main():
         r, out, _ = check(name, p, dark_grey); rows += r; results[name] = out
         dark_grey = out["dark"]["grey"]
     C = pd.DataFrame(rows)
-    C.to_csv(os.path.join(REP, "palette_checks.csv"), index=False)
+    C.to_csv(os.path.join(REP, "palette_checks.csv"), index=False, lineterminator="\n")
     fig, bot = figure(results)
 
     def cellm(pal, chk, vis, mode):

@@ -1,13 +1,15 @@
 """Derive every number the map uses from the data (Phase 1, sections 5-8 of the pivot spec).
 
-Inputs : dashboard/data/doom_predictions.csv, map/data/team_locations.csv, map/data/team_regions.csv,
-         map/data/land_grid.csv (25 km equal-area land grid inside the map crop), map/data_src/regions.csv
+Inputs : map/inputs/scores/*.csv (via scores.py: the only path to the predictions, M50), map/data/team_locations.csv,
+         map/data/team_regions.csv, map/data/team_registry.csv (current names),
+         map/data/land_grid.csv (25 km equal-area land grid inside the map crop), map/data_src/regions.csv,
+         map/data_src/frozen_params.json (optional: keeps sigma, opacity cutoffs and colour-scale ends fixed, M54)
 Outputs: map/data/team_seasons.csv   one row per located team-season: location, region, raw doom, z-scores
          map/data/derived.json       sigma, opacity cutoffs, colour-scale ends, season list (read by the map)
          reports/map_derived/*.csv   standardisation stats, sigma diagnostics, region counts by season and league
 Nothing here hard-codes a league: leagues, seasons and teams all come from the input files.
 """
-import json, os
+import json, os, sys
 import numpy as np
 import pandas as pd
 
@@ -16,6 +18,10 @@ MAP = os.path.dirname(HERE)
 ROOT = os.path.dirname(MAP)
 DATA = os.path.join(MAP, "data")
 REP = os.path.join(ROOT, "reports", "map_derived")
+FROZEN = os.path.join(MAP, "data_src", "frozen_params.json")
+FROZEN_KEYS = ["sigma_mi", "opacity_w0", "opacity_w1", "z_lo", "z_hi"]
+sys.path.insert(0, HERE)
+from scores import OPTIONAL, ScoresError, load_scores        # noqa: E402
 
 SIGMAS = list(range(50, 401, 25))        # miles, tested grid (spec: 50-400 in 25-mile steps)
 FAR_MI = 300                             # "empty interior" = land farther than this from every team
@@ -41,26 +47,31 @@ def zscore(s):
 
 
 def build_team_seasons():
-    P = pd.read_csv(os.path.join(ROOT, "dashboard", "data", "doom_predictions.csv"))
+    try:
+        P, provided, files = load_scores()
+    except ScoresError as e:
+        sys.exit(f"Scores problem: {e}")
     L = pd.read_csv(os.path.join(DATA, "team_locations.csv"))
     TR = pd.read_csv(os.path.join(DATA, "team_regions.csv"))
-    P = P.rename(columns={"season_start_year": "season"})
+    names = pd.read_csv(os.path.join(DATA, "team_registry.csv"), usecols=["league", "franchise_id", "team"]).drop_duplicates()
+    P = P.drop(columns="_file").rename(columns={"season_start_year": "season"})
     # z within league-season (population SD), for predicted doom and, where labels exist, actual doom
     P["z_pred"] = P.groupby(["league", "season"]).doom_pred.transform(zscore)
     lab = P.actual_doom.notna()
     P.loc[lab, "z_actual"] = P[lab].groupby(["league", "season"]).actual_doom.transform(zscore)
-    keep = ["league", "season", "franchise_id", "team", "pred_type", "doom_pred", "doom_lo80", "doom_hi80",
-            "doom_band", "p_doom75", "z_pred", "actual_doom", "z_actual", "win_pct", "win_pct_percentile",
-            "wins", "losses", "ot_losses", "games"]
+    if "z_actual" not in P.columns:
+        P["z_actual"] = np.nan
+    keep = ["league", "season", "franchise_id", "doom_pred", "z_pred", "z_actual"] + list(OPTIONAL)
     T = (L.merge(TR[["league", "season", "franchise_id", "region_id"]], on=["league", "season", "franchise_id"])
+          .merge(names, on=["league", "franchise_id"], how="left")
           .merge(P[keep], on=["league", "season", "franchise_id"], how="left"))
     T["scored"] = T.doom_pred.notna()                  # "too new to score" = located but no prediction row
     T["proj_standing"] = 100 - T.doom_pred             # y of the dashboard scatter
     x, y = T.win_pct_percentile >= 50, T.proj_standing >= 50
     T["quadrant"] = np.select([x & y, x & ~y, ~x & y, ~x & ~y], ["Contender", "Cliff ahead", "Rising", "Stuck"], "")
-    T.loc[~T.scored, "quadrant"] = ""
+    T.loc[~T.scored | T.win_pct_percentile.isna(), "quadrant"] = ""      # quadrant needs the standing (optional)
     T["place"] = np.where(T.metro == "Los Angeles", T.city.str.replace(r" CA$", "", regex=True), T.metro)
-    return P, T
+    return P, T, provided, files
 
 
 def standardisation_stats(P):
@@ -150,7 +161,7 @@ def eb_components(T):
 
 def main():
     os.makedirs(REP, exist_ok=True)
-    P, T = build_team_seasons()
+    P, T, provided, files = build_team_seasons()
     grid = pd.read_csv(os.path.join(DATA, "land_grid.csv"))
 
     stats = standardisation_stats(P)
@@ -178,15 +189,26 @@ def main():
     RA = T[T.scored].groupby(["season", "region_id"]).z_pred.mean()
     v_lo, v_hi = float(RA.quantile(1 / 3)), float(RA.quantile(2 / 3))
     pd.DataFrame({"n_region_seasons": [len(RA)], "tertile_1": [v_lo], "tertile_2": [v_hi], "min": [RA.min()], "max": [RA.max()]}
-                 ).to_csv(os.path.join(REP, "verdict_thresholds.csv"), index=False, float_format="%.3f")
-    E.to_csv(os.path.join(REP, "eb_components_by_season.csv"), index=False, float_format="%.3f")
+                 ).to_csv(os.path.join(REP, "verdict_thresholds.csv"), index=False, float_format="%.3f", lineterminator="\n")
+    E.to_csv(os.path.join(REP, "eb_components_by_season.csv"), index=False, float_format="%.3f", lineterminator="\n")
     T.to_csv(os.path.join(DATA, "team_seasons.csv"), index=False, float_format="%.4f", lineterminator="\n")
-    stats.to_csv(os.path.join(REP, "standardisation.csv"), index=False, float_format="%.3f")
-    D.to_csv(os.path.join(REP, "sigma_diagnostics.csv"), index=False, float_format="%.3f")
-    cnt.reset_index().to_csv(os.path.join(REP, "region_counts_by_season_league.csv"), index=False)
+    stats.to_csv(os.path.join(REP, "standardisation.csv"), index=False, float_format="%.3f", lineterminator="\n")
+    D.to_csv(os.path.join(REP, "sigma_diagnostics.csv"), index=False, float_format="%.3f", lineterminator="\n")
+    cnt.reset_index().to_csv(os.path.join(REP, "region_counts_by_season_league.csv"), index=False, lineterminator="\n")
 
     league_seasons = {lg: sorted(map(int, g.season.unique())) for lg, g in P.groupby("league")}
     actual_seasons = {lg: sorted(map(int, g[g.actual_doom.notna()].season.unique())) for lg, g in P.groupby("league")}
+    common = [s for s in seasons if all(s in v for v in league_seasons.values())]
+    # default season: latest season every league scores; if none is shared, the latest season with the most leagues
+    default_season = int(max(common) if common else
+                         max(seasons, key=lambda s: (sum(s in v for v in league_seasons.values()), s)))
+    computed = {"sigma_mi": sigma, "opacity_w0": round(W0, 4), "opacity_w1": round(W1, 4),
+                "z_lo": round(z_lo, 3), "z_hi": round(z_hi, 3)}
+    frozen = None
+    if os.path.exists(FROZEN):
+        frozen = {k: json.load(open(FROZEN))[k] for k in FROZEN_KEYS}
+        sigma, W0, W1, z_lo, z_hi = (frozen[k] for k in FROZEN_KEYS)
+        print(f"PARAMETERS FROZEN by {os.path.relpath(FROZEN, ROOT)}: {frozen} (re-derived would be {computed})")
     derived = {
         "sigma_mi": sigma, "opacity_w0": round(W0, 4), "opacity_w1": round(W1, 4),
         "z_lo": round(z_lo, 3), "z_hi": round(z_hi, 3),
@@ -195,7 +217,8 @@ def main():
         "far_mi": FAR_MI, "visible_w": VISIBLE_W, "far_land_share_mean": round(far_share, 4),
         "leagues": sorted(P.league.unique()), "seasons": [int(s) for s in seasons],
         "league_seasons": league_seasons, "actual_seasons": actual_seasons,
-        "default_season": int(max(s for s in seasons if all(s in v for v in league_seasons.values()))),
+        "default_season": default_season, "league_features": provided, "score_files": files,
+        "params_frozen": frozen is not None, "params_computed": computed,
         "verdict_lo": round(v_lo, 3), "verdict_hi": round(v_hi, 3),
         "eb_s2_within": round(eb_s2w, 4), "eb_tau2": round(eb_tau2, 4),
         "eb_shrink_by_n": {n: round(eb_tau2 / (eb_tau2 + eb_s2w / n), 3) for n in range(1, 7)},

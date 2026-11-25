@@ -108,6 +108,47 @@
   ]
  },
  "default_season": 2025,
+ "league_features": {
+  "MLB": [
+   "range80",
+   "band",
+   "p_doom75",
+   "win_pct",
+   "standing",
+   "record",
+   "drivers",
+   "driver_note",
+   "projection",
+   "actual"
+  ],
+  "NHL": [
+   "range80",
+   "band",
+   "p_doom75",
+   "win_pct",
+   "standing",
+   "record",
+   "drivers",
+   "projection",
+   "actual"
+  ]
+ },
+ "score_files": {
+  "mlb_scores.csv": [
+   "MLB"
+  ],
+  "nhl_scores.csv": [
+   "NHL"
+  ]
+ },
+ "params_frozen": false,
+ "params_computed": {
+  "sigma_mi": 100,
+  "opacity_w0": 0.0122,
+  "opacity_w1": 1.0703,
+  "z_lo": -1.677,
+  "z_hi": 1.678
+ },
  "verdict_lo": -0.336,
  "verdict_hi": 0.289,
  "eb_s2_within": 1.0017,

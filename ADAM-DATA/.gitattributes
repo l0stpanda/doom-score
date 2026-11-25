@@ -1,0 +1,2 @@
+# Doom Map / pipeline CSVs: LF everywhere, so builds on Windows leave git status clean (docs/MAP_DECISIONS.md, M56)
+*.csv text eol=lf

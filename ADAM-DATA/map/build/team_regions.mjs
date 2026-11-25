@@ -1,6 +1,7 @@
 // Assign team venues to regions from the committed map/data/regions.topo.json (no raw boundary files needed).
-// Inputs:  map/data/regions.topo.json (regions object), map/data/team_locations.csv
-// Output:  map/data/team_regions.csv
+// Inputs:  map/data/regions.topo.json (regions object), map/data/team_registry.csv, map/data/team_locations.csv
+// Outputs: map/data/team_regions.csv (the shown team-seasons) and region_id filled in map/data/team_registry.csv
+//          (every league and season in the registry, scored or not; M52)
 // This is step 4 of regions.mjs, run on the committed region shapes, so the default build (and adding a league)
 // works without data/raw/geo/. regions.mjs still writes the same file when the regions are rebuilt (--rebuild-regions).
 // A venue outside every region polygon (on a simplified shoreline) goes to the region with the nearest boundary
@@ -44,7 +45,8 @@ async function main() {
   const topo = JSON.parse(fs.readFileSync(path.join(OUT, 'regions.topo.json'), 'utf8'));
   const regions = topojson.feature(topo, topo.objects.regions);
   const locs = readCsv(path.join(OUT, 'team_locations.csv'));
-  const pts = [...new Map(locs.map(l => [`${l.lat},${l.lon}`, { lat: +l.lat, lon: +l.lon }])).values()];
+  const reg = readCsv(path.join(OUT, 'team_registry.csv'));
+  const pts = [...new Map(reg.concat(locs).map(l => [`${l.lat},${l.lon}`, { lat: +l.lat, lon: +l.lon }])).values()];
   const ptsGeo = { type: 'FeatureCollection', features: pts.map((p, i) => ({ type: 'Feature', properties: { pid: i },
     geometry: { type: 'Point', coordinates: [p.lon, p.lat] } })) };
   const out = await mapshaper.applyCommands(`-i pts.json name=pts -i regions.json name=regions ` +
@@ -58,17 +60,23 @@ async function main() {
     const polys = f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates : [f.geometry.coordinates];
     for (const poly of polys) for (const ring of poly) for (const [lon, lat] of ring) vertices.push([lat, lon, f.properties.region_id]);
   }
+  const regionOf = l => {
+    const r = byKey.get(`${+l.lat},${+l.lon}`);
+    if (r) return [r, 'in-polygon'];
+    let best = null;
+    for (const [lat, lon, id] of vertices) { const d = miles(+l.lat, +l.lon, lat, lon); if (!best || d < best.d) best = { d, id }; }
+    return [best.id, 'nearest-region'];
+  };
   const teamRows = locs.map(l => {
-    let r = byKey.get(`${+l.lat},${+l.lon}`), how = 'in-polygon';
-    if (!r) {
-      let best = null;
-      for (const [lat, lon, id] of vertices) { const d = miles(+l.lat, +l.lon, lat, lon); if (!best || d < best.d) best = { d, id }; }
-      r = best.id; how = 'nearest-region';
-    }
+    const [r, how] = regionOf(l);
     return { league: l.league, season: l.season, franchise_id: l.franchise_id, metro_id: l.metro_id, region_id: r, how };
   });
+  const regCols = Object.keys(reg[0]);
+  for (const l of reg) l.region_id = regionOf(l)[0];
+  writeCsv(path.join(OUT, 'team_registry.csv'), reg, regCols);
   writeCsv(path.join(OUT, 'team_regions.csv'), teamRows, ['league', 'season', 'franchise_id', 'metro_id', 'region_id', 'how']);
-  console.log(`team venues: ${teamRows.length}; off-polygon: ${teamRows.filter(t => t.how !== 'in-polygon').length}`);
+  console.log(`team venues: ${teamRows.length} shown, ${reg.length} in the registry; off-polygon: ` +
+              `${[...reg, ...locs].filter(l => regionOf(l)[1] !== 'in-polygon').length}`);
 }
 
 main().catch(e => { console.error(e); process.exit(1); });

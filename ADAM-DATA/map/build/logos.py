@@ -1,8 +1,8 @@
 """Logo manifest with monogram fallbacks -> map/data/logo_manifest.csv (one row per team identity).
 
-Logo source: only the logo_url column of dashboard/data/team_meta.csv. Files are cached (git-ignored) by the
-existing dashboard/fetch_logos.py in dashboard/assets/logos/<league>_<franchise_id>.svg; this script does not
-download anything. A team identity uses its logo when the cached file exists AND the season's team name still
+Logo source: only the logo_url column of map/data_src/team_logos.csv (M53). Files are cached (git-ignored) by
+map/build/fetch_logos.py in dashboard/assets/logos/<league>_<franchise_id>.svg; this script does not download
+anything. A team identity uses its logo when the cached file exists AND the season's team name still
 contains the franchise's current nickname (so the Oakland Athletics and Florida Marlins use today's logo, but the
 Arizona Coyotes, Utah Hockey Club and Cleveland Indians get a monogram instead of a later club's logo).
 Monogram rule (used unless map/data_src/monogram_overrides.csv gives one): two-word city prefixes (New York,
@@ -30,7 +30,7 @@ def rule_monogram(name):
 
 
 def main():
-    M = pd.read_csv(os.path.join(ROOT, "dashboard", "data", "team_meta.csv"))
+    M = pd.read_csv(os.path.join(MAP, "data_src", "team_logos.csv"))
     L = pd.read_csv(os.path.join(MAP, "data", "team_locations.csv"))
     ov_path = os.path.join(MAP, "data_src", "monogram_overrides.csv")
     ov = pd.read_csv(ov_path, encoding="utf-8") if os.path.exists(ov_path) else pd.DataFrame(columns=["league", "name", "monogram", "note"])

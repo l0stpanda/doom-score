@@ -85,3 +85,21 @@ Computed on **backtest rows with `interval_available = 1` and a known label**, p
    (`reports/figures/dashboard_all_leagues.png`).
 6. Teammate core-schema check: the NBA/NFL file was never in this repo, so the percentile formula has not been
    cross-checked against it (D15).
+
+## 6. Send me your scores (Doom Map)
+
+The map needs only one file from you: **one CSV of doom scores for your league**, in the format of
+`docs/SCORES_FORMAT.md`. Start from `map/inputs/scores_template.csv`.
+
+- **Required:** `league`, `season_start_year`, `franchise_id`, `doom_pred` (0–100, defined as in §1). Those four
+  columns are enough for the map.
+- **Optional, if you have them:** `doom_lo80`/`doom_hi80`, `band`, `p_doom75`, `win_pct`, `win_pct_percentile`,
+  `record`, `driver_up_1..3`/`driver_down_1..3`, `proj_pct_t1..t3`, `actual_doom`. Anything you leave out is hidden
+  for your league. Nothing else breaks.
+- **Team names:** use the `franchise_id` values from your own file (`raiders`, `philadelphia-sixers`, ...); the
+  map's NBA and NFL registry uses the same ids. Abbreviations and season names (`OAK`, `Seattle SuperSonics`) also
+  work.
+- **Seasons:** any range within 2000–2026. You don't need city, venue, region, logo or performance data: the map
+  has those.
+
+I run `python map/add_scores.py your_file.csv`. It lists any team name it can't match before anything changes.

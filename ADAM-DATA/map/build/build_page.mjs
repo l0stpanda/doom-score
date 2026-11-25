@@ -32,19 +32,18 @@ export function payload() {
   const leagues = Object.fromEntries(csv(path.join(MAP, 'data_src', 'leagues.csv')).map(r =>
     [r.league, { display_name: r.display_name, season_spans_two_years: r.season_spans_two_years === '1', order: +r.order }]));
   const regions = csv(path.join(MAP, 'data_src', 'regions.csv'));
-  // model drivers for the team panel (doom_predictions.csv: top contributions as "Phrase (+x.x)")
-  const drv = new Map(csv(path.join(ROOT, 'dashboard', 'data', 'doom_predictions.csv')).map(r => [`${r.league}|${r.season_start_year}|${r.franchise_id}`,
-    { up: [1, 2, 3].map(i => r[`driver_up_${i}`]).filter(Boolean), down: [1, 2, 3].map(i => r[`driver_down_${i}`]).filter(Boolean), note: r.driver_note || '' }]));
   const teams = csv(path.join(MAP, 'data', 'team_seasons.csv')).map(t => ({
     league: t.league, season: +t.season, franchise_id: t.franchise_id, team: t.team || t.season_team_name,
     season_team_name: t.season_team_name, city: t.city, metro: t.metro, metro_id: t.metro_id, lat: +t.lat, lon: +t.lon,
-    region_id: t.region_id, scored: t.scored === 'True', z: num(t.z_pred), doom: num(t.doom_pred), band: t.doom_band,
+    region_id: t.region_id, scored: t.scored === 'True', z: num(t.z_pred), doom: num(t.doom_pred), band: t.band || null,
     lo80: num(t.doom_lo80), hi80: num(t.doom_hi80), win_pct: num(t.win_pct), wpp: num(t.win_pct_percentile),
-    quadrant: t.quadrant, z_actual: num(t.z_actual), actual_doom: num(t.actual_doom), pred_type: t.pred_type,
-    drivers: drv.get(`${t.league}|${t.season}|${t.franchise_id}`) || null,
+    record: t.record || null, p75: num(t.p_doom75), quadrant: t.quadrant, z_actual: num(t.z_actual), actual_doom: num(t.actual_doom),
+    proj: [1, 2, 3].map(i => num(t[`proj_pct_t${i}`])).some(v => v != null) ? [1, 2, 3].map(i => num(t[`proj_pct_t${i}`])) : null,
+    // model drivers for the team panel (scores file: top contributions as "Phrase (+x.x)")
+    drivers: { up: [1, 2, 3].map(i => t[`driver_up_${i}`]).filter(Boolean), down: [1, 2, 3].map(i => t[`driver_down_${i}`]).filter(Boolean), note: t.driver_note || '' },
   }));
   const topo = JSON.parse(read(MAP, 'data', 'regions.topo.json'));
-  // logos: team_meta.csv URLs cached by dashboard/fetch_logos.py (git-ignored) -> data URIs; monogram always present
+  // logos: map/data_src/team_logos.csv URLs cached by map/build/fetch_logos.py (git-ignored) -> data URIs; monogram always present
   const logos = {};
   let inlined = 0;
   for (const m of csv(path.join(MAP, 'data', 'logo_manifest.csv'))) {

@@ -45,9 +45,13 @@ cd map && npm ci && cd ..                                        # Node 18+: map
 .venv/Scripts/python map/build_map.py --fetch-logos               # add --shots for screenshots, checks and GIFs
 ```
 
+**The map's only model input is per-team doom scores**: `map/inputs/scores/mlb_scores.csv` and `nhl_scores.csv`
+(`docs/SCORES_FORMAT.md`; written from the model by `scripts/export_map_scores.py`). Team names by season, cities,
+venues, regions and logos come from the map's team registry (`map/data/team_registry.csv`: MLB, NHL, NBA and NFL).
+
 The build needs no raw boundary files: it uses the committed region shapes in `map/data/` and only re-assigns
 team venues to regions (M49). Add `--no-renders` to skip the Edge check screenshots. Sources and methods are in
-`docs/MAP_DECISIONS.md` (M06–M07 for the boundaries, 49 decisions in all).
+`docs/MAP_DECISIONS.md` (M06–M07 for the boundaries, 56 decisions in all).
 
 **Rebuilding the regions** (only after changing `map/data_src/region_*.csv` or `regions.csv`):
 `.venv/Scripts/python map/build_map.py --rebuild-regions`. This needs the raw boundary files in `data/raw/geo/`
@@ -97,10 +101,13 @@ this is zero teams: Vegas (2017) and Seattle (2021) have predictions from their 
 - Teams with the same standing and similar doom overlap in the scatter. Use search to select them.
 - "Full diagnostics" in the team panel is a placeholder.
 
-**Adding a league.** Data rows only, no code changes: predictions in the `doom_predictions.csv` format, a
-`team_meta.csv` row per franchise, and location stints. Then run `python map/build_map.py --fetch-logos`, which
-re-derives everything that depends on the set of teams (z-scores, color scale, σ and opacity cutoffs, region
-shrinkage, verdict thresholds). Step by step: `docs/ADD_A_LEAGUE.md`.
+**Adding a league.** One scores file: `python map/add_scores.py nba_scores.csv`. It validates the file, matches
+team names (ids, names, former names, abbreviations), reports season coverage, copies it to `map/inputs/scores/`
+and rebuilds. Only `league, season_start_year, franchise_id, doom_pred` are required; any optional column a league
+leaves out is hidden for that league. The rebuild re-derives everything that depends on the set of teams (z-scores,
+color scale, σ and opacity cutoffs, region shrinkage, verdict thresholds) and prints old vs new values;
+`--freeze-params` keeps σ and the color range. NBA and NFL already have a registry (2000–2026); another league needs
+registry rows first. Step by step: `docs/ADD_A_LEAGUE.md`; for groupmates: `docs/CROSS_LEAGUE_HANDOFF.md` §6.
 
 ## Where things are
 
@@ -112,8 +119,8 @@ shrinkage, verdict thresholds). Step by step: `docs/ADD_A_LEAGUE.md`.
 | `reports/RESULTS.md`, `reports/MODEL_CARD.md` | Consolidated results; model card |
 | `data/` | The slim model table (one row per team-season) |
 | `src/`, `dashboard/`, `scripts/` | Models + exports, viz scripts, the build command |
-| `map/` | Doom Map: `data_src/` (hand-made tables: team locations, regions, rules), `build/` (pipeline), `src/` (page code), `data/` (generated) |
-| `docs/MAP_DECISIONS.md`, `docs/ADD_A_LEAGUE.md` | Map decision log (M01–M49); how to add a league |
+| `map/` | Doom Map: `inputs/scores/` (the only model input), `data_src/` (hand-made tables: team locations, logos, aliases, regions, rules), `build/` (pipeline), `src/` (page code), `data/` (generated, incl. the team registry) |
+| `docs/MAP_DECISIONS.md`, `docs/ADD_A_LEAGUE.md`, `docs/SCORES_FORMAT.md` | Map decision log (M01–M56); how to add a league; the scores format |
 | `reports/map_phase*.md`, `reports/map_palette.png` | Map phase reports, palette validation; screenshots and GIFs in `reports/figures/map_*` |
 
 **Rebuilding from raw sources** (league APIs, Wikipedia, MoneyPuck → full 104-column table → slim table), the

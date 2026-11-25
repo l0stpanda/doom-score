@@ -1,0 +1,507 @@
+league,alias,alias_key,franchise_id,kind
+MLB,ARI,ari,arizona-diamondbacks,abbreviation
+MLB,AZ,az,arizona-diamondbacks,abbreviation
+MLB,Phoenix Diamondbacks,phoenix diamondbacks,arizona-diamondbacks,city_nickname
+MLB,arizona-diamondbacks,arizona diamondbacks,arizona-diamondbacks,franchise_id
+MLB,Diamondbacks,diamondbacks,arizona-diamondbacks,nickname
+MLB,ATH,ath,athletics,abbreviation
+MLB,OAK,oak,athletics,abbreviation
+MLB,West Sacramento Athletics,west sacramento athletics,athletics,city_nickname
+MLB,A's,a s,athletics,common
+MLB,athletics,athletics,athletics,franchise_id
+MLB,Oakland Athletics,oakland athletics,athletics,season_name
+MLB,ATL,atl,atlanta-braves,abbreviation
+MLB,atlanta-braves,atlanta braves,atlanta-braves,franchise_id
+MLB,Braves,braves,atlanta-braves,nickname
+MLB,BAL,bal,baltimore-orioles,abbreviation
+MLB,baltimore-orioles,baltimore orioles,baltimore-orioles,franchise_id
+MLB,Orioles,orioles,baltimore-orioles,nickname
+MLB,BOS,bos,boston-red-sox,abbreviation
+MLB,Boston Sox,boston sox,boston-red-sox,city_nickname
+MLB,boston-red-sox,boston red sox,boston-red-sox,franchise_id
+MLB,CHC,chc,chicago-cubs,abbreviation
+MLB,chicago-cubs,chicago cubs,chicago-cubs,franchise_id
+MLB,Cubs,cubs,chicago-cubs,nickname
+MLB,CHW,chw,chicago-white-sox,abbreviation
+MLB,CWS,cws,chicago-white-sox,abbreviation
+MLB,Chicago Sox,chicago sox,chicago-white-sox,city_nickname
+MLB,chicago-white-sox,chicago white sox,chicago-white-sox,franchise_id
+MLB,CIN,cin,cincinnati-reds,abbreviation
+MLB,cincinnati-reds,cincinnati reds,cincinnati-reds,franchise_id
+MLB,Reds,reds,cincinnati-reds,nickname
+MLB,CLE,cle,cleveland-guardians,abbreviation
+MLB,cleveland-guardians,cleveland guardians,cleveland-guardians,franchise_id
+MLB,Guardians,guardians,cleveland-guardians,nickname
+MLB,Indians,indians,cleveland-guardians,nickname
+MLB,Cleveland Indians,cleveland indians,cleveland-guardians,season_name
+MLB,COL,col,colorado-rockies,abbreviation
+MLB,Denver Rockies,denver rockies,colorado-rockies,city_nickname
+MLB,colorado-rockies,colorado rockies,colorado-rockies,franchise_id
+MLB,Rockies,rockies,colorado-rockies,nickname
+MLB,DET,det,detroit-tigers,abbreviation
+MLB,detroit-tigers,detroit tigers,detroit-tigers,franchise_id
+MLB,Tigers,tigers,detroit-tigers,nickname
+MLB,HOU,hou,houston-astros,abbreviation
+MLB,houston-astros,houston astros,houston-astros,franchise_id
+MLB,Astros,astros,houston-astros,nickname
+MLB,KC,kc,kansas-city-royals,abbreviation
+MLB,KCR,kcr,kansas-city-royals,abbreviation
+MLB,kansas-city-royals,kansas city royals,kansas-city-royals,franchise_id
+MLB,Royals,royals,kansas-city-royals,nickname
+MLB,ANA,ana,los-angeles-angels,abbreviation
+MLB,LAA,laa,los-angeles-angels,abbreviation
+MLB,Anaheim Anaheim,anaheim anaheim,los-angeles-angels,city_nickname
+MLB,Anaheim Angels,anaheim angels,los-angeles-angels,city_nickname
+MLB,los-angeles-angels,los angeles angels,los-angeles-angels,franchise_id
+MLB,Anaheim,anaheim,los-angeles-angels,nickname
+MLB,Angels,angels,los-angeles-angels,nickname
+MLB,Los Angeles Angels of Anaheim,los angeles angels of anaheim,los-angeles-angels,season_name
+MLB,LAD,lad,los-angeles-dodgers,abbreviation
+MLB,los-angeles-dodgers,los angeles dodgers,los-angeles-dodgers,franchise_id
+MLB,Dodgers,dodgers,los-angeles-dodgers,nickname
+MLB,FLA,fla,miami-marlins,abbreviation
+MLB,MIA,mia,miami-marlins,abbreviation
+MLB,Miami Gardens Marlins,miami gardens marlins,miami-marlins,city_nickname
+MLB,miami-marlins,miami marlins,miami-marlins,franchise_id
+MLB,Marlins,marlins,miami-marlins,nickname
+MLB,Florida Marlins,florida marlins,miami-marlins,season_name
+MLB,MIL,mil,milwaukee-brewers,abbreviation
+MLB,milwaukee-brewers,milwaukee brewers,milwaukee-brewers,franchise_id
+MLB,Brewers,brewers,milwaukee-brewers,nickname
+MLB,MIN,min,minnesota-twins,abbreviation
+MLB,Minneapolis Twins,minneapolis twins,minnesota-twins,city_nickname
+MLB,minnesota-twins,minnesota twins,minnesota-twins,franchise_id
+MLB,Twins,twins,minnesota-twins,nickname
+MLB,NYM,nym,new-york-mets,abbreviation
+MLB,Queens Mets,queens mets,new-york-mets,city_nickname
+MLB,new-york-mets,new york mets,new-york-mets,franchise_id
+MLB,Mets,mets,new-york-mets,nickname
+MLB,NYY,nyy,new-york-yankees,abbreviation
+MLB,Bronx Yankees,bronx yankees,new-york-yankees,city_nickname
+MLB,new-york-yankees,new york yankees,new-york-yankees,franchise_id
+MLB,Yankees,yankees,new-york-yankees,nickname
+MLB,PHI,phi,philadelphia-phillies,abbreviation
+MLB,philadelphia-phillies,philadelphia phillies,philadelphia-phillies,franchise_id
+MLB,Phillies,phillies,philadelphia-phillies,nickname
+MLB,PIT,pit,pittsburgh-pirates,abbreviation
+MLB,pittsburgh-pirates,pittsburgh pirates,pittsburgh-pirates,franchise_id
+MLB,Pirates,pirates,pittsburgh-pirates,nickname
+MLB,SD,sd,san-diego-padres,abbreviation
+MLB,SDP,sdp,san-diego-padres,abbreviation
+MLB,san-diego-padres,san diego padres,san-diego-padres,franchise_id
+MLB,Padres,padres,san-diego-padres,nickname
+MLB,SF,sf,san-francisco-giants,abbreviation
+MLB,SFG,sfg,san-francisco-giants,abbreviation
+MLB,san-francisco-giants,san francisco giants,san-francisco-giants,franchise_id
+MLB,Giants,giants,san-francisco-giants,nickname
+MLB,SEA,sea,seattle-mariners,abbreviation
+MLB,seattle-mariners,seattle mariners,seattle-mariners,franchise_id
+MLB,Mariners,mariners,seattle-mariners,nickname
+MLB,STL,stl,st-louis-cardinals,abbreviation
+MLB,st-louis-cardinals,st louis cardinals,st-louis-cardinals,franchise_id
+MLB,Cardinals,cardinals,st-louis-cardinals,nickname
+MLB,TB,tb,tampa-bay-rays,abbreviation
+MLB,TBR,tbr,tampa-bay-rays,abbreviation
+MLB,St. Petersburg Rays,st petersburg rays,tampa-bay-rays,city_nickname
+MLB,tampa-bay-rays,tampa bay rays,tampa-bay-rays,franchise_id
+MLB,Rays,rays,tampa-bay-rays,nickname
+MLB,TEX,tex,texas-rangers,abbreviation
+MLB,Arlington Rangers,arlington rangers,texas-rangers,city_nickname
+MLB,texas-rangers,texas rangers,texas-rangers,franchise_id
+MLB,Rangers,rangers,texas-rangers,nickname
+MLB,TOR,tor,toronto-blue-jays,abbreviation
+MLB,Toronto Jays,toronto jays,toronto-blue-jays,city_nickname
+MLB,toronto-blue-jays,toronto blue jays,toronto-blue-jays,franchise_id
+MLB,Jays,jays,toronto-blue-jays,nickname
+MLB,WSH,wsh,washington-nationals,abbreviation
+MLB,WSN,wsn,washington-nationals,abbreviation
+MLB,washington-nationals,washington nationals,washington-nationals,franchise_id
+MLB,Nationals,nationals,washington-nationals,nickname
+NBA,ATL,atl,atlanta-hawks,abbreviation
+NBA,atlanta-hawks,atlanta hawks,atlanta-hawks,franchise_id
+NBA,Hawks,hawks,atlanta-hawks,nickname
+NBA,BOS,bos,boston-celtics,abbreviation
+NBA,boston-celtics,boston celtics,boston-celtics,franchise_id
+NBA,Celtics,celtics,boston-celtics,nickname
+NBA,BKN,bkn,brooklyn-nets,abbreviation
+NBA,BRK,brk,brooklyn-nets,abbreviation
+NBA,NJN,njn,brooklyn-nets,abbreviation
+NBA,East Rutherford Nets,east rutherford nets,brooklyn-nets,city_nickname
+NBA,NJ Nets,nj nets,brooklyn-nets,common
+NBA,brooklyn-nets,brooklyn nets,brooklyn-nets,franchise_id
+NBA,Nets,nets,brooklyn-nets,nickname
+NBA,New Jersey Nets,new jersey nets,brooklyn-nets,season_name
+NBA,CHA,cha,charlotte-hornets,abbreviation
+NBA,CHH,chh,charlotte-hornets,abbreviation
+NBA,CHO,cho,charlotte-hornets,abbreviation
+NBA,Bobcats,bobcats,charlotte-hornets,common
+NBA,charlotte-hornets,charlotte hornets,charlotte-hornets,franchise_id
+NBA,Charlotte Bobcats,charlotte bobcats,charlotte-hornets,season_name
+NBA,CHI,chi,chicago-bulls,abbreviation
+NBA,chicago-bulls,chicago bulls,chicago-bulls,franchise_id
+NBA,Bulls,bulls,chicago-bulls,nickname
+NBA,CLE,cle,cleveland-cavaliers,abbreviation
+NBA,Cavs,cavs,cleveland-cavaliers,common
+NBA,cleveland-cavaliers,cleveland cavaliers,cleveland-cavaliers,franchise_id
+NBA,Cavaliers,cavaliers,cleveland-cavaliers,nickname
+NBA,DAL,dal,dallas-mavericks,abbreviation
+NBA,Mavs,mavs,dallas-mavericks,common
+NBA,dallas-mavericks,dallas mavericks,dallas-mavericks,franchise_id
+NBA,Mavericks,mavericks,dallas-mavericks,nickname
+NBA,DEN,den,denver-nuggets,abbreviation
+NBA,denver-nuggets,denver nuggets,denver-nuggets,franchise_id
+NBA,Nuggets,nuggets,denver-nuggets,nickname
+NBA,DET,det,detroit-pistons,abbreviation
+NBA,Auburn Hills Pistons,auburn hills pistons,detroit-pistons,city_nickname
+NBA,detroit-pistons,detroit pistons,detroit-pistons,franchise_id
+NBA,Pistons,pistons,detroit-pistons,nickname
+NBA,GS,gs,golden-state-warriors,abbreviation
+NBA,GSW,gsw,golden-state-warriors,abbreviation
+NBA,Oakland Warriors,oakland warriors,golden-state-warriors,city_nickname
+NBA,Dubs,dubs,golden-state-warriors,common
+NBA,golden-state-warriors,golden state warriors,golden-state-warriors,franchise_id
+NBA,Warriors,warriors,golden-state-warriors,nickname
+NBA,HOU,hou,houston-rockets,abbreviation
+NBA,houston-rockets,houston rockets,houston-rockets,franchise_id
+NBA,Rockets,rockets,houston-rockets,nickname
+NBA,IND,ind,indiana-pacers,abbreviation
+NBA,Indianapolis Pacers,indianapolis pacers,indiana-pacers,city_nickname
+NBA,indiana-pacers,indiana pacers,indiana-pacers,franchise_id
+NBA,Pacers,pacers,indiana-pacers,nickname
+NBA,LAC,lac,los-angeles-clippers,abbreviation
+NBA,Clips,clips,los-angeles-clippers,common
+NBA,LA Clippers,la clippers,los-angeles-clippers,current_name
+NBA,los-angeles-clippers,los angeles clippers,los-angeles-clippers,franchise_id
+NBA,Clippers,clippers,los-angeles-clippers,nickname
+NBA,LAL,lal,los-angeles-lakers,abbreviation
+NBA,los-angeles-lakers,los angeles lakers,los-angeles-lakers,franchise_id
+NBA,Lakers,lakers,los-angeles-lakers,nickname
+NBA,MEM,mem,memphis-grizzlies,abbreviation
+NBA,VAN,van,memphis-grizzlies,abbreviation
+NBA,Grizz,grizz,memphis-grizzlies,common
+NBA,memphis-grizzlies,memphis grizzlies,memphis-grizzlies,franchise_id
+NBA,Grizzlies,grizzlies,memphis-grizzlies,nickname
+NBA,Vancouver Grizzlies,vancouver grizzlies,memphis-grizzlies,season_name
+NBA,MIA,mia,miami-heat,abbreviation
+NBA,miami-heat,miami heat,miami-heat,franchise_id
+NBA,Heat,heat,miami-heat,nickname
+NBA,MIL,mil,milwaukee-bucks,abbreviation
+NBA,milwaukee-bucks,milwaukee bucks,milwaukee-bucks,franchise_id
+NBA,Bucks,bucks,milwaukee-bucks,nickname
+NBA,MIN,min,minnesota-timberwolves,abbreviation
+NBA,Minneapolis Timberwolves,minneapolis timberwolves,minnesota-timberwolves,city_nickname
+NBA,T-Wolves,t wolves,minnesota-timberwolves,common
+NBA,Wolves,wolves,minnesota-timberwolves,common
+NBA,minnesota-timberwolves,minnesota timberwolves,minnesota-timberwolves,franchise_id
+NBA,Timberwolves,timberwolves,minnesota-timberwolves,nickname
+NBA,NOH,noh,new-orleans-pelicans,abbreviation
+NBA,NOK,nok,new-orleans-pelicans,abbreviation
+NBA,NOP,nop,new-orleans-pelicans,abbreviation
+NBA,Oklahoma City Hornets,oklahoma city hornets,new-orleans-pelicans,city_nickname
+NBA,Pels,pels,new-orleans-pelicans,common
+NBA,new-orleans-pelicans,new orleans pelicans,new-orleans-pelicans,franchise_id
+NBA,Pelicans,pelicans,new-orleans-pelicans,nickname
+NBA,New Orleans Hornets,new orleans hornets,new-orleans-pelicans,season_name
+NBA,New Orleans/Oklahoma City Hornets,new orleans oklahoma city hornets,new-orleans-pelicans,season_name
+NBA,NYK,nyk,new-york-knicks,abbreviation
+NBA,new-york-knicks,new york knicks,new-york-knicks,franchise_id
+NBA,Knicks,knicks,new-york-knicks,nickname
+NBA,OKC,okc,oklahoma-city-thunder,abbreviation
+NBA,SEA,sea,oklahoma-city-thunder,abbreviation
+NBA,Seattle Sonics,seattle sonics,oklahoma-city-thunder,common
+NBA,Sonics,sonics,oklahoma-city-thunder,common
+NBA,oklahoma-city-thunder,oklahoma city thunder,oklahoma-city-thunder,franchise_id
+NBA,SuperSonics,supersonics,oklahoma-city-thunder,nickname
+NBA,Thunder,thunder,oklahoma-city-thunder,nickname
+NBA,Seattle SuperSonics,seattle supersonics,oklahoma-city-thunder,season_name
+NBA,ORL,orl,orlando-magic,abbreviation
+NBA,orlando-magic,orlando magic,orlando-magic,franchise_id
+NBA,Magic,magic,orlando-magic,nickname
+NBA,PHI,phi,philadelphia-sixers,abbreviation
+NBA,Philadelphia Sixers,philadelphia sixers,philadelphia-sixers,common
+NBA,Sixers,sixers,philadelphia-sixers,common
+NBA,Philadelphia 76ers,philadelphia 76ers,philadelphia-sixers,current_name
+NBA,76ers,76ers,philadelphia-sixers,nickname
+NBA,PHO,pho,phoenix-suns,abbreviation
+NBA,PHX,phx,phoenix-suns,abbreviation
+NBA,phoenix-suns,phoenix suns,phoenix-suns,franchise_id
+NBA,Suns,suns,phoenix-suns,nickname
+NBA,POR,por,portland-trail-blazers,abbreviation
+NBA,Blazers,blazers,portland-trail-blazers,common
+NBA,Portland Blazers,portland blazers,portland-trail-blazers,common
+NBA,portland-trail-blazers,portland trail blazers,portland-trail-blazers,franchise_id
+NBA,SAC,sac,sacramento-kings,abbreviation
+NBA,sacramento-kings,sacramento kings,sacramento-kings,franchise_id
+NBA,Kings,kings,sacramento-kings,nickname
+NBA,SA,sa,san-antonio-spurs,abbreviation
+NBA,SAS,sas,san-antonio-spurs,abbreviation
+NBA,san-antonio-spurs,san antonio spurs,san-antonio-spurs,franchise_id
+NBA,Spurs,spurs,san-antonio-spurs,nickname
+NBA,TOR,tor,toronto-raptors,abbreviation
+NBA,toronto-raptors,toronto raptors,toronto-raptors,franchise_id
+NBA,Raptors,raptors,toronto-raptors,nickname
+NBA,UTA,uta,utah-jazz,abbreviation
+NBA,UTAH,utah,utah-jazz,abbreviation
+NBA,Salt Lake City Jazz,salt lake city jazz,utah-jazz,city_nickname
+NBA,utah-jazz,utah jazz,utah-jazz,franchise_id
+NBA,Jazz,jazz,utah-jazz,nickname
+NBA,WAS,was,washington-wizards,abbreviation
+NBA,WSH,wsh,washington-wizards,abbreviation
+NBA,washington-wizards,washington wizards,washington-wizards,franchise_id
+NBA,Wizards,wizards,washington-wizards,nickname
+NFL,ARI,ari,arizona-cardinals,abbreviation
+NFL,Tempe Cardinals,tempe cardinals,arizona-cardinals,city_nickname
+NFL,arizona-cardinals,arizona cardinals,arizona-cardinals,franchise_id
+NFL,Cardinals,cardinals,arizona-cardinals,nickname
+NFL,ATL,atl,atlanta-falcons,abbreviation
+NFL,atlanta-falcons,atlanta falcons,atlanta-falcons,franchise_id
+NFL,Falcons,falcons,atlanta-falcons,nickname
+NFL,BAL,bal,baltimore-ravens,abbreviation
+NFL,baltimore-ravens,baltimore ravens,baltimore-ravens,franchise_id
+NFL,Ravens,ravens,baltimore-ravens,nickname
+NFL,BUF,buf,buffalo-bills,abbreviation
+NFL,Orchard Park Bills,orchard park bills,buffalo-bills,city_nickname
+NFL,buffalo-bills,buffalo bills,buffalo-bills,franchise_id
+NFL,Bills,bills,buffalo-bills,nickname
+NFL,CAR,car,carolina-panthers,abbreviation
+NFL,Charlotte Panthers,charlotte panthers,carolina-panthers,city_nickname
+NFL,carolina-panthers,carolina panthers,carolina-panthers,franchise_id
+NFL,Panthers,panthers,carolina-panthers,nickname
+NFL,CHI,chi,chicago-bears,abbreviation
+NFL,chicago-bears,chicago bears,chicago-bears,franchise_id
+NFL,Bears,bears,chicago-bears,nickname
+NFL,CIN,cin,cincinnati-bengals,abbreviation
+NFL,cincinnati-bengals,cincinnati bengals,cincinnati-bengals,franchise_id
+NFL,Bengals,bengals,cincinnati-bengals,nickname
+NFL,CLE,cle,cleveland-browns,abbreviation
+NFL,cleveland-browns,cleveland browns,cleveland-browns,franchise_id
+NFL,Browns,browns,cleveland-browns,nickname
+NFL,DAL,dal,dallas-cowboys,abbreviation
+NFL,Irving Cowboys,irving cowboys,dallas-cowboys,city_nickname
+NFL,dallas-cowboys,dallas cowboys,dallas-cowboys,franchise_id
+NFL,Cowboys,cowboys,dallas-cowboys,nickname
+NFL,DEN,den,denver-broncos,abbreviation
+NFL,denver-broncos,denver broncos,denver-broncos,franchise_id
+NFL,Broncos,broncos,denver-broncos,nickname
+NFL,DET,det,detroit-lions,abbreviation
+NFL,Pontiac Lions,pontiac lions,detroit-lions,city_nickname
+NFL,detroit-lions,detroit lions,detroit-lions,franchise_id
+NFL,Lions,lions,detroit-lions,nickname
+NFL,GB,gb,green-bay-packers,abbreviation
+NFL,GNB,gnb,green-bay-packers,abbreviation
+NFL,green-bay-packers,green bay packers,green-bay-packers,franchise_id
+NFL,Packers,packers,green-bay-packers,nickname
+NFL,HOU,hou,houston-texans,abbreviation
+NFL,houston-texans,houston texans,houston-texans,franchise_id
+NFL,Texans,texans,houston-texans,nickname
+NFL,IND,ind,indianapolis-colts,abbreviation
+NFL,indianapolis-colts,indianapolis colts,indianapolis-colts,franchise_id
+NFL,Colts,colts,indianapolis-colts,nickname
+NFL,JAC,jac,jacksonville-jaguars,abbreviation
+NFL,JAX,jax,jacksonville-jaguars,abbreviation
+NFL,jacksonville-jaguars,jacksonville jaguars,jacksonville-jaguars,franchise_id
+NFL,Jaguars,jaguars,jacksonville-jaguars,nickname
+NFL,KAN,kan,kansas-city-chiefs,abbreviation
+NFL,KC,kc,kansas-city-chiefs,abbreviation
+NFL,kansas-city-chiefs,kansas city chiefs,kansas-city-chiefs,franchise_id
+NFL,Chiefs,chiefs,kansas-city-chiefs,nickname
+NFL,LAC,lac,los-angeles-chargers,abbreviation
+NFL,SD,sd,los-angeles-chargers,abbreviation
+NFL,SDG,sdg,los-angeles-chargers,abbreviation
+NFL,Carson Chargers,carson chargers,los-angeles-chargers,city_nickname
+NFL,los-angeles-chargers,los angeles chargers,los-angeles-chargers,franchise_id
+NFL,Chargers,chargers,los-angeles-chargers,nickname
+NFL,San Diego Chargers,san diego chargers,los-angeles-chargers,season_name
+NFL,LA,la,los-angeles-rams,abbreviation
+NFL,LAR,lar,los-angeles-rams,abbreviation
+NFL,STL,stl,los-angeles-rams,abbreviation
+NFL,los-angeles-rams,los angeles rams,los-angeles-rams,franchise_id
+NFL,Rams,rams,los-angeles-rams,nickname
+NFL,St. Louis Rams,st louis rams,los-angeles-rams,season_name
+NFL,MIA,mia,miami-dolphins,abbreviation
+NFL,Miami Gardens Dolphins,miami gardens dolphins,miami-dolphins,city_nickname
+NFL,miami-dolphins,miami dolphins,miami-dolphins,franchise_id
+NFL,Dolphins,dolphins,miami-dolphins,nickname
+NFL,MIN,min,minnesota-vikings,abbreviation
+NFL,Minneapolis Vikings,minneapolis vikings,minnesota-vikings,city_nickname
+NFL,minnesota-vikings,minnesota vikings,minnesota-vikings,franchise_id
+NFL,Vikings,vikings,minnesota-vikings,nickname
+NFL,NE,ne,new-england-patriots,abbreviation
+NFL,NWE,nwe,new-england-patriots,abbreviation
+NFL,Foxborough Patriots,foxborough patriots,new-england-patriots,city_nickname
+NFL,Pats,pats,new-england-patriots,common
+NFL,new-england-patriots,new england patriots,new-england-patriots,franchise_id
+NFL,Patriots,patriots,new-england-patriots,nickname
+NFL,NO,no,new-orleans-saints,abbreviation
+NFL,NOR,nor,new-orleans-saints,abbreviation
+NFL,new-orleans-saints,new orleans saints,new-orleans-saints,franchise_id
+NFL,Saints,saints,new-orleans-saints,nickname
+NFL,NYG,nyg,new-york-giants,abbreviation
+NFL,East Rutherford Giants,east rutherford giants,new-york-giants,city_nickname
+NFL,new-york-giants,new york giants,new-york-giants,franchise_id
+NFL,Giants,giants,new-york-giants,nickname
+NFL,NYJ,nyj,new-york-jets,abbreviation
+NFL,East Rutherford Jets,east rutherford jets,new-york-jets,city_nickname
+NFL,new-york-jets,new york jets,new-york-jets,franchise_id
+NFL,Jets,jets,new-york-jets,nickname
+NFL,PHI,phi,philadelphia-eagles,abbreviation
+NFL,philadelphia-eagles,philadelphia eagles,philadelphia-eagles,franchise_id
+NFL,Eagles,eagles,philadelphia-eagles,nickname
+NFL,PIT,pit,pittsburgh-steelers,abbreviation
+NFL,pittsburgh-steelers,pittsburgh steelers,pittsburgh-steelers,franchise_id
+NFL,Steelers,steelers,pittsburgh-steelers,nickname
+NFL,LV,lv,raiders,abbreviation
+NFL,LVR,lvr,raiders,abbreviation
+NFL,OAK,oak,raiders,abbreviation
+NFL,Paradise Raiders,paradise raiders,raiders,city_nickname
+NFL,Las Vegas Raiders,las vegas raiders,raiders,current_name
+NFL,raiders,raiders,raiders,franchise_id
+NFL,Oakland Raiders,oakland raiders,raiders,season_name
+NFL,SF,sf,san-francisco-49ers,abbreviation
+NFL,SFO,sfo,san-francisco-49ers,abbreviation
+NFL,Niners,niners,san-francisco-49ers,common
+NFL,san-francisco-49ers,san francisco 49ers,san-francisco-49ers,franchise_id
+NFL,49ers,49ers,san-francisco-49ers,nickname
+NFL,SEA,sea,seattle-seahawks,abbreviation
+NFL,seattle-seahawks,seattle seahawks,seattle-seahawks,franchise_id
+NFL,Seahawks,seahawks,seattle-seahawks,nickname
+NFL,TAM,tam,tampa-bay-buccaneers,abbreviation
+NFL,TB,tb,tampa-bay-buccaneers,abbreviation
+NFL,Tampa Buccaneers,tampa buccaneers,tampa-bay-buccaneers,city_nickname
+NFL,Bucs,bucs,tampa-bay-buccaneers,common
+NFL,tampa-bay-buccaneers,tampa bay buccaneers,tampa-bay-buccaneers,franchise_id
+NFL,Buccaneers,buccaneers,tampa-bay-buccaneers,nickname
+NFL,TEN,ten,tennessee-titans,abbreviation
+NFL,Nashville Titans,nashville titans,tennessee-titans,city_nickname
+NFL,tennessee-titans,tennessee titans,tennessee-titans,franchise_id
+NFL,Titans,titans,tennessee-titans,nickname
+NFL,WAS,was,washington-commanders,abbreviation
+NFL,WFT,wft,washington-commanders,abbreviation
+NFL,WSH,wsh,washington-commanders,abbreviation
+NFL,Landover Commanders,landover commanders,washington-commanders,city_nickname
+NFL,Landover Redskins,landover redskins,washington-commanders,city_nickname
+NFL,Landover Team,landover team,washington-commanders,city_nickname
+NFL,Redskins,redskins,washington-commanders,former_name
+NFL,washington-commanders,washington commanders,washington-commanders,franchise_id
+NFL,Commanders,commanders,washington-commanders,nickname
+NFL,Team,team,washington-commanders,nickname
+NFL,Washington Football Team,washington football team,washington-commanders,season_name
+NFL,Washington Redskins,washington redskins,washington-commanders,season_name
+NHL,ANA,ana,anaheim-ducks,abbreviation
+NHL,anaheim-ducks,anaheim ducks,anaheim-ducks,franchise_id
+NHL,Ducks,ducks,anaheim-ducks,nickname
+NHL,BOS,bos,boston-bruins,abbreviation
+NHL,boston-bruins,boston bruins,boston-bruins,franchise_id
+NHL,Bruins,bruins,boston-bruins,nickname
+NHL,BUF,buf,buffalo-sabres,abbreviation
+NHL,buffalo-sabres,buffalo sabres,buffalo-sabres,franchise_id
+NHL,Sabres,sabres,buffalo-sabres,nickname
+NHL,CGY,cgy,calgary-flames,abbreviation
+NHL,calgary-flames,calgary flames,calgary-flames,franchise_id
+NHL,Flames,flames,calgary-flames,nickname
+NHL,CAR,car,carolina-hurricanes,abbreviation
+NHL,Raleigh Hurricanes,raleigh hurricanes,carolina-hurricanes,city_nickname
+NHL,carolina-hurricanes,carolina hurricanes,carolina-hurricanes,franchise_id
+NHL,Hurricanes,hurricanes,carolina-hurricanes,nickname
+NHL,CHI,chi,chicago-blackhawks,abbreviation
+NHL,chicago-blackhawks,chicago blackhawks,chicago-blackhawks,franchise_id
+NHL,Blackhawks,blackhawks,chicago-blackhawks,nickname
+NHL,COL,col,colorado-avalanche,abbreviation
+NHL,Denver Avalanche,denver avalanche,colorado-avalanche,city_nickname
+NHL,colorado-avalanche,colorado avalanche,colorado-avalanche,franchise_id
+NHL,Avalanche,avalanche,colorado-avalanche,nickname
+NHL,CBJ,cbj,columbus-blue-jackets,abbreviation
+NHL,Columbus Jackets,columbus jackets,columbus-blue-jackets,city_nickname
+NHL,columbus-blue-jackets,columbus blue jackets,columbus-blue-jackets,franchise_id
+NHL,Jackets,jackets,columbus-blue-jackets,nickname
+NHL,DAL,dal,dallas-stars,abbreviation
+NHL,dallas-stars,dallas stars,dallas-stars,franchise_id
+NHL,Stars,stars,dallas-stars,nickname
+NHL,DET,det,detroit-red-wings,abbreviation
+NHL,Detroit Wings,detroit wings,detroit-red-wings,city_nickname
+NHL,detroit-red-wings,detroit red wings,detroit-red-wings,franchise_id
+NHL,Wings,wings,detroit-red-wings,nickname
+NHL,EDM,edm,edmonton-oilers,abbreviation
+NHL,edmonton-oilers,edmonton oilers,edmonton-oilers,franchise_id
+NHL,Oilers,oilers,edmonton-oilers,nickname
+NHL,FLA,fla,florida-panthers,abbreviation
+NHL,Sunrise Panthers,sunrise panthers,florida-panthers,city_nickname
+NHL,florida-panthers,florida panthers,florida-panthers,franchise_id
+NHL,Panthers,panthers,florida-panthers,nickname
+NHL,LAK,lak,los-angeles-kings,abbreviation
+NHL,los-angeles-kings,los angeles kings,los-angeles-kings,franchise_id
+NHL,Kings,kings,los-angeles-kings,nickname
+NHL,MIN,min,minnesota-wild,abbreviation
+NHL,St. Paul Wild,st paul wild,minnesota-wild,city_nickname
+NHL,minnesota-wild,minnesota wild,minnesota-wild,franchise_id
+NHL,Wild,wild,minnesota-wild,nickname
+NHL,MTL,mtl,montreal-canadiens,abbreviation
+NHL,montreal-canadiens,montreal canadiens,montreal-canadiens,franchise_id
+NHL,Canadiens,canadiens,montreal-canadiens,nickname
+NHL,NSH,nsh,nashville-predators,abbreviation
+NHL,nashville-predators,nashville predators,nashville-predators,franchise_id
+NHL,Predators,predators,nashville-predators,nickname
+NHL,NJD,njd,new-jersey-devils,abbreviation
+NHL,Newark Devils,newark devils,new-jersey-devils,city_nickname
+NHL,new-jersey-devils,new jersey devils,new-jersey-devils,franchise_id
+NHL,Devils,devils,new-jersey-devils,nickname
+NHL,NYI,nyi,new-york-islanders,abbreviation
+NHL,Uniondale Islanders,uniondale islanders,new-york-islanders,city_nickname
+NHL,new-york-islanders,new york islanders,new-york-islanders,franchise_id
+NHL,Islanders,islanders,new-york-islanders,nickname
+NHL,NYR,nyr,new-york-rangers,abbreviation
+NHL,new-york-rangers,new york rangers,new-york-rangers,franchise_id
+NHL,Rangers,rangers,new-york-rangers,nickname
+NHL,OTT,ott,ottawa-senators,abbreviation
+NHL,Ottawa ON Senators,ottawa on senators,ottawa-senators,city_nickname
+NHL,ottawa-senators,ottawa senators,ottawa-senators,franchise_id
+NHL,Senators,senators,ottawa-senators,nickname
+NHL,PHI,phi,philadelphia-flyers,abbreviation
+NHL,philadelphia-flyers,philadelphia flyers,philadelphia-flyers,franchise_id
+NHL,Flyers,flyers,philadelphia-flyers,nickname
+NHL,PIT,pit,pittsburgh-penguins,abbreviation
+NHL,pittsburgh-penguins,pittsburgh penguins,pittsburgh-penguins,franchise_id
+NHL,Penguins,penguins,pittsburgh-penguins,nickname
+NHL,SJS,sjs,san-jose-sharks,abbreviation
+NHL,san-jose-sharks,san jose sharks,san-jose-sharks,franchise_id
+NHL,Sharks,sharks,san-jose-sharks,nickname
+NHL,SEA,sea,seattle-kraken,abbreviation
+NHL,seattle-kraken,seattle kraken,seattle-kraken,franchise_id
+NHL,Kraken,kraken,seattle-kraken,nickname
+NHL,STL,stl,st-louis-blues,abbreviation
+NHL,st-louis-blues,st louis blues,st-louis-blues,franchise_id
+NHL,Blues,blues,st-louis-blues,nickname
+NHL,TBL,tbl,tampa-bay-lightning,abbreviation
+NHL,Tampa Lightning,tampa lightning,tampa-bay-lightning,city_nickname
+NHL,tampa-bay-lightning,tampa bay lightning,tampa-bay-lightning,franchise_id
+NHL,Lightning,lightning,tampa-bay-lightning,nickname
+NHL,TOR,tor,toronto-maple-leafs,abbreviation
+NHL,Toronto Leafs,toronto leafs,toronto-maple-leafs,city_nickname
+NHL,toronto-maple-leafs,toronto maple leafs,toronto-maple-leafs,franchise_id
+NHL,Leafs,leafs,toronto-maple-leafs,nickname
+NHL,ARI,ari,utah-mammoth,abbreviation
+NHL,PHX,phx,utah-mammoth,abbreviation
+NHL,UTA,uta,utah-mammoth,abbreviation
+NHL,Glendale Coyotes,glendale coyotes,utah-mammoth,city_nickname
+NHL,Salt Lake City Club,salt lake city club,utah-mammoth,city_nickname
+NHL,Salt Lake City Mammoth,salt lake city mammoth,utah-mammoth,city_nickname
+NHL,utah-mammoth,utah mammoth,utah-mammoth,franchise_id
+NHL,Club,club,utah-mammoth,nickname
+NHL,Coyotes,coyotes,utah-mammoth,nickname
+NHL,Mammoth,mammoth,utah-mammoth,nickname
+NHL,Arizona Coyotes,arizona coyotes,utah-mammoth,season_name
+NHL,Phoenix Coyotes,phoenix coyotes,utah-mammoth,season_name
+NHL,Utah Hockey Club,utah hockey club,utah-mammoth,season_name
+NHL,VAN,van,vancouver-canucks,abbreviation
+NHL,vancouver-canucks,vancouver canucks,vancouver-canucks,franchise_id
+NHL,Canucks,canucks,vancouver-canucks,nickname
+NHL,VGK,vgk,vegas-golden-knights,abbreviation
+NHL,Paradise Knights,paradise knights,vegas-golden-knights,city_nickname
+NHL,vegas-golden-knights,vegas golden knights,vegas-golden-knights,franchise_id
+NHL,Knights,knights,vegas-golden-knights,nickname
+NHL,WSH,wsh,washington-capitals,abbreviation
+NHL,washington-capitals,washington capitals,washington-capitals,franchise_id
+NHL,Capitals,capitals,washington-capitals,nickname
+NHL,WPG,wpg,winnipeg-jets,abbreviation
+NHL,winnipeg-jets,winnipeg jets,winnipeg-jets,franchise_id
+NHL,Jets,jets,winnipeg-jets,nickname

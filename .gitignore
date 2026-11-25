@@ -9,3 +9,5 @@ ADAM-DATA/map/check/
 # Doom dashboard page (inlines data + logos); rebuild with ADAM-DATA/map/build_map.py
 ADAM-DATA/dashboard/index.html
 ADAM-DATA/dashboard/doom_map.html
+# Test score files for the Doom Map (fake data; never committed). See ADAM-DATA/docs/SCORES_FORMAT.md
+ADAM-DATA/map/inputs/scores/FAKE_*

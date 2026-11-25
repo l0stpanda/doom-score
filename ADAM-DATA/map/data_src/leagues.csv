@@ -1,3 +1,5 @@
-league,display_name,season_spans_two_years,order
-MLB,Major League Baseball,0,1
-NHL,National Hockey League,1,2
+league,display_name,season_spans_two_years,order,registry_first,registry_last
+MLB,Major League Baseball,0,1,2008,2026
+NHL,National Hockey League,1,2,2013,2025
+NBA,National Basketball Association,1,3,2000,2026
+NFL,National Football League,0,4,2000,2026
