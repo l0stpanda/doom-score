@@ -1,7 +1,7 @@
 ADAM-DATA/data/raw/
 __pycache__/
 ADAM-DATA/dashboard/assets/logos/
-# built file embeds the (trademarked) logos as base64; rebuild with ADAM-DATA/src/viz/build_scatter.py
+# built file embeds the (trademarked) logos as base64; rebuild with ADAM-DATA/scripts/build_dashboard.py (or ADAM-DATA/dashboard/build_scatter.py)
 ADAM-DATA/dashboard/doom_scatter.html
 # Doom Map: node deps and generated check pages (they inline d3 + data; rebuild with map/build_map.py)
 ADAM-DATA/map/node_modules/

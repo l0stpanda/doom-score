@@ -40,13 +40,25 @@ The build starts **only from `data/mlb_nhl_model_slim.csv`**: it fits the models
 self-contained and git-ignored (it embeds the logos). Build it after the steps above:
 
 ```
-cd map && npm install && cd ..                                   # Node 18+: mapshaper, d3, playwright-core
+cd map && npm ci && cd ..                                        # Node 18+: mapshaper, d3, playwright-core
 .venv/Scripts/pip install -r map/requirements.txt
 .venv/Scripts/python map/build_map.py --fetch-logos               # add --shots for screenshots, checks and GIFs
 ```
 
-The build needs the public boundary files in `data/raw/geo/` (US Census 2023 counties; StatCan 2021 census
-divisions). Sources and methods are in `docs/MAP_DECISIONS.md` (M05–M07, 48 decisions in all).
+The build needs no raw boundary files: it uses the committed region shapes in `map/data/` and only re-assigns
+team venues to regions (M49). Add `--no-renders` to skip the Edge check screenshots. Sources and methods are in
+`docs/MAP_DECISIONS.md` (M06–M07 for the boundaries, 49 decisions in all).
+
+**Rebuilding the regions** (only after changing `map/data_src/region_*.csv` or `regions.csv`):
+`.venv/Scripts/python map/build_map.py --rebuild-regions`. This needs the raw boundary files in `data/raw/geo/`
+(git-ignored), and stops with a list of any that are missing:
+- **US counties** (Census cartographic boundary 2023, 1:5M): `.venv/Scripts/python scripts/fetch_geo.py` writes
+  `data/raw/geo/us_county/cb_2023_us_county_5m.*`.
+- **Canadian census divisions** (StatCan 2021, cartographic): a **manual** download. StatCan's zip returns HTTP 403
+  to scripts, so they were taken from StatCan's ArcGIS REST service at 0.005° generalisation (293 divisions; the file
+  names suggest three pages of 100 features at offsets 0, 100, 200), saved as GeoJSON `data/raw/geo/cd_0.geojson`, `cd_100.geojson` and
+  `cd_200.geojson`, with at least the fields `CDUID`, `CDNAME` and `PRUID`. **The original query URL was not
+  recorded**, so a re-download may not match the committed shapes exactly: check `git diff map/data/` afterwards.
 
 **What the map shows.** For every point, the *local outlook*: a distance-weighted average of the doom of nearby
 teams. Weights fall off with a Gaussian (σ = 100 mi), and each team counts once.
@@ -101,7 +113,7 @@ shrinkage, verdict thresholds). Step by step: `docs/ADD_A_LEAGUE.md`.
 | `data/` | The slim model table (one row per team-season) |
 | `src/`, `dashboard/`, `scripts/` | Models + exports, viz scripts, the build command |
 | `map/` | Doom Map: `data_src/` (hand-made tables: team locations, regions, rules), `build/` (pipeline), `src/` (page code), `data/` (generated) |
-| `docs/MAP_DECISIONS.md`, `docs/ADD_A_LEAGUE.md` | Map decision log (M01–M48); how to add a league |
+| `docs/MAP_DECISIONS.md`, `docs/ADD_A_LEAGUE.md` | Map decision log (M01–M49); how to add a league |
 | `reports/map_phase*.md`, `reports/map_palette.png` | Map phase reports, palette validation; screenshots and GIFs in `reports/figures/map_*` |
 
 **Rebuilding from raw sources** (league APIs, Wikipedia, MoneyPuck → full 104-column table → slim table), the

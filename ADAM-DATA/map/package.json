@@ -2,7 +2,7 @@
   "name": "doom-map",
   "private": true,
   "type": "module",
-  "description": "Doom Map: build tooling (geometry, bundling, screenshots). See map/README.md",
+  "description": "Doom Map: build tooling (geometry, bundling, screenshots). See the 'Doom Map and the dashboard page' section of ADAM-DATA/README.md",
   "scripts": {},
   "devDependencies": {
     "mapshaper": "^0.6.102",

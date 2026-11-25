@@ -1,5 +1,6 @@
-// Build dashboard/doom_map.html: a self-contained page (d3, topojson-client, heat.js, map.js, CSS and data inlined;
-// no server). Like dashboard/doom_scatter.html it is git-ignored and rebuilt with `python map/build_map.py`.
+// Build dashboard/index.html: the dashboard page (map + scatter + team panel; d3, topojson-client, heat.js, map.js,
+// CSS and data inlined; no server). Like dashboard/doom_scatter.html it is git-ignored and rebuilt with
+// `python map/build_map.py`.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
