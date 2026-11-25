@@ -293,13 +293,13 @@ def main():
              "actual_pct_t1", "actual_pct_t2", "actual_pct_t3"]
             + [f"driver_up_{i}" for i in (1, 2, 3)] + [f"driver_down_{i}" for i in (1, 2, 3)] + ["driver_note"])
     P = P.sort_values(["league", "season_start_year", "doom_pred"], ascending=[True, True, False])
-    P[cols].to_csv(os.path.join(OUT, "doom_predictions.csv"), index=False)
+    P[cols].to_csv(os.path.join(OUT, "doom_predictions.csv"), index=False, lineterminator="\n")
     D[["league", "season_start_year", "franchise_id", "pred_type", "feature", "feature_label", "z",
-       "contribution"]].to_csv(os.path.join(OUT, "doom_drivers_long.csv"), index=False)
-    team_meta(df).to_csv(os.path.join(OUT, "team_meta.csv"), index=False)
+       "contribution"]].to_csv(os.path.join(OUT, "doom_drivers_long.csv"), index=False, lineterminator="\n")
+    team_meta(df).to_csv(os.path.join(OUT, "team_meta.csv"), index=False, lineterminator="\n")
     prof, dic = team_profile(df)
-    prof.to_csv(os.path.join(OUT, "team_profile.csv"), index=False)
-    dic.to_csv(os.path.join(OUT, "team_profile_columns.csv"), index=False)
+    prof.to_csv(os.path.join(OUT, "team_profile.csv"), index=False, lineterminator="\n")
+    dic.to_csv(os.path.join(OUT, "team_profile_columns.csv"), index=False, lineterminator="\n")
 
     # summary for the console (format of reports/RESULTS.md section 4)
     path_err = np.abs(100 - P[["proj_pct_t1", "proj_pct_t2", "proj_pct_t3"]].mean(axis=1) - P.doom_pred)

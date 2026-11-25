@@ -27,7 +27,8 @@ Open `dashboard/index.html` in a browser (no server needed).
 
 **Try four leagues (demo):** `.venv/Scripts/python map/demo.py` adds fake NBA/NFL scores, rebuilds and opens the page;
 `.venv/Scripts/python map/demo.py --off` removes them and checks every file is back as it was. Things to try, with what
-should happen at each step: `docs/DEMO_GUIDE.md`. Demo data is labelled on the page and can't be committed.
+should happen at each step: `docs/DEMO_GUIDE.md`. Demo data is labelled on the page and can't be committed. The demo
+reads real NBA/NFL standings from the teammate branch: if `origin/leo` is missing, run `git fetch origin leo`.
 
 ## Add a league's scores
 

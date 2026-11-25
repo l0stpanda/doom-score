@@ -55,7 +55,7 @@ def main():
                             "comp_pct_t1": c.y_pct_t1, "comp_pct_t2": c.y_pct_t2, "comp_pct_t3": c.y_pct_t3,
                             "features_compared": len(cols)})
     df = pd.DataFrame(out)
-    df.to_csv(os.path.join(DATA, "comparables.csv"), index=False)
+    df.to_csv(os.path.join(DATA, "comparables.csv"), index=False, lineterminator="\n")
     print(df.shape, df.distance.describe().round(1).to_dict())
 
 
